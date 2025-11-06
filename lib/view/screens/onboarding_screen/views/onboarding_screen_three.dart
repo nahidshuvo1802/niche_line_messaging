@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/routes/default_transitions.dart';
 import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
-import 'package:niche_line_messaging/view/screens/onboarding_screen/onboarding_screen_two.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
 
-class OnboardingScreenOne extends StatelessWidget {
-  const OnboardingScreenOne({super.key});
+class OnboardingScreenThree extends StatelessWidget {
+  const OnboardingScreenThree({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +25,7 @@ class OnboardingScreenOne extends StatelessWidget {
               // Image Placeholder
               Center(
                 child: CustomImage(
-                  imageSrc: AppImages.onBoardingOne,
+                  imageSrc: AppImages.onBoardingThree,
                   height: 350.h,
                   width: 300.w,
                   boxFit: BoxFit.fitHeight,
@@ -35,13 +34,11 @@ class OnboardingScreenOne extends StatelessWidget {
                   //imageColor: AppColors.loading,
                 ),
               ),
-
               SizedBox(height: 80.h),
-
 
               // Title
               Text(
-                'Your Privacy, Our Priority',
+                'Recover Securely',
                 style: TextStyle(
                   fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
@@ -54,7 +51,7 @@ class OnboardingScreenOne extends StatelessWidget {
 
               // Description
               Text(
-                'Only you and your recipient can read\nmessages.',
+                'Use your recovery key to restore messages anytime.',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: Colors.white.withOpacity(0.7),
@@ -69,11 +66,11 @@ class OnboardingScreenOne extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  _buildIndicator(isActive: false),
+                  SizedBox(width: 8.w),
+                  _buildIndicator(isActive: false),
+                  SizedBox(width: 8.w),
                   _buildIndicator(isActive: true),
-                  SizedBox(width: 8.w),
-                  _buildIndicator(isActive: false),
-                  SizedBox(width: 8.w),
-                  _buildIndicator(isActive: false),
                 ],
               ),
 
@@ -86,7 +83,7 @@ class OnboardingScreenOne extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Navigate to next onboarding screen or login
-                     Get.to(() => OnboardingScreenTwo());
+                    Get.offAll(() => AuthScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
-import 'package:niche_line_messaging/view/screens/onboarding_screen/onboarding_screen_one.dart';
+import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen_one.dart';
 import '../../../core/app_routes/app_routes.dart';
 import '../../../utils/app_images/app_images.dart';
 import '../../components/custom_image/custom_image.dart';
@@ -27,7 +27,7 @@ class _SplashScreenState extends State<SplashScreen>
     // Initialize animation controller for 10 seconds
     _animationController = AnimationController(
       vsync: this,
-      duration: const Duration(seconds: 10),
+      duration: const Duration(seconds: 5),
     );
 
     // Create animation from 0.0 to 1.0

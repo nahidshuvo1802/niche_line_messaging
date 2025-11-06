@@ -6,7 +6,8 @@ import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_from_card/custom_from_card.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
-import 'package:niche_line_messaging/view/screens/authentication/screen/verify_pincode_screen.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/verify_pincode_screen/verify_pincode_screen.dart';
+import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
 
 // ==================== Auth Screen - Login & SignUp Combined ====================
 // AuthController use করে login and signup handle করছে
@@ -131,7 +132,8 @@ class AuthScreen extends StatelessWidget {
                       onPressed: () {
                         if (isLoginTab.value) {
                           // Login button press
-                          authController.loginUser();
+                          Get.offAll(() => HomeScreen());
+                          // authController.loginUser();
                         } else {
                           // Create Account button press
                           Get.to(() => TwoFactorAuthScreen());

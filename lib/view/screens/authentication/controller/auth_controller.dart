@@ -11,7 +11,7 @@ import 'package:niche_line_messaging/service/api_url.dart';
 import 'package:niche_line_messaging/utils/ToastMsg/toast_message.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_const/app_const.dart';
-import 'package:niche_line_messaging/view/screens/authentication/screen/auth_screen.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 

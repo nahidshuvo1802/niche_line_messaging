@@ -408,9 +408,10 @@ import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/components/custom_pin_code/custom_pin_code.dart';
 import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
-import '../../../../utils/app_strings/app_strings.dart';
-import '../../../components/custom_button/custom_button.dart';
-import '../../../components/custom_text/custom_text.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/recovery_screen1.dart';
+import '../../../../../utils/app_strings/app_strings.dart';
+import '../../../../components/custom_button/custom_button.dart';
+import '../../../../components/custom_text/custom_text.dart';
 
 // ==================== Two-Factor Authentication OTP Screen ====================
 // 6-digit OTP verification for 2FA
@@ -516,6 +517,7 @@ class TwoFactorAuthScreen extends StatelessWidget {
 
               SizedBox(height: 40.h),
 
+
               // ==================== Verify Button ====================
               Obx(() => CustomButton(
                 height: 50.h,
@@ -523,7 +525,9 @@ class TwoFactorAuthScreen extends StatelessWidget {
                 width: 600.w,
                 fillColor: AppColors.loading,
                     title: isVerifying.value ? 'Verifying...' : 'Verify',
-                    onTap:(){} //isVerifying.value ? null : _handleVerifyOtp,
+                    onTap:(){
+                     Get.to(()=> RecoveryKeySetupScreenOne());
+                    } //isVerifying.value ? null : _handleVerifyOtp,
                   )),
 
               SizedBox(height: 20.h),

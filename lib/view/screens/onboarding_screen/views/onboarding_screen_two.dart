@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
-import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
-import 'package:niche_line_messaging/view/screens/authentication/screen/auth_screen.dart';
+import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen_three.dart';
 
-class OnboardingScreenThree extends StatelessWidget {
-  const OnboardingScreenThree({super.key});
+class OnboardingScreenTwo extends StatelessWidget {
+  const OnboardingScreenTwo({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +24,7 @@ class OnboardingScreenThree extends StatelessWidget {
               // Image Placeholder
               Center(
                 child: CustomImage(
-                  imageSrc: AppImages.onBoardingThree,
+                  imageSrc: AppImages.onBoardingTwo,
                   height: 350.h,
                   width: 300.w,
                   boxFit: BoxFit.fitHeight,
@@ -38,7 +37,7 @@ class OnboardingScreenThree extends StatelessWidget {
 
               // Title
               Text(
-                'Recover Securely',
+                'Your keys stay with you',
                 style: TextStyle(
                   fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
@@ -51,7 +50,7 @@ class OnboardingScreenThree extends StatelessWidget {
 
               // Description
               Text(
-                'Use your recovery key to restore messages anytime.',
+                'NichLine never stores your\nprivate keys.',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: Colors.white.withOpacity(0.7),
@@ -68,9 +67,9 @@ class OnboardingScreenThree extends StatelessWidget {
                 children: [
                   _buildIndicator(isActive: false),
                   SizedBox(width: 8.w),
-                  _buildIndicator(isActive: false),
-                  SizedBox(width: 8.w),
                   _buildIndicator(isActive: true),
+                  SizedBox(width: 8.w),
+                  _buildIndicator(isActive: false),
                 ],
               ),
 
@@ -83,7 +82,7 @@ class OnboardingScreenThree extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Navigate to next onboarding screen or login
-                    Get.offAll(() => AuthScreen());
+                     Get.to(() => OnboardingScreenThree());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),

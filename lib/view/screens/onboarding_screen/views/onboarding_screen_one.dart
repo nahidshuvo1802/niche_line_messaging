@@ -2,13 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/routes/default_transitions.dart';
+import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
-import 'package:niche_line_messaging/view/screens/onboarding_screen/onboarding_screen_three.dart';
+import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen_two.dart';
 
-class OnboardingScreenTwo extends StatelessWidget {
-  const OnboardingScreenTwo({super.key});
+class OnboardingScreenOne extends StatelessWidget {
+  const OnboardingScreenOne({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class OnboardingScreenTwo extends StatelessWidget {
               // Image Placeholder
               Center(
                 child: CustomImage(
-                  imageSrc: AppImages.onBoardingTwo,
+                  imageSrc: AppImages.onBoardingOne,
                   height: 350.h,
                   width: 300.w,
                   boxFit: BoxFit.fitHeight,
@@ -33,11 +35,13 @@ class OnboardingScreenTwo extends StatelessWidget {
                   //imageColor: AppColors.loading,
                 ),
               ),
+
               SizedBox(height: 80.h),
+
 
               // Title
               Text(
-                'Your keys stay with you',
+                'Your Privacy, Our Priority',
                 style: TextStyle(
                   fontSize: 26.sp,
                   fontWeight: FontWeight.bold,
@@ -50,7 +54,7 @@ class OnboardingScreenTwo extends StatelessWidget {
 
               // Description
               Text(
-                'NichLine never stores your\nprivate keys.',
+                'Only you and your recipient can read\nmessages.',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: Colors.white.withOpacity(0.7),
@@ -65,9 +69,9 @@ class OnboardingScreenTwo extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildIndicator(isActive: false),
-                  SizedBox(width: 8.w),
                   _buildIndicator(isActive: true),
+                  SizedBox(width: 8.w),
+                  _buildIndicator(isActive: false),
                   SizedBox(width: 8.w),
                   _buildIndicator(isActive: false),
                 ],
@@ -82,7 +86,7 @@ class OnboardingScreenTwo extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Navigate to next onboarding screen or login
-                     Get.to(() => OnboardingScreenThree());
+                     Get.to(() => OnboardingScreenTwo());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),
