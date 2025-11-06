@@ -8,6 +8,7 @@ import 'package:niche_line_messaging/view/components/custom_text/custom_text.dar
 import 'package:niche_line_messaging/view/screens/home/controller/chatlist_controller.dart';
 import 'package:niche_line_messaging/view/screens/home/model/chat_model.dart';
 import 'package:niche_line_messaging/view/screens/home/views/new_chat_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/settings_main_screen.dart';
 
 final controller = Get.put(ChatListController());
 // ==================== Chat List Screen ====================
@@ -86,7 +87,7 @@ class HomeScreen extends StatelessWidget {
           // Profile Avatar
           GestureDetector(
             onTap: () {
-              debugPrint('Profile tapped');
+             Get.to(()=> SettingsScreen());
             },
             child: CircleAvatar(
               radius: 18.r,

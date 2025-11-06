@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/recipient_controller.dart';
@@ -34,7 +35,7 @@ class ChatInfoScreen extends StatelessWidget {
   // ==================== AppBar ====================
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      // backgroundColor: AppColors.primary,
+      backgroundColor: const Color(0xFF0A0E1A),
       elevation: 0,
       leading: IconButton(
         onPressed: () => Get.back(),
@@ -59,7 +60,7 @@ class ChatInfoScreen extends StatelessWidget {
     return Container(
       height: double.infinity,
       width: double.infinity,
-     decoration: const BoxDecoration(
+      decoration: const BoxDecoration(
         gradient: LinearGradient(
           colors: [
             Color(0xFF000000),
@@ -73,8 +74,8 @@ class ChatInfoScreen extends StatelessWidget {
       child: SingleChildScrollView(
         child: Column(
           children: [
-             SizedBox(height: 12.h),
-            _buildProfileSection(chatInfo),
+            SizedBox(height: 12.h),
+            _buildProfileSection(chatInfo, controller),
             SizedBox(height: 30.h),
             _buildSwitchOption(
               icon: Icons.notifications_off_outlined,
@@ -85,7 +86,11 @@ class ChatInfoScreen extends StatelessWidget {
               isLoading: controller.isMuteToggling,
             ),
             //========================DIVIDER===============================
-             Container(height: 0.3.h,width: 350.h,color: const Color.fromARGB(209, 255, 255, 255),),
+            Container(
+              height: 0.3.h,
+              width: 350.w,
+              color: const Color.fromARGB(209, 255, 255, 255),
+            ),
             _buildNavigationOption(
               icon: Icons.image_outlined,
               title: 'View Media',
@@ -98,17 +103,22 @@ class ChatInfoScreen extends StatelessWidget {
               subtitle: 'Your messages are end-to-end encrypted',
               onTap: controller.viewEncryptionInfo,
               iconColor: const Color(0xFF2DD4BF),
-              borderRadius:  BorderRadius.vertical(top: Radius.circular(12.r))
+              borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(12.r)),
             ),
-             //========================DIVIDER===============================
-             Container(height: 0.3.h,width: 350.h,color: const Color.fromARGB(209, 255, 255, 255),),
+            //========================DIVIDER===============================
+            Container(
+              height: 0.3.h,
+              width: 350.w,
+              color: const Color.fromARGB(209, 255, 255, 255),
+            ),
             _buildNavigationOption(
-              
               icon: Icons.cloud_upload_outlined,
               title: 'Export Chat (Encrypted)',
               subtitle: 'Save a secure backup of this conversation',
               onTap: controller.exportChat,
-              borderRadius:  BorderRadius.vertical(bottom: Radius.circular(12.r))
+              borderRadius:
+                  BorderRadius.vertical(bottom: Radius.circular(12.r)),
             ),
             SizedBox(height: 20.h),
             _buildNavigationOption(
@@ -118,11 +128,16 @@ class ChatInfoScreen extends StatelessWidget {
               onTap: controller.deleteChat,
               iconColor: Colors.red,
               titleColor: Colors.red,
-              borderRadius:  BorderRadius.vertical(top: Radius.circular(12.r))
+              borderRadius:
+                  BorderRadius.vertical(top: Radius.circular(12.r)),
             ),
-             //========================DIVIDER===============================
-             Container(height: 0.3.h,width: 350.h,color: const Color.fromARGB(209, 255, 255, 255),),
-             
+            //========================DIVIDER===============================
+            Container(
+              height: 0.3.h,
+              width: 350.w,
+              color: const Color.fromARGB(209, 255, 255, 255),
+            ),
+
             _buildNavigationOption(
               icon: Icons.block_outlined,
               title: 'Block or Report User',
@@ -130,7 +145,8 @@ class ChatInfoScreen extends StatelessWidget {
               onTap: controller.blockOrReportUser,
               iconColor: Colors.red,
               titleColor: Colors.red,
-               borderRadius:  BorderRadius.vertical(bottom: Radius.circular(12.r))
+              borderRadius:
+                  BorderRadius.vertical(bottom: Radius.circular(12.r)),
             ),
             SizedBox(height: 32.h),
             _buildFooterNote(),
@@ -179,17 +195,18 @@ class ChatInfoScreen extends StatelessWidget {
   }
 
   // ==================== Profile Section ====================
-  Widget _buildProfileSection(dynamic chatInfo) {
+  Widget _buildProfileSection(
+      dynamic chatInfo, ChatInfoController controller) {
     return Container(
       width: 370.w,
       padding: EdgeInsets.symmetric(vertical: 30.h),
       decoration: BoxDecoration(
-        color:  const Color.fromARGB(255, 14, 21, 39),
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(15.r),top:  Radius.circular(15.r)),
+        color: const Color.fromARGB(255, 14, 21, 39),
+        borderRadius: BorderRadius.circular(15.r),
       ),
       child: Column(
         children: [
-          _buildProfileAvatar(chatInfo),
+          _buildProfileAvatar(chatInfo, controller),
           SizedBox(height: 16.h),
           CustomText(
             text: chatInfo.name,
@@ -214,17 +231,19 @@ class ChatInfoScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Profile Avatar ====================
-  Widget _buildProfileAvatar(dynamic chatInfo) {
-    final hasImage = chatInfo.profileImage != null && 
-                      chatInfo.profileImage!.isNotEmpty;
-    
+  // ==================== Profile Avatar with Edit ====================
+  Widget _buildProfileAvatar(
+      dynamic chatInfo, ChatInfoController controller) {
+    final hasImage =
+        chatInfo.profileImage != null && chatInfo.profileImage!.isNotEmpty;
+
     return Stack(
       children: [
         CircleAvatar(
           radius: 50.r,
           backgroundColor: Colors.grey[700],
-          backgroundImage: hasImage ? NetworkImage(chatInfo.profileImage!) : null,
+          backgroundImage:
+              hasImage ? NetworkImage(chatInfo.profileImage!) : null,
           child: !hasImage
               ? Text(
                   chatInfo.name[0].toUpperCase(),
@@ -239,20 +258,133 @@ class ChatInfoScreen extends StatelessWidget {
         Positioned(
           right: 2,
           bottom: 2,
-          child: Container(
-            padding: EdgeInsets.all(6.w),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(255, 255, 255, 255),
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color.fromARGB(255, 14, 21, 39),
-                width: 3,
+          child: GestureDetector(
+            onTap: () => _showImagePickerOptions(controller),
+            child: Container(
+              padding: EdgeInsets.all(6.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2DD4BF),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color.fromARGB(255, 14, 21, 39),
+                  width: 3,
+                ),
+              ),
+              child: Icon(
+                Icons.edit,
+                size: 12.sp,
+                color: Colors.white,
               ),
             ),
-            child: Icon(Icons.edit, size: 12.sp, color: const Color.fromARGB(255, 0, 0, 0)),
           ),
         ),
       ],
+    );
+  }
+
+  // ==================== Show Image Picker Options ====================
+  void _showImagePickerOptions(ChatInfoController controller) {
+    Get.bottomSheet(
+      Container(
+        padding: EdgeInsets.all(24.w),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(255, 14, 21, 39),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Title
+            CustomText(
+              text: 'Change Profile Picture',
+              fontSize: 18.sp,
+              fontWeight: FontWeight.w600,
+              color: Colors.white,
+              bottom: 20.h,
+            ),
+
+            // Camera Option
+            _buildImagePickerOption(
+              icon: Icons.camera_alt,
+              label: 'Take Photo',
+              onTap: () {
+                Get.back();
+                controller.pickImage(ImageSource.camera);
+              },
+            ),
+
+            SizedBox(height: 12.h),
+
+            // Gallery Option
+            _buildImagePickerOption(
+              icon: Icons.photo_library,
+              label: 'Choose from Gallery',
+              onTap: () {
+                Get.back();
+                controller.pickImage(ImageSource.gallery);
+              },
+            ),
+
+            SizedBox(height: 12.h),
+
+            // Remove Photo Option (if image exists)
+            if (controller.chatInfo.value?.profileImage != null &&
+                controller.chatInfo.value!.profileImage!.isNotEmpty)
+              _buildImagePickerOption(
+                icon: Icons.delete_outline,
+                label: 'Remove Photo',
+                iconColor: Colors.red,
+                labelColor: Colors.red,
+                onTap: () {
+                  Get.back();
+                  controller.removeProfileImage();
+                },
+              ),
+          ],
+        ),
+      ),
+      isDismissible: true,
+      enableDrag: true,
+    );
+  }
+
+  // ==================== Image Picker Option Widget ====================
+  Widget _buildImagePickerOption({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+    Color? iconColor,
+    Color? labelColor,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 16.w),
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.05),
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: Colors.white.withOpacity(0.1),
+            width: 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              icon,
+              color: iconColor ?? const Color(0xFF2DD4BF),
+              size: 24.sp,
+            ),
+            SizedBox(width: 16.w),
+            CustomText(
+              text: label,
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w500,
+              color: labelColor ?? Colors.white,
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -271,7 +403,7 @@ class ChatInfoScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
         decoration: BoxDecoration(
           color: const Color.fromARGB(255, 14, 21, 39),
-          borderRadius: BorderRadius.vertical(top: Radius.circular(12.r) ),
+          borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
         ),
         child: Row(
           children: [
@@ -324,14 +456,14 @@ class ChatInfoScreen extends StatelessWidget {
   }
 
   // ==================== Navigation Option ====================
-  Widget  _buildNavigationOption({
+  Widget _buildNavigationOption({
     required IconData icon,
     required String title,
     String? subtitle,
     required VoidCallback onTap,
     Color? iconColor,
     Color? titleColor,
-    BorderRadius? borderRadius
+    BorderRadius? borderRadius,
   }) {
     return InkWell(
       onTap: onTap,
@@ -400,5 +532,133 @@ class ChatInfoScreen extends StatelessWidget {
         maxLines: 3,
       ),
     );
+  }
+}
+
+// ==================== Extension for ChatInfoController ====================
+// Add these methods to your existing ChatInfoController
+
+extension ImagePickerExtension on ChatInfoController {
+  // ==================== Pick Image ====================
+  Future<void> pickImage(ImageSource source) async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: source,
+        maxWidth: 1024,
+        maxHeight: 1024,
+        imageQuality: 85,
+      );
+
+      if (image == null) {
+        debugPrint('❌ No image selected');
+        return;
+      }
+
+      debugPrint('✅ Image selected: ${image.path}');
+
+      // TODO: Upload image to server
+      // Example:
+      // final formData = FormData.fromMap({
+      //   'profile_image': await MultipartFile.fromFile(image.path),
+      //   'userId': chatInfo.value?.userId,
+      // });
+      // final response = await ApiClient.postData(ApiUrl.uploadProfileImage, formData);
+      // if (response.statusCode == 200) {
+      //   chatInfo.value = chatInfo.value!.copyWith(
+      //     profileImage: response.body['data']['imageUrl']
+      //   );
+      // }
+
+      // Simulate upload
+      await Future.delayed(const Duration(seconds: 2));
+
+      // Update local state with new image URL (mock)
+      chatInfo.value = chatInfo.value!.copyWith(
+        profileImage: image.path, // In production, use server URL
+      );
+
+      Get.snackbar(
+        'Success',
+        'Profile picture updated successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      debugPrint('✅ Profile image updated');
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to update profile picture',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      debugPrint('❌ Pick Image Error: $e');
+    }
+  }
+
+  // ==================== Remove Profile Image ====================
+  Future<void> removeProfileImage() async {
+    try {
+      // Show confirmation
+      bool? confirm = await Get.dialog<bool>(
+        AlertDialog(
+          backgroundColor: const Color(0xFF0E1527),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            'Remove Profile Picture?',
+            style: TextStyle(color: Colors.white),
+          ),
+          content: const Text(
+            'Are you sure you want to remove your profile picture?',
+            style: TextStyle(color: Colors.white70),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(result: false),
+              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+            ),
+            TextButton(
+              onPressed: () => Get.back(result: true),
+              child: const Text('Remove', style: TextStyle(color: Colors.red)),
+            ),
+          ],
+        ),
+      );
+
+      if (confirm != true) return;
+
+      // TODO: Remove image from server
+      // await ApiClient.deleteData(ApiUrl.removeProfileImage(userId: chatInfo.value!.userId));
+
+      // Simulate API call
+      await Future.delayed(const Duration(seconds: 1));
+
+      // Update local state
+      chatInfo.value = chatInfo.value!.copyWith(profileImage: '');
+
+      Get.snackbar(
+        'Success',
+        'Profile picture removed',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      debugPrint('✅ Profile image removed');
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to remove profile picture',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      debugPrint('❌ Remove Image Error: $e');
+    }
   }
 }

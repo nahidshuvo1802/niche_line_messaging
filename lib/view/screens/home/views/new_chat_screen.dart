@@ -6,9 +6,14 @@ import 'package:niche_line_messaging/view/components/custom_text/custom_text.dar
 import 'package:niche_line_messaging/view/screens/home/controller/new_chat_controller.dart';
 
 // ==================== New Chat Screen ====================
-class NewChatScreen extends StatelessWidget {
+class NewChatScreen extends StatefulWidget {
   NewChatScreen({super.key});
 
+  @override
+  State<NewChatScreen> createState() => _NewChatScreenState();
+}
+
+class _NewChatScreenState extends State<NewChatScreen> {
   final NewChatController controller = Get.put(NewChatController());
 
   @override
@@ -88,7 +93,7 @@ class NewChatScreen extends StatelessWidget {
             color: const Color(0xFF2DD4BF),
             size: 20.sp,
           ),
-          suffixIcon: Obx(() => controller.searchController.text.isNotEmpty
+          suffixIcon: controller.searchController.text.isNotEmpty
               ? IconButton(
                   onPressed: () {
                     controller.searchController.clear();
@@ -100,7 +105,7 @@ class NewChatScreen extends StatelessWidget {
                     size: 20.sp,
                   ),
                 )
-              : const SizedBox.shrink()),
+              : const SizedBox.shrink(),
           filled: true,
           fillColor: Colors.white.withOpacity(0.05),
           border: OutlineInputBorder(
