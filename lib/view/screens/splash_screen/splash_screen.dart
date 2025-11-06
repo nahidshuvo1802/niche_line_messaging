@@ -83,7 +83,7 @@ class _SplashScreenState extends State<SplashScreen>
             
                 // Slogan Text
                 Transform.translate(
-                  offset: Offset(0, -65.9),
+                  offset: Offset(0, -65.9.h),
                   child: CustomImage(
                     imageSrc: AppImages.sloganText,
                     boxFit: BoxFit.none,

@@ -74,50 +74,53 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           size: 20.sp,
         ),
       ),
-      title: Row(
-        children: [
-          CircleAvatar(
-            radius: 18.r,
-            backgroundColor: const Color(0xFF2DD4BF),
-            backgroundImage: widget.recipientAvatar.isNotEmpty
-                ? NetworkImage(widget.recipientAvatar)
-                : null,
-            child: widget.recipientAvatar.isEmpty
-                ? Text(
-                    widget.recipientName[0].toUpperCase(),
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  )
-                : null,
-          ),
-          SizedBox(width: 12.w),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CustomText(
-                  text: widget.recipientName,
-                  fontSize: 16.sp,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  textAlign: TextAlign.left,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                CustomText(
-                  text: 'Online',
-                  fontSize: 12.sp,
-                  fontWeight: FontWeight.w400,
-                  color: const Color(0xFF2DD4BF),
-                  textAlign: TextAlign.left,
-                ),
-              ],
+      title: Transform.translate(
+        offset: Offset(-20, 0        ),
+        child: Row(
+          children: [
+            CircleAvatar(
+              radius: 18.r,
+              backgroundColor: const Color(0xFF2DD4BF),
+              backgroundImage: widget.recipientAvatar.isNotEmpty
+                  ? NetworkImage(widget.recipientAvatar)
+                  : null,
+              child: widget.recipientAvatar.isEmpty
+                  ? Text(
+                      widget.recipientName[0].toUpperCase(),
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )
+                  : null,
             ),
-          ),
-        ],
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CustomText(
+                    text: widget.recipientName,
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                    textAlign: TextAlign.left,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  CustomText(
+                    text: 'Online',
+                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w400,
+                    color: const Color(0xFF2DD4BF),
+                    textAlign: TextAlign.left,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       actions: [
         IconButton(
