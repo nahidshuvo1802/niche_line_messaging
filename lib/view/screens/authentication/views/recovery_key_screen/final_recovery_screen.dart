@@ -7,6 +7,7 @@ import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_one.dart';
 
 // ==================== Recovery Key Setup Complete Screen ====================
 // Recovery key setup complete হলে এই screen দেখাবে
@@ -332,7 +333,7 @@ class BiometricSetupDialog extends StatelessWidget {
 
     // Navigate to home screen
     // TODO: 
-    Get.offAll(() => HomeScreen());
+    Get.offAll(() => SubscriptionScreenOne());
   }
 
   // ==================== Skip Biometric ====================
@@ -349,7 +350,6 @@ class BiometricSetupDialog extends StatelessWidget {
     debugPrint('✅ Biometric Skipped');
 
     // Navigate to home screen directly
-    // TODO: Get.offAllNamed(AppRoutes.homeScreen);
-     Get.offAll(()=>HomeScreen());
+     Get.offAll(()=> SubscriptionScreenOne());
   }
 }

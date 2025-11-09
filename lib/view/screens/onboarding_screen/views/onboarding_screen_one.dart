@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:get/get_core/src/get_main.dart';
@@ -37,7 +38,6 @@ class OnboardingScreenOne extends StatelessWidget {
               ),
 
               SizedBox(height: 80.h),
-
 
               // Title
               Text(
@@ -86,7 +86,8 @@ class OnboardingScreenOne extends StatelessWidget {
                 child: ElevatedButton(
                   onPressed: () {
                     // Navigate to next onboarding screen or login
-                     Get.to(() => OnboardingScreenTwo());
+                    HapticFeedback.lightImpact();
+                    Get.to(() => OnboardingScreenTwo());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),

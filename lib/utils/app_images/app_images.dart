@@ -16,6 +16,7 @@ class AppImages {
   static const String qrCodeImage = "$basePath/qrCodeImage.png";
   static const String vectorImage= "$basePath/vectorimage.png";
   static const String fingerPrint = "$basePathIcon/fingerprint.json";
+  static const String splashScreenTwo = "$basePath/splashTwo.png";
 
 
 }

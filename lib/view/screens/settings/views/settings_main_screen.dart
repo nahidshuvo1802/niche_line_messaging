@@ -1,6 +1,13 @@
  import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/about_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/accounts_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/apperance_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/notification_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/privacy_security_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/secure_folder_screen.dart';
 
 // ==================== Settings Screen - UI Only ====================
 // Controller and API integration করবেন পরে
@@ -16,7 +23,7 @@ class SettingsScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => Get.to(() => HomeScreen()),
         ),
         title: const Text(
           'Settings',
@@ -47,16 +54,19 @@ class SettingsScreen extends StatelessWidget {
               child: Row(
                 children: [
                   // Icon
-                  Container(
-                    padding: EdgeInsets.all(12.w),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF2DD4BF).withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Icon(
-                      Icons.folder_outlined,
-                      color: const Color(0xFF2DD4BF),
-                      size: 28.sp,
+                  GestureDetector(
+                    onTap: () => Get.to(SecureFolderScreen()),
+                    child: Container(
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF2DD4BF).withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Icon(
+                        Icons.folder_outlined,
+                        color: const Color(0xFF2DD4BF),
+                        size: 28.sp,
+                      ),
                     ),
                   ),
 
@@ -102,6 +112,7 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: 'Access and manage your encrypted media',
                   onTap: () {
                     debugPrint('Secure Folder clicked');
+                    Get.to(SecureFolderScreen());
                     // TODO: Navigate to Secure Folder screen
                     // Get.toNamed(AppRoutes.secureFolder);
                   },
@@ -117,7 +128,7 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     debugPrint('Account clicked');
                     // TODO: Navigate to Account screen
-                    // Get.toNamed(AppRoutes.account);
+                    Get.to(() => AccountScreen());
                   },
                 ),
 
@@ -130,8 +141,9 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: 'Control who sees your info and how your data is protected',
                   onTap: () {
                     debugPrint('Privacy & Security clicked');
+                    Get.to(() => PrivacySecurityScreen());
                     // TODO: Navigate to Privacy & Security screen
-                    // Get.toNamed(AppRoutes.privacySecurity);
+                    // Get.toNamed(AppRoutes.privacySecurity); 
                   },
                 ),
 
@@ -145,7 +157,7 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     debugPrint('Notifications clicked');
                     // TODO: Navigate to Notifications screen
-                    // Get.toNamed(AppRoutes.notifications);
+                    Get.to(() => NotificationsScreen());
                   },
                 ),
 
@@ -159,7 +171,7 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     debugPrint('Appearance clicked');
                     // TODO: Navigate to Appearance screen
-                    // Get.toNamed(AppRoutes.appearance);
+                     Get.to(() => AppearanceScreen());
                   },
                 ),
 
@@ -173,7 +185,7 @@ class SettingsScreen extends StatelessWidget {
                   onTap: () {
                     debugPrint('About clicked');
                     // TODO: Navigate to About screen
-                    // Get.toNamed(AppRoutes.about);
+                    Get.to(() => AboutScreen());
                   },
                 ),
               ],
