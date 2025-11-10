@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/chat_detail_controller.dart';
 import 'package:niche_line_messaging/view/screens/home/model/chat_details_model.dart';
@@ -9,13 +8,13 @@ import 'package:niche_line_messaging/view/screens/home/views/recipient_info_scre
 
 final TextEditingController messageController = TextEditingController();
 RxString message = ''.obs;
-// ==================== Chat Detail Screen ====================
+
 class ChatDetailScreen extends StatefulWidget {
   final String recipientId;
   final String recipientName;
   final String recipientAvatar;
 
-  ChatDetailScreen({
+  const ChatDetailScreen({
     super.key,
     required this.recipientId,
     required this.recipientName,
@@ -31,56 +30,44 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Initialize with recipient info
     controller.initChat(widget.recipientId, widget.recipientName);
 
     return Scaffold(
-      backgroundColor: AppColors.primary,
-      appBar: _buildAppBar(),
+      appBar: _buildAppBar(context),
       body: Column(
         children: [
-          // Messages List
           Expanded(
             child: Obx(() {
               if (controller.isLoading.value) {
-                return _buildLoadingState();
+                return _buildLoadingState(context);
               }
-
               if (controller.messages.isEmpty) {
-                return _buildEmptyState();
+                return _buildEmptyState(context);
               }
-
-              return _buildMessagesList();
+              return _buildMessagesList(context);
             }),
           ),
-
-          // Message Input
-          _buildMessageInput(),
+          _buildMessageInput(context),
         ],
       ),
     );
   }
 
-  // ==================== AppBar ====================
-  PreferredSizeWidget _buildAppBar() {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
-      backgroundColor: AppColors.primary,
-      elevation: 0,
       leading: IconButton(
         onPressed: () => Get.back(),
         icon: Icon(
           Icons.arrow_back_ios,
-          color: const Color(0xFF2DD4BF),
           size: 20.sp,
         ),
       ),
       title: Transform.translate(
-        offset: Offset(-20, 0        ),
+        offset: const Offset(-20, 0),
         child: Row(
           children: [
             CircleAvatar(
               radius: 18.r,
-              backgroundColor: const Color(0xFF2DD4BF),
               backgroundImage: widget.recipientAvatar.isNotEmpty
                   ? NetworkImage(widget.recipientAvatar)
                   : null,
@@ -88,7 +75,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                   ? Text(
                       widget.recipientName[0].toUpperCase(),
                       style: TextStyle(
-                        color: Colors.white,
+                        color: Theme.of(context).colorScheme.onPrimary,
                         fontSize: 16.sp,
                         fontWeight: FontWeight.bold,
                       ),
@@ -102,18 +89,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 children: [
                   CustomText(
                     text: widget.recipientName,
-                    fontSize: 16.sp,
+                    fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: Colors.white,
                     textAlign: TextAlign.left,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   CustomText(
                     text: 'Online',
-                    fontSize: 12.sp,
+                    fontSize: 12,
                     fontWeight: FontWeight.w400,
-                    color: const Color(0xFF2DD4BF),
+                    color: Theme.of(context).colorScheme.primary,
                     textAlign: TextAlign.left,
                   ),
                 ],
@@ -125,24 +111,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       actions: [
         IconButton(
           onPressed: () {
-            // TODO: Search in chat
             debugPrint('Search in chat');
           },
           icon: Icon(
             Icons.search,
-            color: const Color(0xFF2DD4BF),
             size: 24.sp,
           ),
         ),
         IconButton(
           onPressed: () {
-            // TODO: Open chat settings
-            // debugPrint('Chat settings');
-            Get.to(()=>ChatInfoScreen());
+            Get.to(() => const ChatInfoScreen());
           },
           icon: Icon(
             Icons.info,
-            color: const Color(0xFF2DD4BF),
             size: 24.sp,
           ),
         ),
@@ -150,49 +131,43 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  // ==================== Messages List ====================
-  Widget _buildMessagesList() {
+  Widget _buildMessagesList(BuildContext context) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
       reverse: true,
       itemCount: controller.messages.length,
       itemBuilder: (context, index) {
         final message = controller.messages[index];
-        return _buildMessageItem(message);
+        return _buildMessageItem(context, message);
       },
     );
   }
 
-  // ==================== Message Item ====================
-  Widget _buildMessageItem(MessageModel message) {
+  Widget _buildMessageItem(BuildContext context, MessageModel message) {
     final isMe = message.senderId == 'me';
-
     return Padding(
       padding: EdgeInsets.only(bottom: 16.h),
       child: Column(
         crossAxisAlignment:
             isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
-          // Date Label (if needed)
           if (message.showDateLabel)
             Center(
               child: Container(
                 margin: EdgeInsets.only(bottom: 16.h),
                 padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Theme.of(context).cardColor,
                   borderRadius: BorderRadius.circular(12.r),
                 ),
                 child: CustomText(
                   text: message.dateLabel ?? '',
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500,
-                  color: Colors.white.withOpacity(0.6),
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
               ),
             ),
-
-          // Message Bubble
           Row(
             mainAxisAlignment:
                 isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
@@ -201,7 +176,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               if (!isMe) ...[
                 CircleAvatar(
                   radius: 16.r,
-                  backgroundColor: const Color(0xFF2DD4BF),
                   backgroundImage: widget.recipientAvatar.isNotEmpty
                       ? NetworkImage(widget.recipientAvatar)
                       : null,
@@ -209,7 +183,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                       ? Text(
                           widget.recipientName[0].toUpperCase(),
                           style: TextStyle(
-                            color: Colors.white,
+                            color: Theme.of(context).colorScheme.onPrimary,
                             fontSize: 14.sp,
                             fontWeight: FontWeight.bold,
                           ),
@@ -219,12 +193,10 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 SizedBox(width: 8.w),
               ],
               Flexible(
-                child: _buildMessageBubble(message, isMe),
+                child: _buildMessageBubble(context, message, isMe),
               ),
             ],
           ),
-
-          // Timestamp and Status
           Padding(
             padding: EdgeInsets.only(
               top: 4.h,
@@ -237,9 +209,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               children: [
                 CustomText(
                   text: message.timestamp,
-                  fontSize: 11.sp,
+                  fontSize: 11,
                   fontWeight: FontWeight.w400,
-                  color: Colors.white.withOpacity(0.5),
+                  color: Theme.of(context).textTheme.bodySmall?.color,
                 ),
                 if (isMe) ...[
                   SizedBox(width: 4.w),
@@ -251,8 +223,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                             : Icons.done,
                     size: 14.sp,
                     color: message.isRead
-                        ? const Color(0xFF2DD4BF)
-                        : Colors.white.withOpacity(0.5),
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).textTheme.bodySmall?.color,
                   ),
                 ],
               ],
@@ -263,28 +235,26 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  // ==================== Message Bubble ====================
-  Widget _buildMessageBubble(MessageModel message, bool isMe) {
+  Widget _buildMessageBubble(BuildContext context, MessageModel message, bool isMe) {
     switch (message.type) {
       case MessageType.text:
-        return _buildTextMessage(message, isMe);
+        return _buildTextMessage(context, message, isMe);
       case MessageType.file:
-        return _buildFileMessage(message, isMe);
+        return _buildFileMessage(context, message, isMe);
       case MessageType.voice:
-        return _buildVoiceMessage(message, isMe);
+        return _buildVoiceMessage(context, message, isMe);
       case MessageType.typing:
-        return _buildTypingIndicator();
+        return _buildTypingIndicator(context);
       default:
         return const SizedBox.shrink();
     }
   }
 
-  // ==================== Text Message ====================
-  Widget _buildTextMessage(MessageModel message, bool isMe) {
+  Widget _buildTextMessage(BuildContext context, MessageModel message, bool isMe) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: isMe ? const Color(0xFF2DD4BF) : Colors.white,
+        color: isMe ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(16.r),
           topRight: Radius.circular(16.r),
@@ -294,21 +264,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
       ),
       child: CustomText(
         text: message.content,
-        fontSize: 14.sp,
+        fontSize: 14,
         fontWeight: FontWeight.w400,
-        color: isMe ? Colors.white : Colors.black87,
+        color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
         textAlign: TextAlign.left,
         maxLines: 100,
       ),
     );
   }
 
-  // ==================== File Message ====================
-  Widget _buildFileMessage(MessageModel message, bool isMe) {
+  Widget _buildFileMessage(BuildContext context, MessageModel message, bool isMe) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: isMe ? const Color(0xFF2DD4BF) : Colors.white,
+        color: isMe ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
@@ -318,13 +287,13 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             padding: EdgeInsets.all(12.w),
             decoration: BoxDecoration(
               color: isMe
-                  ? Colors.white.withOpacity(0.2)
-                  : Colors.grey.withOpacity(0.2),
+                  ? Theme.of(context).colorScheme.onPrimary.withOpacity(0.2)
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: Icon(
               Icons.insert_drive_file,
-              color: isMe ? Colors.white : Colors.black87,
+              color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
               size: 24.sp,
             ),
           ),
@@ -335,9 +304,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               children: [
                 CustomText(
                   text: message.fileName ?? 'File',
-                  fontSize: 14.sp,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
-                  color: isMe ? Colors.white : Colors.black87,
+                  color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
                   textAlign: TextAlign.left,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -345,11 +314,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 SizedBox(height: 4.h),
                 CustomText(
                   text: message.fileSize ?? '0 KB',
-                  fontSize: 12.sp,
+                  fontSize: 12,
                   fontWeight: FontWeight.w400,
                   color: isMe
-                      ? Colors.white.withOpacity(0.8)
-                      : Colors.black54,
+                      ? Theme.of(context).colorScheme.onPrimary.withOpacity(0.8)
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                   textAlign: TextAlign.left,
                 ),
               ],
@@ -360,12 +329,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  // ==================== Voice Message ====================
-  Widget _buildVoiceMessage(MessageModel message, bool isMe) {
+  Widget _buildVoiceMessage(BuildContext context, MessageModel message, bool isMe) {
     return Container(
       padding: EdgeInsets.all(12.w),
       decoration: BoxDecoration(
-        color: isMe ? const Color(0xFF2DD4BF) : Colors.white,
+        color: isMe ? Theme.of(context).colorScheme.primary : Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
@@ -375,18 +343,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             padding: EdgeInsets.all(8.w),
             decoration: BoxDecoration(
               color: isMe
-                  ? Colors.white.withOpacity(0.2)
-                  : Colors.grey.withOpacity(0.2),
+                  ? Theme.of(context).colorScheme.onPrimary.withOpacity(0.2)
+                  : Theme.of(context).colorScheme.onSurface.withOpacity(0.1),
               shape: BoxShape.circle,
             ),
             child: Icon(
               Icons.play_arrow,
-              color: isMe ? Colors.white : Colors.black87,
+              color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
               size: 20.sp,
             ),
           ),
           SizedBox(width: 8.w),
-          // Waveform representation
           Row(
             children: List.generate(
               15,
@@ -396,8 +363,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 height: (index % 3 + 1) * 8.h,
                 decoration: BoxDecoration(
                   color: isMe
-                      ? Colors.white.withOpacity(0.6)
-                      : Colors.black45,
+                      ? Theme.of(context).colorScheme.onPrimary.withOpacity(0.6)
+                      : Theme.of(context).colorScheme.onSurface.withOpacity(0.4),
                   borderRadius: BorderRadius.circular(2.r),
                 ),
               ),
@@ -406,21 +373,20 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           SizedBox(width: 8.w),
           CustomText(
             text: message.voiceDuration ?? '0:23',
-            fontSize: 12.sp,
+            fontSize: 12,
             fontWeight: FontWeight.w500,
-            color: isMe ? Colors.white : Colors.black87,
+            color: isMe ? Theme.of(context).colorScheme.onPrimary : Theme.of(context).colorScheme.onSurface,
           ),
         ],
       ),
     );
   }
 
-  // ==================== Typing Indicator ====================
-  Widget _buildTypingIndicator() {
+  Widget _buildTypingIndicator(BuildContext context) {
     return Container(
       padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16.r),
       ),
       child: Row(
@@ -428,9 +394,9 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         children: [
           CustomText(
             text: 'Alex is typing',
-            fontSize: 14.sp,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: Colors.black54,
+            color: Theme.of(context).textTheme.bodyMedium?.color,
           ),
           SizedBox(width: 8.w),
           SizedBox(
@@ -438,7 +404,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             height: 20.w,
             child: CircularProgressIndicator(
               strokeWidth: 2,
-              color: Colors.black54,
+              color: Theme.of(context).textTheme.bodyMedium?.color,
             ),
           ),
         ],
@@ -446,117 +412,107 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     );
   }
 
-  // ==================== Message Input ====================
-Widget _buildMessageInput() {
-  return Container(
-    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-    decoration: BoxDecoration(
-      color: AppColors.primary,
-      border: Border(
-        top: BorderSide(
-          color: Colors.white.withOpacity(0.1),
-          width: 1,
+  Widget _buildMessageInput(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+      decoration: BoxDecoration(
+        color: Theme.of(context).scaffoldBackgroundColor,
+        border: Border(
+          top: BorderSide(
+            color: Theme.of(context).dividerColor,
+            width: 1,
+          ),
         ),
       ),
-    ),
-    child: SafeArea(
-      child: Row(
-        children: [
-          // Attachment Button
-          GestureDetector(
-            onTap: controller.showAttachmentOptions,
-            child: Container(
-              padding: EdgeInsets.all(10.w),
-              decoration: const BoxDecoration(
-                color: Color(0xFF2DD4BF),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.add,
-                color: Colors.white,
-                size: 20.sp,
-              ),
-            ),
-          ),
-
-          SizedBox(width: 12.w),
-
-          // Text Input
-          Expanded(
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
-                borderRadius: BorderRadius.circular(24.r),
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.2),
-                  width: 1,
-                ),
-              ),
-              child: TextField(
-                controller: messageController,
-                onChanged: (value) => message.value = value,
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14.sp,
-                ),
-                maxLines: null,
-                decoration: InputDecoration(
-                  hintText: 'Type a message',
-                  hintStyle: TextStyle(
-                    color: Colors.white.withOpacity(0.5),
-                    fontSize: 14.sp,
-                  ),
-                  border: InputBorder.none,
-                ),
-              ),
-            ),
-          ),
-
-          SizedBox(width: 12.w),
-
-          // Send / Mic Button (Reactive)
-          Obx(() {
-            final isEmpty = message.value.trim().isEmpty;
-            return GestureDetector(
-              onTap: isEmpty
-                  ? controller.startVoiceRecording
-                  : () {
-                      controller.sendMessage();
-                      messageController.clear();
-                      message.value = '';
-                    },
+      child: SafeArea(
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: controller.showAttachmentOptions,
               child: Container(
                 padding: EdgeInsets.all(10.w),
-                decoration: const BoxDecoration(
-                  color: Color(0xFF2DD4BF),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isEmpty ? Icons.mic : Icons.send,
-                  color: Colors.white,
+                  Icons.add,
+                  color: Theme.of(context).colorScheme.onPrimary,
                   size: 20.sp,
                 ),
               ),
-            );
-          }),
-        ],
-      ),
-    ),
-  );
-}
-
-  // ==================== Loading State ====================
-  Widget _buildLoadingState() {
-    return Center(
-      child: CircularProgressIndicator(
-        color: const Color(0xFF2DD4BF),
+            ),
+            SizedBox(width: 12.w),
+            Expanded(
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface,
+                  borderRadius: BorderRadius.circular(24.r),
+                  border: Border.all(
+                    color: Theme.of(context).dividerColor,
+                    width: 1,
+                  ),
+                ),
+                child: TextField(
+                  controller: messageController,
+                  onChanged: (value) => message.value = value,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 14.sp,
+                  ),
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    hintText: 'Type a message',
+                    hintStyle: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                      fontSize: 14.sp,
+                    ),
+                    border: InputBorder.none,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(width: 12.w),
+            Obx(() {
+              final isEmpty = message.value.trim().isEmpty;
+              return GestureDetector(
+                onTap: isEmpty
+                    ? controller.startVoiceRecording
+                    : () {
+                        controller.sendMessage();
+                        messageController.clear();
+                        message.value = '';
+                      },
+                child: Container(
+                  padding: EdgeInsets.all(10.w),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.primary,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    isEmpty ? Icons.mic : Icons.send,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                    size: 20.sp,
+                  ),
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }
 
-  // ==================== Empty State ====================
-  Widget _buildEmptyState() {
+  Widget _buildLoadingState(BuildContext context) {
+    return Center(
+      child: CircularProgressIndicator(
+        color: Theme.of(context).colorScheme.primary,
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(BuildContext context) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -564,21 +520,21 @@ Widget _buildMessageInput() {
           Icon(
             Icons.chat_bubble_outline,
             size: 80.sp,
-            color: Colors.white.withOpacity(0.3),
+            color: Theme.of(context).textTheme.bodySmall?.color,
           ),
           SizedBox(height: 16.h),
           CustomText(
             text: 'No messages yet',
-            fontSize: 18.sp,
+            fontSize: 18,
             fontWeight: FontWeight.w600,
-            color: Colors.white.withOpacity(0.7),
+            color: Theme.of(context).textTheme.bodyMedium?.color,
           ),
           SizedBox(height: 8.h),
           CustomText(
             text: 'Say hi to ${widget.recipientName}!',
-            fontSize: 14.sp,
+            fontSize: 14,
             fontWeight: FontWeight.w400,
-            color: Colors.white.withOpacity(0.5),
+            color: Theme.of(context).textTheme.bodySmall?.color,
           ),
         ],
       ),
@@ -586,7 +542,6 @@ Widget _buildMessageInput() {
   }
 }
 
-// ==================== Message Type Enum ====================
 enum MessageType {
   text,
   file,

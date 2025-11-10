@@ -4,7 +4,7 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 
 class ThemeController extends GetxController {
   // ============ Reactive Variables ============
-  var themeMode = 'system'.obs; // ✅ Reactive string
+  var themeMode = 'dark'.obs; // ✅ Reactive string
   var fontSize = 16.0.obs;      // ✅ Reactive double
 
   // ============ Computed Getter ============

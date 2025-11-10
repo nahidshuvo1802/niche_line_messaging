@@ -14,218 +14,150 @@ class AppearanceScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Obx(() {
-      // Use controller's isDarkMode instead of Theme.of(context)
-      final isDark = themeController.isDarkMode;
-
       return Scaffold(
         appBar: AppBar(
-          backgroundColor: isDark ? const Color(0xFF0E1527) : Colors.white,
-          elevation: 0,
           leading: IconButton(
-            icon: Icon(
-              Icons.arrow_back,
-              color: isDark ? const Color(0xFF2DD4BF) : Colors.black,
-            ),
-            onPressed: () => Get.to(() =>SettingsScreen()),
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () => Get.to(() => SettingsScreen()),
           ),
-          title: Text(
-            'Appearance',
-            style: TextStyle(
-              color: isDark ? Colors.white : Colors.black,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          title: const Text('Appearance'),
           centerTitle: true,
         ),
-        body: Container(
-          decoration: isDark
-              ? const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Color(0xFF000000),
-                      Color.fromARGB(255, 31, 41, 55),
-                    ],
-                    tileMode: TileMode.mirror,
-                    begin: Alignment.centerLeft,
-                    end: Alignment.centerRight,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(16.w),
+          child: Column(
+            children: [
+              SizedBox(height: 8.h),
+              _buildSectionCard(
+                context,
+                title: 'Theme Settings',
+                children: [
+                  _buildThemeOption(
+                    context,
+                    icon: Icons.light_mode,
+                    title: 'Light Mode',
+                    subtitle: 'Use a bright theme',
+                    isSelected: themeController.themeMode.value == 'light',
+                    onTap: () => themeController.setThemeMode('light'),
                   ),
-                )
-              : const BoxDecoration(color: Color(0xFFF5F5F5)),
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(16.w),
-            child: Column(
-              children: [
-                SizedBox(height: 8.h),
-
-                // ==================== Message Alerts Section ====================
-                _buildSectionCard(
-                  isDark: isDark,
-                  title: 'Theme Settings',
-                  children: [
-                    // Light Mode
-                    _buildThemeOption(
-                      isDark: isDark,
-                      icon: Icons.light_mode,
-                      title: 'Light Mode',
-                      subtitle: 'Use a bright theme',
-                      isSelected: themeController.themeMode == 'light',
-                      onTap: () => {
-                        themeController.setThemeMode('light'),
-                        Get.snackbar(
-                          'Theme Updated',
-                          'App theme changed to Light Mode',
-                          snackPosition: SnackPosition.BOTTOM,
-                          backgroundColor: AppColors.green,
-                          colorText: AppColors.white,
-                        ),
-                      },
-                    ),
-
-                    Divider(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
-                      height: 1,
-                    ),
-
-                    // Dark Mode
-                    _buildThemeOption(
-                      isDark: isDark,
-                      icon: Icons.dark_mode,
-                      title: 'Dark Mode',
-                      subtitle: 'Best for low light and privacy',
-                      isSelected: themeController.themeMode == 'dark',
-                      onTap: () => themeController.setThemeMode('dark'),
-                    ),
-
-                    Divider(
-                      color: isDark
-                          ? Colors.white.withOpacity(0.1)
-                          : Colors.black.withOpacity(0.1),
-                      height: 1,
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 16.h),
-
-                // ==================== Font Size Section ====================
-                _buildSectionCard(
-                  isDark: isDark,
-                  title: 'Font Size',
-                  children: [
-                    SizedBox(height: 8.h),
-
-                    // Font Size Slider
-                    Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              'A',
-                              style: TextStyle(
-                                fontSize: 12.sp,
-                                fontWeight: FontWeight.w600,
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.7)
-                                    : Colors.black.withOpacity(0.7),
-                              ),
-                            ),
-                            Expanded(
-                              child: SliderTheme(
-                                data: SliderThemeData(
-                                  activeTrackColor: const Color(0xFF2DD4BF),
-                                  inactiveTrackColor: isDark
-                                      ? Colors.white.withOpacity(0.2)
-                                      : Colors.black.withOpacity(0.2),
-                                  thumbColor: const Color(0xFF2DD4BF),
-                                  overlayColor: const Color(
-                                    0xFF2DD4BF,
-                                  ).withOpacity(0.2),
-                                  trackHeight: 4.h,
-                                ),
-                                child: Slider(
-                                  value: themeController.fontSize.value,
-                                  min: 12.0,
-                                  max: 20.0,
-                                  divisions: 8,
-                                  onChanged: (value) {
-                                    themeController.updateFontSize(value);
-                                  },
-                                ),
-                              ),
-                            ),
-                            Text(
-                              'A',
-                              style: TextStyle(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w600,
-                                color: isDark
-                                    ? Colors.white.withOpacity(0.7)
-                                    : Colors.black.withOpacity(0.7),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 16.h),
-
-                        // Sample Chat Preview
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.all(16.w),
-                          decoration: BoxDecoration(
-                            color: isDark
-                                ? Colors.black.withOpacity(0.3)
-                                : Colors.white,
-                            borderRadius: BorderRadius.circular(8.r),
-                            border: Border.all(
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.1)
-                                  : Colors.black.withOpacity(0.1),
-                            ),
-                          ),
-                          child: Text(
-                            'Sample chat message preview',
+                  Divider(
+                    color: Theme.of(context).dividerColor,
+                    height: 1,
+                  ),
+                  _buildThemeOption(
+                    context,
+                    icon: Icons.dark_mode,
+                    title: 'Dark Mode',
+                    subtitle: 'Best for low light and privacy',
+                    isSelected: themeController.themeMode.value == 'dark',
+                    onTap: () => themeController.setThemeMode('dark'),
+                  ),
+                  Divider(
+                    color: Theme.of(context).dividerColor,
+                    height: 1,
+                  ),
+                  _buildThemeOption(
+                    context,
+                    icon: Icons.settings_system_daydream,
+                    title: 'System',
+                    subtitle: 'Follow the device theme',
+                    isSelected: themeController.themeMode.value == 'system',
+                    onTap: () => themeController.setThemeMode('system'),
+                  ),
+                ],
+              ),
+              SizedBox(height: 16.h),
+              _buildSectionCard(
+                context,
+                title: 'Font Size',
+                children: [
+                  SizedBox(height: 8.h),
+                  Column(
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            'A',
                             style: TextStyle(
-                              fontSize: themeController.fontSize.value.sp,
-                              color: isDark
-                                  ? Colors.white.withOpacity(0.8)
-                                  : Colors.black.withOpacity(0.8),
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
                             ),
                           ),
+                          Expanded(
+                            child: SliderTheme(
+                              data: SliderTheme.of(context).copyWith(
+                                activeTrackColor: Theme.of(context).colorScheme.primary,
+                                inactiveTrackColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                                thumbColor: Theme.of(context).colorScheme.primary,
+                                overlayColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                                trackHeight: 4.h,
+                              ),
+                              child: Slider(
+                                value: themeController.fontSize.value,
+                                min: 12.0,
+                                max: 20.0,
+                                divisions: 8,
+                                onChanged: (value) {
+                                  themeController.updateFontSize(value);
+                                },
+                              ),
+                            ),
+                          ),
+                          Text(
+                            'A',
+                            style: TextStyle(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w600,
+                              color: Theme.of(context).textTheme.bodySmall?.color,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 16.h),
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.all(16.w),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).colorScheme.background,
+                          borderRadius: BorderRadius.circular(8.r),
+                          border: Border.all(
+                            color: Theme.of(context).dividerColor,
+                          ),
                         ),
-                      ],
-                    ),
-
-                    SizedBox(height: 8.h),
-                  ],
-                ),
-
-                SizedBox(height: 40.h),
-              ],
-            ),
+                        child: Text(
+                          'Sample chat message preview',
+                          style: TextStyle(
+                            fontSize: themeController.fontSize.value.sp,
+                            color: Theme.of(context).textTheme.bodyLarge?.color,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8.h),
+                ],
+              ),
+              SizedBox(height: 40.h),
+            ],
           ),
         ),
       );
     });
   }
 
-  // ==================== Section Card Widget ====================
-  Widget _buildSectionCard({
-    required bool isDark,
+  Widget _buildSectionCard(BuildContext context, {
     required String title,
     required List<Widget> children,
   }) {
     return Container(
       padding: EdgeInsets.all(20.w),
       decoration: BoxDecoration(
-        color: isDark ? const Color.fromARGB(255, 14, 21, 39) : Colors.white,
+        color: Theme.of(context).cardColor,
         borderRadius: BorderRadius.circular(12.r),
         border: Border.all(
-          color: isDark
-              ? const Color(0xFF2DD4BF).withOpacity(0.3)
-              : Colors.black.withOpacity(0.1),
+          color: Theme.of(context).dividerColor,
           width: 1,
         ),
       ),
@@ -237,7 +169,7 @@ class AppearanceScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 16.sp,
               fontWeight: FontWeight.w600,
-              color: isDark ? Colors.white : Colors.black,
+              color: Theme.of(context).textTheme.titleLarge?.color,
             ),
           ),
           SizedBox(height: 16.h),
@@ -247,9 +179,7 @@ class AppearanceScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Theme Option Widget ====================
-  Widget _buildThemeOption({
-    required bool isDark,
+  Widget _buildThemeOption(BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -266,10 +196,10 @@ class AppearanceScreen extends StatelessWidget {
               width: 40.w,
               height: 40.w,
               decoration: BoxDecoration(
-                color: const Color(0xFF2DD4BF).withOpacity(0.15),
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(8.r),
               ),
-              child: Icon(icon, color: const Color(0xFF2DD4BF), size: 22.sp),
+              child: Icon(icon, color: Theme.of(context).colorScheme.primary, size: 22.sp),
             ),
             SizedBox(width: 12.w),
             Expanded(
@@ -281,7 +211,7 @@ class AppearanceScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w500,
-                      color: isDark ? Colors.white : Colors.black,
+                      color: Theme.of(context).textTheme.bodyLarge?.color,
                     ),
                   ),
                   SizedBox(height: 2.h),
@@ -289,9 +219,7 @@ class AppearanceScreen extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 12.sp,
-                      color: isDark
-                          ? Colors.white.withOpacity(0.5)
-                          : Colors.black.withOpacity(0.5),
+                      color: Theme.of(context).textTheme.bodyMedium?.color,
                     ),
                   ),
                 ],
@@ -304,14 +232,12 @@ class AppearanceScreen extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? const Color(0xFF2DD4BF)
-                      : isDark
-                      ? Colors.white.withOpacity(0.3)
-                      : Colors.black.withOpacity(0.3),
+                      ? Theme.of(context).colorScheme.primary
+                      : Theme.of(context).dividerColor,
                   width: 2,
                 ),
                 color: isSelected
-                    ? const Color(0xFF2DD4BF)
+                    ? Theme.of(context).colorScheme.primary
                     : Colors.transparent,
               ),
               child: isSelected
@@ -325,35 +251,76 @@ class AppearanceScreen extends StatelessWidget {
   }
 }
 
-// ==================== Theme Data Configuration ====================
 class AppTheme {
-  static ThemeData lightTheme = ThemeData(
+  static ThemeData lightTheme(double baseFontSize) => ThemeData(
+    useMaterial3: true,
     brightness: Brightness.light,
     primaryColor: const Color(0xFF2DD4BF),
     scaffoldBackgroundColor: const Color(0xFFF5F5F5),
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: Colors.white,
       foregroundColor: Colors.black,
       elevation: 0,
+      iconTheme: const IconThemeData(color: Colors.black),
+      titleTextStyle: TextStyle(color: Colors.black, fontSize: 18.sp, fontWeight: FontWeight.w600)
     ),
     colorScheme: const ColorScheme.light(
       primary: Color(0xFF2DD4BF),
       secondary: Color(0xFF2DD4BF),
+      background: Color(0xFFF5F5F5),
+      surface: Colors.white,
+      onBackground: Colors.black,
+      onSurface: Colors.black,
+    ),
+    cardColor: Colors.white,
+    iconTheme: const IconThemeData(color: Colors.black),
+    dividerColor: Colors.black.withOpacity(0.1),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(fontSize: (baseFontSize * 1.5).sp, color: Colors.black),
+      displayMedium: TextStyle(fontSize: (baseFontSize * 1.25).sp, color: Colors.black),
+      displaySmall: TextStyle(fontSize: (baseFontSize * 1.15).sp, color: Colors.black),
+      headlineMedium: TextStyle(fontSize: (baseFontSize * 1.1).sp, color: Colors.black),
+      headlineSmall: TextStyle(fontSize: (baseFontSize * 1.05).sp, color: Colors.black),
+      titleLarge: TextStyle(fontSize: baseFontSize.sp, color: Colors.black),
+      bodyLarge: TextStyle(fontSize: baseFontSize.sp, color: Colors.black),
+      bodyMedium: TextStyle(fontSize: (baseFontSize * 0.9).sp, color: Colors.black87),
+      bodySmall: TextStyle(fontSize: (baseFontSize * 0.8).sp, color: Colors.black54),
     ),
   );
 
-  static ThemeData darkTheme = ThemeData(
+  static ThemeData darkTheme(double baseFontSize) => ThemeData(
+    useMaterial3: true,
     brightness: Brightness.dark,
     primaryColor: const Color(0xFF2DD4BF),
-    scaffoldBackgroundColor: const Color(0xFF000000),
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF0E1527),
+    scaffoldBackgroundColor: const Color(0xFF0E1527),
+    appBarTheme: AppBarTheme(
+      backgroundColor: const Color(0xFF0E1527),
       foregroundColor: Colors.white,
       elevation: 0,
+      iconTheme: const IconThemeData(color: Color(0xFF2DD4BF)),
+      titleTextStyle: TextStyle(color: Colors.white, fontSize: 18.sp, fontWeight: FontWeight.w600)
     ),
     colorScheme: const ColorScheme.dark(
       primary: Color(0xFF2DD4BF),
       secondary: Color(0xFF2DD4BF),
+      background: Color(0xFF0E1527),
+      surface: Color(0xFF1A1F3A),
+      onBackground: Colors.white,
+      onSurface: Colors.white,
+    ),
+    cardColor: const Color(0xFF1A1F3A),
+    iconTheme: const IconThemeData(color: Colors.white),
+    dividerColor: Colors.white.withOpacity(0.1),
+    textTheme: TextTheme(
+      displayLarge: TextStyle(fontSize: (baseFontSize * 1.5).sp, color: Colors.white),
+      displayMedium: TextStyle(fontSize: (baseFontSize * 1.25).sp, color: Colors.white),
+      displaySmall: TextStyle(fontSize: (baseFontSize * 1.15).sp, color: Colors.white),
+      headlineMedium: TextStyle(fontSize: (baseFontSize * 1.1).sp, color: Colors.white),
+      headlineSmall: TextStyle(fontSize: (baseFontSize * 1.05).sp, color: Colors.white),
+      titleLarge: TextStyle(fontSize: baseFontSize.sp, color: Colors.white),
+      bodyLarge: TextStyle(fontSize: baseFontSize.sp, color: Colors.white),
+      bodyMedium: TextStyle(fontSize: (baseFontSize * 0.9).sp, color: Colors.white70),
+      bodySmall: TextStyle(fontSize: (baseFontSize * 0.8).sp, color: Colors.white54),
     ),
   );
 }

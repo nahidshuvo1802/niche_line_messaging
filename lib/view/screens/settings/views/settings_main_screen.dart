@@ -9,29 +9,18 @@ import 'package:niche_line_messaging/view/screens/settings/views/notification_sc
 import 'package:niche_line_messaging/view/screens/settings/views/privacy_security_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/secure_folder_screen.dart';
 
-// ==================== Settings Screen - UI Only ====================
-// Controller and API integration করবেন পরে
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0E1527), // Dark navy background
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0E1527),
-        elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.to(() => HomeScreen()),
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Get.to(() => const HomeScreen()),
         ),
-        title: const Text(
-          'Settings',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
+        title: const Text('Settings'),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -39,40 +28,34 @@ class SettingsScreen extends StatelessWidget {
         child: Column(
           children: [
             SizedBox(height: 8.h),
-
-            // ==================== Secure Folder Highlight Card ====================
             Container(
               padding: EdgeInsets.all(16.w),
               decoration: BoxDecoration(
-                color: const Color(0xFF1A1F3A),
+                color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(12.r),
                 border: Border.all(
-                  color: const Color(0xFF2DD4BF),
+                  color: Theme.of(context).colorScheme.primary,
                   width: 1.5,
                 ),
               ),
               child: Row(
                 children: [
-                  // Icon
                   GestureDetector(
-                    onTap: () => Get.to(SecureFolderScreen()),
+                    onTap: () => Get.to(const SecureFolderScreen()),
                     child: Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: const Color(0xFF2DD4BF).withOpacity(0.2),
+                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Icon(
                         Icons.folder_outlined,
-                        color: const Color(0xFF2DD4BF),
+                        color: Theme.of(context).colorScheme.primary,
                         size: 28.sp,
                       ),
                     ),
                   ),
-
                   SizedBox(width: 16.w),
-
-                  // Text
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -82,7 +65,6 @@ class SettingsScreen extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 16.sp,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
                           ),
                         ),
                         SizedBox(height: 4.h),
@@ -90,7 +72,7 @@ class SettingsScreen extends StatelessWidget {
                           'Access and manage your encrypted media',
                           style: TextStyle(
                             fontSize: 13.sp,
-                            color: Colors.white.withOpacity(0.6),
+                            color: Theme.of(context).textTheme.bodySmall?.color,
                           ),
                         ),
                       ],
@@ -99,98 +81,76 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             SizedBox(height: 20.h),
-
-            // ==================== Settings Options List ====================
             Column(
               children: [
-                // Secure Folder
                 _buildSettingOption(
+                  context,
                   icon: Icons.folder_outlined,
                   title: 'Secure Folder',
                   subtitle: 'Access and manage your encrypted media',
                   onTap: () {
                     debugPrint('Secure Folder clicked');
-                    Get.to(SecureFolderScreen());
-                    // TODO: Navigate to Secure Folder screen
-                    // Get.toNamed(AppRoutes.secureFolder);
+                    Get.to(const SecureFolderScreen());
                   },
                 ),
-
-                _buildDivider(),
-
-                // Account
+                _buildDivider(context),
                 _buildSettingOption(
+                  context,
                   icon: Icons.person_outline,
                   title: 'Account',
                   subtitle: 'Manage your account and devices',
                   onTap: () {
                     debugPrint('Account clicked');
-                    // TODO: Navigate to Account screen
-                    Get.to(() => AccountScreen());
+                    Get.to(() => const AccountScreen());
                   },
                 ),
-
-                _buildDivider(),
-
-                // Privacy & Security
+                _buildDivider(context),
                 _buildSettingOption(
+                  context,
                   icon: Icons.lock_outline,
                   title: 'Privacy & Security',
                   subtitle: 'Control who sees your info and how your data is protected',
                   onTap: () {
                     debugPrint('Privacy & Security clicked');
                     Get.to(() => PrivacySecurityScreen());
-                    // TODO: Navigate to Privacy & Security screen
-                    // Get.toNamed(AppRoutes.privacySecurity); 
                   },
                 ),
-
-                _buildDivider(),
-
-                // Notifications
+                _buildDivider(context),
                 _buildSettingOption(
+                  context,
                   icon: Icons.notifications_outlined,
                   title: 'Notifications',
                   subtitle: 'Manage message alerts and Do Not Disturb',
                   onTap: () {
                     debugPrint('Notifications clicked');
-                    // TODO: Navigate to Notifications screen
                     Get.to(() => NotificationsScreen());
                   },
                 ),
-
-                _buildDivider(),
-
-                // Appearance
+                _buildDivider(context),
                 _buildSettingOption(
+                  context,
                   icon: Icons.palette_outlined,
                   title: 'Appearance',
                   subtitle: 'Customize theme, font, and chat look',
                   onTap: () {
                     debugPrint('Appearance clicked');
-                    // TODO: Navigate to Appearance screen
-                     Get.to(() => AppearanceScreen());
+                    Get.to(() => AppearanceScreen());
                   },
                 ),
-
-                _buildDivider(),
-
-                // About
+                _buildDivider(context),
                 _buildSettingOption(
+                  context,
                   icon: Icons.info_outline,
                   title: 'About',
-                  subtitle: 'Customize theme, font, and chat look',
+                  subtitle: 'Learn more about the app',
                   onTap: () {
                     debugPrint('About clicked');
-                    // TODO: Navigate to About screen
-                    Get.to(() => AboutScreen());
+                    Get.to(() => const AboutScreen());
                   },
                 ),
               ],
             ),
-
             SizedBox(height: 40.h),
           ],
         ),
@@ -198,8 +158,7 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Setting Option Widget ====================
-  Widget _buildSettingOption({
+  Widget _buildSettingOption(BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -211,16 +170,12 @@ class SettingsScreen extends StatelessWidget {
         padding: EdgeInsets.symmetric(vertical: 12.h),
         child: Row(
           children: [
-            // Icon
             Icon(
               icon,
-              color: const Color(0xFF2DD4BF),
+              color: Theme.of(context).colorScheme.primary,
               size: 24.sp,
             ),
-
             SizedBox(width: 16.w),
-
-            // Text Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,7 +185,6 @@ class SettingsScreen extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w500,
-                      color: Colors.white,
                     ),
                   ),
                   SizedBox(height: 4.h),
@@ -238,7 +192,7 @@ class SettingsScreen extends StatelessWidget {
                     subtitle,
                     style: TextStyle(
                       fontSize: 13.sp,
-                      color: Colors.white.withOpacity(0.5),
+                      color: Theme.of(context).textTheme.bodySmall?.color,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
@@ -246,11 +200,9 @@ class SettingsScreen extends StatelessWidget {
                 ],
               ),
             ),
-
-            // Arrow Icon
             Icon(
               Icons.chevron_right,
-              color: Colors.white.withOpacity(0.3),
+              color: Theme.of(context).textTheme.bodySmall?.color,
               size: 24.sp,
             ),
           ],
@@ -259,10 +211,9 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Divider Widget ====================
-  Widget _buildDivider() {
+  Widget _buildDivider(BuildContext context) {
     return Divider(
-      color: Colors.white.withOpacity(0.1),
+      color: Theme.of(context).dividerColor,
       height: 1,
       thickness: 1,
     );
