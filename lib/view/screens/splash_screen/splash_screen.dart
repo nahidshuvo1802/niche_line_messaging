@@ -1,12 +1,14 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/helper/shared_prefe/shared_prefe.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
-import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen_one.dart';
-import '../../../core/app_routes/app_routes.dart';
-import '../../../utils/app_images/app_images.dart';
-import '../../components/custom_image/custom_image.dart';
+import 'package:niche_line_messaging/utils/app_images/app_images.dart';
+import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
+import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -15,115 +17,54 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _animation;
-
+class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-
-    // Initialize animation controller for 10 seconds
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 5),
-    );
-
-    // Create animation from 0.0 to 1.0
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
-
-    // Start animation
-    _animationController.forward();
-
-    // Navigate after 10 seconds
-    Future.delayed(const Duration(seconds: 10), () {
-      Get.offAll(() => OnboardingScreenOne(),transition: Transition.fade ,duration: Duration(milliseconds: 500));
-    });
+    _navigateNext();
   }
 
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
+  // নতুন নেভিগেশন লজিক
+  Future<void> _navigateNext() async {
+    // ৩ সেকেন্ড অপেক্ষা
+    await Future.delayed(const Duration(seconds: 3));
+
+    // ১. চেক করা ইউজার লগইন আছে কিনা (আপনার টোকেন সেভ করার লজিক অনুযায়ী)
+    // ধরে নিচ্ছি 'userToken' থাকলে ইউজার লগইনড
+    String? token = await SharePrefsHelper.getString('userToken');
+
+    if (token != null && token.isNotEmpty) {
+      // ইউজার লগইন থাকলে সরাসরি হোম
+      Get.offAll(() => HomeScreen());
+      return;
+    }
+
+    // ২. যদি লগইন না থাকে, চেক করা অনবোর্ডিং দেখেছে কিনা
+    bool seenOnboarding = await SharePrefsHelper.getBool('seenOnboarding') ?? false;
+
+    if (seenOnboarding) {
+      // অনবোর্ডিং দেখা থাকলে সরাসরি Auth স্ক্রিনে
+      //Get.offAll(()=> AuthScreen());
+      Get.offAll(()=> OnboardingScreen());
+    } else {
+      // প্রথমবার অ্যাপ ওপেন করলে অনবোর্ডিং স্ক্রিনে
+      Get.offAll(()=> OnboardingScreen());
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background
-          Container(
-            color: const Color.fromARGB(255, 14, 21, 39),
-            height: double.infinity,
-            width: double.infinity,
+      backgroundColor: AppColors.primary,
+      body: Center(
+        child: Transform.scale(
+          scale: 0.9,
+          child: CustomImage(
+            imageSrc: AppImages.splashScreenImage,
+            height: 100.h,
+            width: 280.w,
           ),
-
-          // Content
-          SafeArea(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Logo
-                CustomImage(
-                  imageSrc: AppImages.splashScreenImage,
-                  boxFit: BoxFit.fill,
-                  fit: BoxFit.fill,
-                  height: 100.h,
-                  width: 50.w,
-                  scale: 10,
-                ),
-            
-                // Slogan Text
-                Transform.translate(
-                  offset: Offset(0, -65.9.h),
-                  child: CustomImage(
-                    imageSrc: AppImages.sloganText,
-                    boxFit: BoxFit.none,
-                    fit: BoxFit.none,
-                    height: 100.h,
-                    width: 50.w,
-                    scale: 2,
-                  ),
-                ),
-              
-                // Animated Loading Bar
-                Transform.translate(
-                  offset: Offset(0, -70),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 70.w),
-                    child: AnimatedBuilder(
-                      animation: _animation,
-                      builder: (context, child) {
-                        return ClipRRect(
-                          borderRadius: BorderRadius.circular(10.r),
-                          child: SizedBox(
-                            height: 6.h,
-                            child: LinearProgressIndicator(
-                              value: _animation.value,
-                              backgroundColor: Colors.white.withOpacity(0.2),
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.loading,
-                              ),
-                              minHeight: 6.h,
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

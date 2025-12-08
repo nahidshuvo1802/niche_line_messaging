@@ -1,22 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:niche_line_messaging/view/screens/settings/controller/screen_timeout_controller.dart'; // <-- যোগ করো
+import 'package:niche_line_messaging/helper/shared_prefe/shared_prefe.dart';
+import 'package:niche_line_messaging/view/screens/settings/controller/screen_timeout_controller.dart';
 
-class PrivacySecurityScreen extends StatelessWidget {
-  PrivacySecurityScreen({super.key});
+class PrivacySecurityScreen extends StatefulWidget {
+  const PrivacySecurityScreen({super.key});
 
-  final RxBool isFaceIDEnabled = true.obs;
+  @override
+  State<PrivacySecurityScreen> createState() => _PrivacySecurityScreenState();
+}
+
+class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
+  final RxBool isFaceIDEnabled = false.obs;
   final RxBool isReadReceiptsEnabled = true.obs;
   final RxBool isOnlineStatusEnabled = true.obs;
   final RxString screenLockTimeout = '30s'.obs;
 
-  final timeoutController = Get.put(ScreenTimeoutController()); // 👈 Controller inject
+  final timeoutController = Get.put(ScreenTimeoutController());
+
+  @override
+  void initState() {
+    super.initState();
+    _loadSettings();
+  }
+
+  // Load saved settings from Shared Preferences
+  Future<void> _loadSettings() async {
+    bool enabled = await SharePrefsHelper.getBool('isBiometricEnabled') ?? false;
+    isFaceIDEnabled.value = enabled;
+  }
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // User activity detect করবো
       onTap: timeoutController.resetTimer,
       onPanDown: (_) => timeoutController.resetTimer(),
       child: Scaffold(
@@ -50,219 +67,208 @@ class PrivacySecurityScreen extends StatelessWidget {
               child: Column(
                 children: [
                   SizedBox(height: 8.h),
+
+                  // ==================== Authentication Section ====================
                   _buildSectionCard(
                     title: 'Authentication & Lock',
                     children: [
                       Obx(() => _buildSwitchOption(
-                            icon: Icons.fingerprint,
-                            title: 'Face ID / Fingerprint',
-                            subtitle: 'Use biometrics to unlock',
-                            value: isFaceIDEnabled.value,
-                            onChanged: (v) => isFaceIDEnabled.value = v,
-                          )),
+                        icon: Icons.fingerprint,
+                        title: 'Face ID / Fingerprint',
+                        subtitle: 'Use biometrics to unlock',
+                        value: isFaceIDEnabled.value,
+                        onChanged: (v) async {
+                          isFaceIDEnabled.value = v;
+                          // Save setting to preferences
+                          await SharePrefsHelper.setBool('isBiometricEnabled', v);
+
+                          Get.snackbar(
+                            'Success',
+                            v ? 'Biometric enabled' : 'Biometric disabled',
+                            snackPosition: SnackPosition.BOTTOM,
+                            backgroundColor: Colors.green,
+                            colorText: Colors.white,
+                            duration: const Duration(seconds: 1),
+                          );
+                        },
+                      )),
                       Divider(color: Colors.white.withOpacity(0.1), height: 1),
                       _buildNavigationOption(
                         icon: Icons.timer_outlined,
                         title: 'Screen Lock Timeout',
                         subtitle: 'Automatically locks after inactivity',
                         trailing: Obx(() => Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  screenLockTimeout.value,
-                                  style: TextStyle(
-                                      color: const Color(0xFF2DD4BF),
-                                      fontSize: 14.sp),
-                                ),
-                                SizedBox(width: 8.w),
-                                Icon(Icons.chevron_right,
-                                    color: Colors.white.withOpacity(0.3),
-                                    size: 20.sp),
-                              ],
-                            )),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              screenLockTimeout.value,
+                              style: TextStyle(
+                                  color: const Color(0xFF2DD4BF),
+                                  fontSize: 14.sp),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(Icons.chevron_right,
+                                color: Colors.white.withOpacity(0.3),
+                                size: 20.sp),
+                          ],
+                        )),
                         onTap: () => _showTimeoutOptions(),
                       ),
                     ],
                   ),
-                      SizedBox(height: 16.h),
-        
-              // ==================== Messaging Privacy Section ====================
-              _buildSectionCard(
-                title: 'Messaging Privacy',
-                children: [
-                  // Read Receipts
-                  Obx(() => _buildSwitchOption(
+                  SizedBox(height: 16.h),
+
+                  // ==================== Messaging Privacy Section ====================
+                  _buildSectionCard(
+                    title: 'Messaging Privacy',
+                    children: [
+                      // Read Receipts
+                      Obx(() => _buildSwitchOption(
                         icon: Icons.done_all,
                         title: 'Read Receipts',
                         subtitle: 'Allow others to see when you\'ve read their messages',
                         value: isReadReceiptsEnabled.value,
                         onChanged: (value) {
                           isReadReceiptsEnabled.value = value;
-                          Get.snackbar(
-                            'Success',
-                            value
-                                ? 'Read receipts enabled'
-                                : 'Read receipts disabled',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 1),
-                          );
                         },
                       )),
-        
-                  Divider(color: Colors.white.withOpacity(0.1), height: 1),
-        
-                  // Online Status
-                  Obx(() => _buildSwitchOption(
+
+                      Divider(color: Colors.white.withOpacity(0.1), height: 1),
+
+                      // Online Status
+                      Obx(() => _buildSwitchOption(
                         icon: Icons.circle,
                         title: 'Online Status',
                         subtitle: 'Show when you\'re active',
                         value: isOnlineStatusEnabled.value,
                         onChanged: (value) {
                           isOnlineStatusEnabled.value = value;
-                          Get.snackbar(
-                            'Success',
-                            value
-                                ? 'Online status visible'
-                                : 'Online status hidden',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 1),
-                          );
                         },
                       )),
-        
-                  Divider(color: Colors.white.withOpacity(0.1), height: 1),
-        
-                  // Blocked Contacts
-                  _buildNavigationOption(
-                    icon: Icons.block,
-                    title: 'Blocked Contacts',
-                    subtitle: 'View and manage blocked users',
-                    onTap: () {
-                      debugPrint('Blocked Contacts clicked');
-                      // TODO: Navigate to blocked contacts screen
-                    },
+
+                      Divider(color: Colors.white.withOpacity(0.1), height: 1),
+
+                      // Blocked Contacts
+                      _buildNavigationOption(
+                        icon: Icons.block,
+                        title: 'Blocked Contacts',
+                        subtitle: 'View and manage blocked users',
+                        onTap: () {},
+                      ),
+                    ],
                   ),
-                ],
-              ),
-        
-              SizedBox(height: 16.h),
-        
-              // ==================== Backup & Recovery Section ====================
-              _buildSectionCard(
-                title: 'Backup & Recovery',
-                subtitle:
-                    'Securely store your message keys with a passphrase.',
-                children: [
+
                   SizedBox(height: 16.h),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48.h,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        _showBackupDialog();
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF2DD4BF),
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.r),
-                        ),
-                      ),
-                      child: Text(
-                        'Manage Backups',
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    'Last backup: Aug 23, 2025, 10:45 AM',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.white.withOpacity(0.5),
-                    ),
-                  ),
-                  SizedBox(height: 8.h),
-                ],
-              ),
-        
-              SizedBox(height: 16.h),
-        
-              // ==================== Danger Zone Section ====================
-              Container(
-                padding: EdgeInsets.all(20.w),
-                decoration: BoxDecoration(
-                  color: const Color(0x0E1521),
-                  borderRadius: BorderRadius.circular(12.r),
-                  border: Border.all(
-                    color: Colors.red.withOpacity(0.3),
-                    width: 1,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Danger Zone',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.red,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      'These actions cannot be undone.',
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: Colors.white.withOpacity(0.5),
-                      ),
-                    ),
-                    SizedBox(height: 20.h),
-                    GestureDetector(
-                      onTap: () => _showDeleteConfirmation(),
-                      child: Row(
-                        children: [
-                          Icon(
-                            Icons.delete_forever,
-                            color: Colors.red,
-                            size: 24.sp,
-                          ),
-                          SizedBox(width: 12.w),
-                          Text(
-                            'Delete All Messages',
-                            style: TextStyle(
-                              fontSize: 15.sp,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.red,
+
+                  // ==================== Backup & Recovery Section ====================
+                  _buildSectionCard(
+                    title: 'Backup & Recovery',
+                    subtitle: 'Securely store your message keys with a passphrase.',
+                    children: [
+                      SizedBox(height: 16.h),
+                      SizedBox(
+                        width: double.infinity,
+                        height: 48.h,
+                        child: ElevatedButton(
+                          onPressed: () => _showBackupDialog(),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFF2DD4BF),
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8.r),
                             ),
                           ),
-                        ],
+                          child: Text(
+                            'Manage Backups',
+                            style: TextStyle(
+                              fontSize: 15.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        'Last backup: Aug 23, 2025, 10:45 AM',
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Colors.white.withOpacity(0.5),
+                        ),
+                      ),
+                      SizedBox(height: 8.h),
+                    ],
+                  ),
+
+                  SizedBox(height: 16.h),
+
+                  // ==================== Danger Zone Section ====================
+                  Container(
+                    padding: EdgeInsets.all(20.w),
+                    decoration: BoxDecoration(
+                      color: const Color(0x0E1521),
+                      borderRadius: BorderRadius.circular(12.r),
+                      border: Border.all(
+                        color: Colors.red.withOpacity(0.3),
+                        width: 1,
                       ),
                     ),
-                  ],
-                ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Danger Zone',
+                          style: TextStyle(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.red,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Text(
+                          'These actions cannot be undone.',
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            color: Colors.white.withOpacity(0.5),
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+                        GestureDetector(
+                          onTap: () => _showDeleteConfirmation(),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.delete_forever,
+                                color: Colors.red,
+                                size: 24.sp,
+                              ),
+                              SizedBox(width: 12.w),
+                              Text(
+                                'Delete All Messages',
+                                style: TextStyle(
+                                  fontSize: 15.sp,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 40.h),
+                ],
               ),
-        
-              SizedBox(height: 40.h),
-            ],
-          ),
+            ),
+          ],
         ),
-        ]
       ),
-    )
     );
   }
 
-  // ==================== Section Card Widget ====================
+  // ==================== Widget Helpers ====================
+
   Widget _buildSectionCard({
     required String title,
     String? subtitle,
@@ -306,7 +312,6 @@ class PrivacySecurityScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Switch Option Widget ====================
   Widget _buildSwitchOption({
     required IconData icon,
     required String title,
@@ -356,7 +361,6 @@ class PrivacySecurityScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Navigation Option Widget ====================
   Widget _buildNavigationOption({
     required IconData icon,
     required String title,
@@ -407,7 +411,6 @@ class PrivacySecurityScreen extends StatelessWidget {
     );
   }
 
-  // ==================== Show Timeout Options ====================
   void _showTimeoutOptions() {
     Get.bottomSheet(
       Container(
@@ -444,81 +447,39 @@ class PrivacySecurityScreen extends StatelessWidget {
 
   Widget _buildTimeoutOption(String time) {
     return Obx(() => ListTile(
-          title: Text(
-            time,
-            style: const TextStyle(color: Colors.white),
-          ),
-          trailing: screenLockTimeout.value == time
-              ? const Icon(Icons.check, color: Color(0xFF2DD4BF))
-              : null,
-          onTap: () {
-            screenLockTimeout.value = time;
-            Get.back();
-            Get.snackbar(
-              'Success',
-              'Screen lock timeout set to $time',
-              snackPosition: SnackPosition.BOTTOM,
-              backgroundColor: Colors.green,
-              colorText: Colors.white,
-              duration: const Duration(seconds: 1),
-            );
-          },
-        ));
+      title: Text(
+        time,
+        style: const TextStyle(color: Colors.white),
+      ),
+      trailing: screenLockTimeout.value == time
+          ? const Icon(Icons.check, color: Color(0xFF2DD4BF))
+          : null,
+      onTap: () {
+        screenLockTimeout.value = time;
+        Get.back();
+      },
+    ));
   }
 
-  // ==================== Show Backup Dialog ====================
-  void _showBackupDialog() {
-    Get.snackbar(
-      'Backup',
-      'Opening backup management...',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFF2DD4BF),
-      colorText: Colors.white,
-      duration: const Duration(seconds: 1),
-    );
-    // TODO: Navigate to backup screen
-  }
+  void _showBackupDialog() {}
 
-  // ==================== Show Delete Confirmation ====================
   void _showDeleteConfirmation() {
     Get.dialog(
       AlertDialog(
         backgroundColor: const Color(0xFF1A1F3A),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Delete All Messages?',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: const Text('Delete All Messages?', style: TextStyle(color: Colors.white)),
         content: Text(
-          'This will permanently delete all your messages. This action cannot be undone.',
+          'This will permanently delete all your messages.',
           style: TextStyle(color: Colors.white.withOpacity(0.7)),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey),
-            ),
-          ),
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
           TextButton(
             onPressed: () {
               Get.back();
-              Get.snackbar(
-                'Success',
-                'All messages deleted',
-                snackPosition: SnackPosition.BOTTOM,
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
-              // TODO: Delete all messages API call
+              Get.snackbar('Success', 'All messages deleted', backgroundColor: Colors.green, colorText: Colors.white);
             },
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.red),
-            ),
+            child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),
         ],
       ),

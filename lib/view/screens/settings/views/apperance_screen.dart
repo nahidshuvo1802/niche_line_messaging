@@ -18,7 +18,7 @@ class AppearanceScreen extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Get.to(() => SettingsScreen()),
+            onPressed: () => Get.back()
           ),
           title: const Text('Appearance'),
           centerTitle: true,
@@ -308,7 +308,7 @@ class AppTheme {
       onBackground: Colors.white,
       onSurface: Colors.white,
     ),
-    cardColor: const Color(0xFF1A1F3A),
+    cardColor: const  Color(0xFF0E1527),
     iconTheme: const IconThemeData(color: Colors.white),
     dividerColor: Colors.white.withOpacity(0.1),
     textTheme: TextTheme(

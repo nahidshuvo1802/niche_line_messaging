@@ -22,7 +22,7 @@ class ThemeController extends GetxController {
     updateTheme();
 
     // optional feedback
-    Future.delayed(const Duration(milliseconds: 100), () {
+    Future.delayed(const Duration(milliseconds: 10), () {
       Get.snackbar(
         'Theme Updated',
         'App theme changed to ${mode.capitalizeFirst} Mode',

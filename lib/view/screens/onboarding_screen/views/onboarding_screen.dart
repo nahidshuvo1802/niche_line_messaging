@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/helper/shared_prefe/shared_prefe.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
+import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
 
 import '../../../../core/app_routes/app_routes.dart';
@@ -25,19 +26,19 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       "title": "Secure Messaging",
       "text": "End-to-end encryption keeps your conversations private and secure.",
       // "image": AppImages.onboarding1, // আপনার ইমেজের পাথ দিন
-      "image": "assets/images/splash_logo.png", // Placeholder
+      "image": AppImages.onBoardingOne, // Placeholder
     },
     {
       "title": "Biometric Access",
       "text": "Quickly and securely access your chats using fingerprint or Face ID.",
       // "image": AppImages.onboarding2,
-      "image": "assets/images/splash_logo.png", // Placeholder
+      "image": AppImages.onBoardingTwo, // Placeholder
     },
     {
       "title": "Recovery Key",
       "text": "Never lose access to your account with our secure recovery key system.",
       // "image": AppImages.onboarding3,
-      "image": "assets/images/splash_logo.png", // Placeholder
+      "image": AppImages.onBoardingThree, // Placeholder
     },
   ];
 
@@ -185,10 +186,10 @@ class OnboardingContent extends StatelessWidget {
           // Image placeholder - use CustomImage if available
           Image.asset(
             image,
-            height: 250.h,
-            width: 250.w,
+            height: 350.h,
+            width: 350.w,
           ),
-          const Spacer(),
+          //const Spacer(),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -198,7 +199,7 @@ class OnboardingContent extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          SizedBox(height: 16.h),
+          SizedBox(height: 10.h),
           Text(
             text,
             textAlign: TextAlign.center,

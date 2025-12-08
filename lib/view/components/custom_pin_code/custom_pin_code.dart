@@ -30,8 +30,8 @@ class CustomPinCode extends StatelessWidget {
           fieldHeight: 60,
           fieldWidth: size.width * 0.15,
           inactiveColor: AppColors.black_80,
-          activeColor: AppColors.white_50, // active color
-          activeFillColor: AppColors.white_50,
+          activeColor: AppColors.black_02, // active color
+          activeFillColor: AppColors.black_02,
           inactiveFillColor: AppColors.white,
           selectedFillColor: AppColors.white, // selected color
           disabledColor: AppColors.white,

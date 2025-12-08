@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -7,6 +7,7 @@ import 'package:niche_line_messaging/view/screens/settings/views/apperance_scree
 import 'package:permission_handler/permission_handler.dart';
 import 'core/app_routes/app_routes.dart';
 import 'utils/app_colors/app_colors.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

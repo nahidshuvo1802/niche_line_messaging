@@ -1,62 +1,58 @@
-
-import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/splash_screen/splash_screen.dart';
-
-
-
+import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/verify_pincode_screen/verify_pincode_screen.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/recovery_screen1.dart';
+import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/final_recovery_screen.dart';
+import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_one.dart';
 
 class AppRoutes {
-  ///===========================Splash Screen==========================
-  static const String splashScreen = "/SplashScreen";
-  static const String splashScreenTwo = "/SplashScreenTwo";
-  static const String loginScreen = "/LoginScreen";
-  static const String createAccountScreen = "/CreateAccountScreen";
-  static const String verifyPicCodeScreen = "/VerifyPicCodeScreen";
-  static const String verifypiccodescreenForget = '/VerifyPicCodeScreenForget';
-  static const String forgotPasswordScreen = "/ForgotPasswordScreen";
-  static const String resetPasswordScreen = "/ResetPasswordScreen";
-  static const String navbar = "/Navbar";
-  static const String homeScreen = "/HomeScreen";
-  static const String qrCodeScreen = "/QrCodeScreen";
-  static const String socialScreen = "/SocialScreen";
-  static const String socialProfileView = "/SocialProfileView";
-  static const String uploadScreen = "/UploadScreen";
-  static const String profileScreen = "/ProfileScreen";
+  // ==================== Route Names ====================
+  static const String splashScreen = '/splash_screen';
+  static const String onboardingScreen = '/onboarding';
+
+  // Auth Flow
+  static const String authScreen = '/auth'; // Login & Signup
+  static const String verifyPicCodeScreen = "/verify_otp"; // 2FA Screen
+
+  // Recovery Flow (Sequential)
+  static const String recoverySetupScreen = '/recovery_setup_1'; // Recovery Screen 1
+  static const String finalRecoveryScreen = '/final_recovery'; // Success Screen
+
+  // App Core
+  static const String homeScreen = '/home';
+  static const String subscriptionScreen = '/subscription';
+
+  // Settings & Others
   static const String settingScreen = "/SettingScreen";
-  static const String editProfileSetting = "/EditProfileSetting";
-  static const String changePasswordScreen = "/ChangePasswordScreen";
-  static const String aboutUsScreen = "/AboutUsScreen";
-  static const String privacyPolicyScreen = "/PrivacyPolicyScreen";
-  static const String termsConditionScreen = "/TermsConditionScreen";
 
-
+  // ==================== Pages List ====================
   static List<GetPage> routes = [
     GetPage(name: splashScreen, page: () => const SplashScreen()),
-///===============================Auth Routes===========================
-  //  GetPage(name: verifypiccodescreenForget, page: () => VerifyPicCodeScreenForget()),
+    GetPage(name: onboardingScreen, page: () => const OnboardingScreen()),
+    GetPage(name: authScreen, page: () => const AuthScreen()),
 
+    // Create Account এর পর এখানে আসবে
+    GetPage(
+        name: verifyPicCodeScreen,
+        page: () => TwoFactorAuthScreen()
+    ),
 
-  //   ///===========================Splash Screen==========================
-  //   GetPage(name: splashScreen, page: () => SplashScreen()),
-  //   GetPage(name: splashScreenTwo, page: () => SplashScreenTwo()),
-    // GetPage(name: loginScreen, page: () => LoginScreen()),
-  //   GetPage(name: createAccountScreen, page: () => CreateAccountScreen()),
-  //   GetPage(name: verifyPicCodeScreen, page: () => VerifyPicCodeScreen()),
-  //   GetPage(name: forgotPasswordScreen, page: () => ForgotPasswordScreen()),
-  //   GetPage(name: resetPasswordScreen, page: () => ResetPasswordScreen(userId: Get.arguments)),
-  //   GetPage(name: navbar, page: () => Navbar()),
-  //   GetPage(name: homeScreen, page: () => HomeScreen()),
-  //   GetPage(name: qrCodeScreen, page: () => QrScannerScreen()),
-  //   GetPage(name: socialScreen, page: () => SocialScreen()),
-  //   GetPage(name: uploadScreen, page: () => UploadScreen()),
-  //   GetPage(name: profileScreen, page: () => ProfileScreen()),
-  //   GetPage(name: settingScreen, page: () => SettingScreen()),
-  //   GetPage(name: editProfileSetting, page: () => EditProfileSetting()),
-  //   GetPage(name: changePasswordScreen, page: () => ChangePasswordScreen()),
-  //   GetPage(name: aboutUsScreen, page: () => AboutUsScreen()),
-  //   GetPage(name: privacyPolicyScreen, page: () => PrivacyPolicyScreen()),
-  //   GetPage(name: termsConditionScreen, page: () => TermsConditionScreen()),
+    // OTP Verify হওয়ার পর এখানে আসবে (Recovery Step 1)
+    GetPage(
+        name: recoverySetupScreen,
+        page: () => RecoveryKeySetupScreenOne()
+    ),
 
+    // Recovery সব স্টেপ শেষ হলে এখানে আসবে
+    GetPage(
+        name: finalRecoveryScreen,
+        page: () => const FinalRecoveryScreen()
+    ),
+
+    GetPage(name: homeScreen, page: () => const HomeScreen()),
+    GetPage(name: subscriptionScreen, page: () => const SubscriptionScreenOne()),
   ];
 }

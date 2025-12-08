@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/new_chat_controller.dart';
+import 'package:niche_line_messaging/view/screens/home/views/create_group_chat_screen.dart';
 
 // ==================== New Chat Screen ====================
 class NewChatScreen extends StatefulWidget {
@@ -281,6 +282,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
     return FloatingActionButton(
       onPressed: () {
         // TODO: Navigate to create group screen
+        Get.to(()=>CreateGroupScreen());
         debugPrint('Create group tapped');
         Get.snackbar(
           'Create Group',

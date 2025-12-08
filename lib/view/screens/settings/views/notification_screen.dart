@@ -67,14 +67,6 @@ class NotificationsScreen extends StatelessWidget {
                           value: isSoundEnabled.value,
                           onChanged: (value) {
                             isSoundEnabled.value = value;
-                            Get.snackbar(
-                              'Success',
-                              value ? 'Sound enabled' : 'Sound disabled',
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                              duration: const Duration(seconds: 1),
-                            );
                           },
                         )),
 
@@ -88,14 +80,6 @@ class NotificationsScreen extends StatelessWidget {
                           value: isVibrateEnabled.value,
                           onChanged: (value) {
                             isVibrateEnabled.value = value;
-                            Get.snackbar(
-                              'Success',
-                              value ? 'Vibration enabled' : 'Vibration disabled',
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                              duration: const Duration(seconds: 1),
-                            );
                           },
                         )),
                   ],
@@ -115,7 +99,7 @@ class NotificationsScreen extends StatelessWidget {
                           value: isGroupMentionsEnabled.value,
                           onChanged: (value) {
                             isGroupMentionsEnabled.value = value;
-                            Get.snackbar(
+                           /*  Get.snackbar(
                               'Success',
                               value
                                   ? 'Group mentions enabled'
@@ -123,8 +107,8 @@ class NotificationsScreen extends StatelessWidget {
                               snackPosition: SnackPosition.BOTTOM,
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
-                              duration: const Duration(seconds: 1),
-                            );
+                              duration: const Duration(milliseconds: 600),
+                            ); */
                           },
                         )),
 
@@ -138,7 +122,7 @@ class NotificationsScreen extends StatelessWidget {
                           value: isGroupMessagesEnabled.value,
                           onChanged: (value) {
                             isGroupMessagesEnabled.value = value;
-                            Get.snackbar(
+                           /*  Get.snackbar(
                               'Success',
                               value
                                   ? 'Group messages enabled'
@@ -147,7 +131,7 @@ class NotificationsScreen extends StatelessWidget {
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
                               duration: const Duration(seconds: 1),
-                            );
+                            ); */
                           },
                         )),
                   ],
@@ -167,7 +151,7 @@ class NotificationsScreen extends StatelessWidget {
                           value: isShowUnreadCountEnabled.value,
                           onChanged: (value) {
                             isShowUnreadCountEnabled.value = value;
-                            Get.snackbar(
+                          /*   Get.snackbar(
                               'Success',
                               value
                                   ? 'Unread count enabled'
@@ -176,7 +160,7 @@ class NotificationsScreen extends StatelessWidget {
                               backgroundColor: Colors.green,
                               colorText: Colors.white,
                               duration: const Duration(seconds: 1),
-                            );
+                            ); */
                           },
                         )),
                   ],
