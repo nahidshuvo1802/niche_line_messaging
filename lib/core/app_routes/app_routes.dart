@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
 import 'package:niche_line_messaging/view/screens/splash_screen/splash_screen.dart';
 import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
@@ -18,7 +19,8 @@ class AppRoutes {
   static const String verifyPicCodeScreen = "/verify_otp"; // 2FA Screen
 
   // Recovery Flow (Sequential)
-  static const String recoverySetupScreen = '/recovery_setup_1'; // Recovery Screen 1
+  static const String recoverySetupScreen =
+      '/recovery_setup_1'; // Recovery Screen 1
   static const String finalRecoveryScreen = '/final_recovery'; // Success Screen
 
   // App Core
@@ -36,23 +38,29 @@ class AppRoutes {
 
     // Create Account এর পর এখানে আসবে
     GetPage(
-        name: verifyPicCodeScreen,
-        page: () => TwoFactorAuthScreen()
+      name: verifyPicCodeScreen,
+      page: () => TwoFactorAuthScreen(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => AuthController());
+      }),
     ),
 
     // OTP Verify হওয়ার পর এখানে আসবে (Recovery Step 1)
     GetPage(
-        name: recoverySetupScreen,
-        page: () => RecoveryKeySetupScreenOne()
+      name: recoverySetupScreen,
+      page: () => RecoveryKeySetupScreenOne(),
+      binding: BindingsBuilder(() {
+        Get.lazyPut(() => AuthController());
+      }),
     ),
 
     // Recovery সব স্টেপ শেষ হলে এখানে আসবে
-    GetPage(
-        name: finalRecoveryScreen,
-        page: () => const FinalRecoveryScreen()
-    ),
+    GetPage(name: finalRecoveryScreen, page: () => const FinalRecoveryScreen()),
 
     GetPage(name: homeScreen, page: () => const HomeScreen()),
-    GetPage(name: subscriptionScreen, page: () => const SubscriptionScreenOne()),
+    GetPage(
+      name: subscriptionScreen,
+      page: () => const SubscriptionScreenOne(),
+    ),
   ];
 }

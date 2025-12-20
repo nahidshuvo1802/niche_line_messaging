@@ -57,30 +57,6 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
     });
   }
 
-  void _authenticateWithBiometrics() {
-    // Simulate biometric authentication
-    Get.snackbar(
-      'Biometric Authentication',
-      'Please verify your identity',
-      snackPosition: SnackPosition.BOTTOM,
-      backgroundColor: const Color(0xFF2DD4BF),
-      colorText: Colors.white,
-      duration: const Duration(seconds: 2),
-    );
-    
-    // Simulate successful authentication after 1 second
-    Future.delayed(const Duration(seconds: 1), () {
-      Get.snackbar(
-        'Success',
-        'Folder unlocked successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -94,10 +70,7 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
         ),
         title: const Text(
           'Secure Folder',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
@@ -105,10 +78,7 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
         width: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color(0xFF1A1F3A),
-            ],
+            colors: [Color(0xFF000000), Color(0xFF1A1F3A)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -162,70 +132,9 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
               SizedBox(height: 40.h),
 
               // Biometric Authentication Button
-              GestureDetector(
-                onTap: _authenticateWithBiometrics,
-                child: Container(
-                  padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 24.w),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF2A3B5A),
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(
-                      color: const Color(0xFF2DD4BF).withOpacity(0.3),
-                      width: 1,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.fingerprint,
-                        color: const Color(0xFF2DD4BF),
-                        size: 24.sp,
-                      ),
-                      SizedBox(width: 12.w),
-                      Text(
-                        'Use Face ID / Fingerprint',
-                        style: TextStyle(
-                          fontSize: 15.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
               SizedBox(height: 32.h),
 
               // OR Divider
-              Row(
-                children: [
-                  Expanded(
-                    child: Divider(
-                      color: Colors.white.withOpacity(0.2),
-                      thickness: 1,
-                    ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 16.w),
-                    child: Text(
-                      'OR',
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        color: Colors.white.withOpacity(0.5),
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    child: Divider(
-                      color: Colors.white.withOpacity(0.2),
-                      thickness: 1,
-                    ),
-                  ),
-                ],
-              ),
-
               SizedBox(height: 32.h),
 
               // PIN Input Dots
@@ -255,16 +164,6 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
               SizedBox(height: 16.h),
 
               // Hint Text
-              Text(
-                'Next time, unlock instantly with your fingerprint or face.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 12.sp,
-                  color: Colors.white.withOpacity(0.5),
-                  height: 1.5,
-                ),
-              ),
-
               SizedBox(height: 32.h),
 
               // Unlock Folder Button
@@ -387,10 +286,7 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: const Color(0xFF2A3B5A).withOpacity(0.5),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
         ),
         child: Center(
           child: Text(
@@ -422,10 +318,7 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: const Color(0xFF2A3B5A).withOpacity(0.5),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
         ),
         child: Center(
           child: Icon(

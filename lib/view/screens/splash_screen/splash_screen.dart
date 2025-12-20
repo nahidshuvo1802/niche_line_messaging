@@ -17,38 +17,63 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+class _SplashScreenState extends State<SplashScreen>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
-    _navigateNext();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 3),
+    );
+
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeIn),
+      ),
+    );
+
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _controller,
+        curve: const Interval(0.0, 0.6, curve: Curves.easeOutBack),
+      ),
+    );
+
+    _controller.forward().whenComplete(() {
+      _navigateNext();
+    });
   }
 
-  // নতুন নেভিগেশন লজিক
-  Future<void> _navigateNext() async {
-    // ৩ সেকেন্ড অপেক্ষা
-    await Future.delayed(const Duration(seconds: 3));
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
-    // ১. চেক করা ইউজার লগইন আছে কিনা (আপনার টোকেন সেভ করার লজিক অনুযায়ী)
-    // ধরে নিচ্ছি 'userToken' থাকলে ইউজার লগইনড
+  // Navigation Logic
+  Future<void> _navigateNext() async {
+    // Using simple checks as requested, relying on the animation for the delay
     String? token = await SharePrefsHelper.getString('userToken');
 
     if (token != null && token.isNotEmpty) {
-      // ইউজার লগইন থাকলে সরাসরি হোম
       Get.offAll(() => HomeScreen());
       return;
     }
 
-    // ২. যদি লগইন না থাকে, চেক করা অনবোর্ডিং দেখেছে কিনা
-    bool seenOnboarding = await SharePrefsHelper.getBool('seenOnboarding') ?? false;
+    bool seenOnboarding =
+        await SharePrefsHelper.getBool('seenOnboarding') ?? false;
 
     if (seenOnboarding) {
-      // অনবোর্ডিং দেখা থাকলে সরাসরি Auth স্ক্রিনে
-      //Get.offAll(()=> AuthScreen());
-      Get.offAll(()=> OnboardingScreen());
+      Get.offAll(() => OnboardingScreen());
     } else {
-      // প্রথমবার অ্যাপ ওপেন করলে অনবোর্ডিং স্ক্রিনে
-      Get.offAll(()=> OnboardingScreen());
+      Get.offAll(() => OnboardingScreen());
     }
   }
 
@@ -57,13 +82,49 @@ class _SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: Center(
-        child: Transform.scale(
-          scale: 0.9,
-          child: CustomImage(
-            imageSrc: AppImages.splashScreenImage,
-            height: 100.h,
-            width: 280.w,
-          ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: CustomImage(
+                  imageSrc: AppImages.splashScreenImage,
+                  height: 100.h,
+                  width: 280.w,
+                ),
+              ),
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              "Private. Secure. Yours.",
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w400,
+                letterSpacing: 0.5,
+              ),
+            ),
+            SizedBox(height: 20.h),
+            AnimatedBuilder(
+              animation: _controller,
+              builder: (context, child) {
+                return SizedBox(
+                  width: 250.w,
+                  child: LinearProgressIndicator(
+                    value: _controller.value,
+                    backgroundColor: AppColors.loading.withOpacity(0.2),
+                    valueColor: const AlwaysStoppedAnimation<Color>(
+                      AppColors.loading,
+                    ),
+                    minHeight: 5.h,
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );

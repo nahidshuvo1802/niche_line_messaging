@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:niche_line_messaging/helper/shared_prefe/shared_prefe.dart';
+
 import 'package:niche_line_messaging/view/screens/settings/controller/screen_timeout_controller.dart';
 
 class PrivacySecurityScreen extends StatefulWidget {
@@ -12,7 +12,6 @@ class PrivacySecurityScreen extends StatefulWidget {
 }
 
 class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
-  final RxBool isFaceIDEnabled = false.obs;
   final RxBool isReadReceiptsEnabled = true.obs;
   final RxBool isOnlineStatusEnabled = true.obs;
   final RxString screenLockTimeout = '30s'.obs;
@@ -27,8 +26,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
 
   // Load saved settings from Shared Preferences
   Future<void> _loadSettings() async {
-    bool enabled = await SharePrefsHelper.getBool('isBiometricEnabled') ?? false;
-    isFaceIDEnabled.value = enabled;
+    // Load future settings here
   }
 
   @override
@@ -72,46 +70,30 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   _buildSectionCard(
                     title: 'Authentication & Lock',
                     children: [
-                      Obx(() => _buildSwitchOption(
-                        icon: Icons.fingerprint,
-                        title: 'Face ID / Fingerprint',
-                        subtitle: 'Use biometrics to unlock',
-                        value: isFaceIDEnabled.value,
-                        onChanged: (v) async {
-                          isFaceIDEnabled.value = v;
-                          // Save setting to preferences
-                          await SharePrefsHelper.setBool('isBiometricEnabled', v);
-
-                          Get.snackbar(
-                            'Success',
-                            v ? 'Biometric enabled' : 'Biometric disabled',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: Colors.green,
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 1),
-                          );
-                        },
-                      )),
-                      Divider(color: Colors.white.withOpacity(0.1), height: 1),
                       _buildNavigationOption(
                         icon: Icons.timer_outlined,
                         title: 'Screen Lock Timeout',
                         subtitle: 'Automatically locks after inactivity',
-                        trailing: Obx(() => Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              screenLockTimeout.value,
-                              style: TextStyle(
+                        trailing: Obx(
+                          () => Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                screenLockTimeout.value,
+                                style: TextStyle(
                                   color: const Color(0xFF2DD4BF),
-                                  fontSize: 14.sp),
-                            ),
-                            SizedBox(width: 8.w),
-                            Icon(Icons.chevron_right,
+                                  fontSize: 14.sp,
+                                ),
+                              ),
+                              SizedBox(width: 8.w),
+                              Icon(
+                                Icons.chevron_right,
                                 color: Colors.white.withOpacity(0.3),
-                                size: 20.sp),
-                          ],
-                        )),
+                                size: 20.sp,
+                              ),
+                            ],
+                          ),
+                        ),
                         onTap: () => _showTimeoutOptions(),
                       ),
                     ],
@@ -123,28 +105,33 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     title: 'Messaging Privacy',
                     children: [
                       // Read Receipts
-                      Obx(() => _buildSwitchOption(
-                        icon: Icons.done_all,
-                        title: 'Read Receipts',
-                        subtitle: 'Allow others to see when you\'ve read their messages',
-                        value: isReadReceiptsEnabled.value,
-                        onChanged: (value) {
-                          isReadReceiptsEnabled.value = value;
-                        },
-                      )),
+                      Obx(
+                        () => _buildSwitchOption(
+                          icon: Icons.done_all,
+                          title: 'Read Receipts',
+                          subtitle:
+                              'Allow others to see when you\'ve read their messages',
+                          value: isReadReceiptsEnabled.value,
+                          onChanged: (value) {
+                            isReadReceiptsEnabled.value = value;
+                          },
+                        ),
+                      ),
 
                       Divider(color: Colors.white.withOpacity(0.1), height: 1),
 
                       // Online Status
-                      Obx(() => _buildSwitchOption(
-                        icon: Icons.circle,
-                        title: 'Online Status',
-                        subtitle: 'Show when you\'re active',
-                        value: isOnlineStatusEnabled.value,
-                        onChanged: (value) {
-                          isOnlineStatusEnabled.value = value;
-                        },
-                      )),
+                      Obx(
+                        () => _buildSwitchOption(
+                          icon: Icons.circle,
+                          title: 'Online Status',
+                          subtitle: 'Show when you\'re active',
+                          value: isOnlineStatusEnabled.value,
+                          onChanged: (value) {
+                            isOnlineStatusEnabled.value = value;
+                          },
+                        ),
+                      ),
 
                       Divider(color: Colors.white.withOpacity(0.1), height: 1),
 
@@ -163,7 +150,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   // ==================== Backup & Recovery Section ====================
                   _buildSectionCard(
                     title: 'Backup & Recovery',
-                    subtitle: 'Securely store your message keys with a passphrase.',
+                    subtitle:
+                        'Securely store your message keys with a passphrase.',
                     children: [
                       SizedBox(height: 16.h),
                       SizedBox(
@@ -446,19 +434,18 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   }
 
   Widget _buildTimeoutOption(String time) {
-    return Obx(() => ListTile(
-      title: Text(
-        time,
-        style: const TextStyle(color: Colors.white),
+    return Obx(
+      () => ListTile(
+        title: Text(time, style: const TextStyle(color: Colors.white)),
+        trailing: screenLockTimeout.value == time
+            ? const Icon(Icons.check, color: Color(0xFF2DD4BF))
+            : null,
+        onTap: () {
+          screenLockTimeout.value = time;
+          Get.back();
+        },
       ),
-      trailing: screenLockTimeout.value == time
-          ? const Icon(Icons.check, color: Color(0xFF2DD4BF))
-          : null,
-      onTap: () {
-        screenLockTimeout.value = time;
-        Get.back();
-      },
-    ));
+    );
   }
 
   void _showBackupDialog() {}
@@ -467,17 +454,28 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
     Get.dialog(
       AlertDialog(
         backgroundColor: const Color(0xFF1A1F3A),
-        title: const Text('Delete All Messages?', style: TextStyle(color: Colors.white)),
+        title: const Text(
+          'Delete All Messages?',
+          style: TextStyle(color: Colors.white),
+        ),
         content: Text(
           'This will permanently delete all your messages.',
           style: TextStyle(color: Colors.white.withOpacity(0.7)),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel', style: TextStyle(color: Colors.grey))),
+          TextButton(
+            onPressed: () => Get.back(),
+            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+          ),
           TextButton(
             onPressed: () {
               Get.back();
-              Get.snackbar('Success', 'All messages deleted', backgroundColor: Colors.green, colorText: Colors.white);
+              Get.snackbar(
+                'Success',
+                'All messages deleted',
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+              );
             },
             child: const Text('Delete', style: TextStyle(color: Colors.red)),
           ),

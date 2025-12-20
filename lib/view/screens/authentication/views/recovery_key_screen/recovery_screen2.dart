@@ -6,6 +6,7 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
+import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/recovery_screen3.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_line_widget.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_widget.dart';
@@ -16,14 +17,11 @@ import 'package:niche_line_messaging/view/screens/authentication/views/recovery_
 class RecoveryScreen2 extends StatelessWidget {
   RecoveryScreen2({super.key});
 
-  // ==================== Reactive State ====================
-  // Recovery key - backend থেকে API call এর পর set হবে
-  final RxString recoveryKey = ''.obs;
+  // ==================== Controller ====================
+  final AuthController authController = Get.find<AuthController>();
 
-  // Loading state for initial API call
+  //Loading state
   final RxBool isLoading = true.obs;
-
-  // Loading state for regenerate button
   final RxBool isRegenerating = false.obs;
 
   @override
@@ -53,7 +51,7 @@ class RecoveryScreen2 extends StatelessWidget {
           CircularProgressIndicator(color: const Color(0xFF2DD4BF)),
           SizedBox(height: 20.h),
           CustomText(
-            text: 'Generating your recovery key...',
+            text: 'Fetching your recovery key...',
             fontSize: 16.sp,
             fontWeight: FontWeight.w500,
             color: Colors.white.withOpacity(0.7),
@@ -69,7 +67,6 @@ class RecoveryScreen2 extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // ==================== Logo ====================
-        // ),
         CustomImage(
           imageSrc: AppImages.splashScreenImage,
           height: 50.h,
@@ -116,15 +113,17 @@ class RecoveryScreen2 extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(12.r),
           ),
-          child: SelectableText(
-            recoveryKey.value,
-            style: TextStyle(
-              fontSize: 20.sp,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF2DD4BF),
-              letterSpacing: 2,
+          child: Obx(
+            () => SelectableText(
+              authController.recoveryKey.value,
+              style: TextStyle(
+                fontSize: 20.sp,
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFF2DD4BF),
+                letterSpacing: 2,
+              ),
+              textAlign: TextAlign.center,
             ),
-            textAlign: TextAlign.center,
           ),
         ),
 
@@ -243,54 +242,34 @@ class RecoveryScreen2 extends StatelessWidget {
             ),
           ),
         ),
-
-        //SizedBox(height: 20.h),
       ],
     );
   }
 
-
-  // ==================== Fetch Recovery Key from Backend ====================
-  // TODO: Backend API থেকে recovery key fetch করবে
+  // ==================== Fetch Recovery Key ====================
   void _fetchRecoveryKey() async {
-    isLoading.value = true;
-
-    try {
-      // TODO: Replace with your actual API call
-      // Example:
-      // final response = await ApiClient.getData(ApiUrl.getRecoveryKey);
-      // recoveryKey.value = response.body['data']['recoveryKey'];
-
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 2));
-
-      // Temporary mock data - আপনার API থেকে এই format এ আসবে
-      recoveryKey.value = 'M2K4-9LQX-5T7A-2V0F';
-
+    // If key is empty, mock fetch delay. If present, show immediately or simulate fetch.
+    if (authController.recoveryKey.value.isEmpty) {
+      isLoading.value = true;
+      try {
+        await Future.delayed(const Duration(seconds: 1));
+        authController.generateRecoveryKey();
+        isLoading.value = false;
+        debugPrint(
+          '✅ Recovery Key Fetched: ${authController.recoveryKey.value}',
+        );
+      } catch (e) {
+        isLoading.value = false;
+        Get.snackbar('Error', 'Failed to load recovery key.');
+      }
+    } else {
       isLoading.value = false;
-
-      debugPrint('✅ Recovery Key Fetched: ${recoveryKey.value}');
-    } catch (e) {
-      isLoading.value = false;
-
-      Get.snackbar(
-        'Error',
-        'Failed to load recovery key. Please try again.',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-
-      debugPrint('❌ Fetch Recovery Key Error: $e');
-
-      // Retry option
-      Get.back();
     }
   }
 
   // ==================== Copy Recovery Key to Clipboard ====================
   void _handleCopyKey() async {
-    if (recoveryKey.value.isEmpty) {
+    if (authController.recoveryKey.value.isEmpty) {
       Get.snackbar(
         'Error',
         'No recovery key to copy',
@@ -301,8 +280,9 @@ class RecoveryScreen2 extends StatelessWidget {
       return;
     }
 
-    // Copy to clipboard
-    await Clipboard.setData(ClipboardData(text: recoveryKey.value));
+    await Clipboard.setData(
+      ClipboardData(text: authController.recoveryKey.value),
+    );
 
     Get.snackbar(
       'Copied',
@@ -312,12 +292,9 @@ class RecoveryScreen2 extends StatelessWidget {
       colorText: Colors.white,
       duration: const Duration(seconds: 2),
     );
-
-    debugPrint('✅ Recovery Key Copied: ${recoveryKey.value}');
   }
 
   // ==================== Regenerate Recovery Key ====================
-  // TODO: Backend API দিয়ে নতুন key generate করবে
   void _handleRegenerateKey() async {
     // Confirmation dialog
     bool? confirm = await Get.dialog<bool>(
@@ -372,16 +349,9 @@ class RecoveryScreen2 extends StatelessWidget {
     isRegenerating.value = true;
 
     try {
-      // TODO: Replace with your actual regenerate API call
-      // Example:
-      // final response = await ApiClient.postData(ApiUrl.regenerateRecoveryKey, {});
-      // recoveryKey.value = response.body['data']['recoveryKey'];
-
-      // Simulate API call
       await Future.delayed(const Duration(seconds: 2));
 
-      // Generate new mock key
-      recoveryKey.value = 'N3L5-8MRY-6U8B-3W1G';
+      authController.generateRecoveryKey();
 
       isRegenerating.value = false;
 
@@ -393,10 +363,11 @@ class RecoveryScreen2 extends StatelessWidget {
         colorText: Colors.white,
       );
 
-      debugPrint('✅ New Recovery Key Generated: ${recoveryKey.value}');
+      debugPrint(
+        '✅ New Recovery Key Generated: ${authController.recoveryKey.value}',
+      );
     } catch (e) {
       isRegenerating.value = false;
-
       Get.snackbar(
         'Error',
         'Failed to regenerate key. Please try again.',
@@ -404,17 +375,12 @@ class RecoveryScreen2 extends StatelessWidget {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-
-      debugPrint('❌ Regenerate Recovery Key Error: $e');
     }
   }
 
   // ==================== Continue to Next Step ====================
   void _handleContinue() {
-    // User key save করেছে confirm করে next step এ যাবে
-    // TODO: Navigate to verify screen or home
-    // Get.offAllNamed(AppRoutes.homeScreen);
-    Get.offAll(() => RecoveryScreen3());
+    Get.to(() => RecoveryScreen3());
 
     Get.snackbar(
       'Info',
@@ -423,7 +389,5 @@ class RecoveryScreen2 extends StatelessWidget {
       backgroundColor: const Color(0xFF2DD4BF),
       colorText: AppColors.primary,
     );
-
-    debugPrint('✅ User confirmed key saved, proceeding...');
   }
 }

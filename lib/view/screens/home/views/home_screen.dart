@@ -65,8 +65,14 @@ class HomeScreen extends StatelessWidget {
         onPressed: () => Get.to(() => NewChatScreen()),
         backgroundColor: const Color(0xFF2DD4BF),
         elevation: 10,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-        child: Icon(Icons.add_comment_rounded, color: Colors.white, size: 28.sp),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Icon(
+          Icons.add_comment_rounded,
+          color: Colors.white,
+          size: 28.sp,
+        ),
       ),
     );
   }
@@ -89,12 +95,12 @@ class HomeScreen extends StatelessWidget {
                 width: 35.h,
               ),
               SizedBox(width: 10.w),
-              CustomText(
+              /* CustomText(
                 text: 'NichLine',
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.white,
-              ),
+              ), */
             ],
           ),
           GestureDetector(
@@ -107,7 +113,9 @@ class HomeScreen extends StatelessWidget {
               ),
               child: CircleAvatar(
                 radius: 18.r,
-                backgroundImage: const NetworkImage('https://i.pravatar.cc/150?img=5'),
+                backgroundImage: const NetworkImage(
+                  'https://i.pravatar.cc/150?img=5',
+                ),
               ),
             ),
           ),
@@ -143,8 +151,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActionItem(BuildContext context,
-      {required IconData icon, required String label, required bool isSpecial, required VoidCallback onTap}) {
+  Widget _buildQuickActionItem(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required bool isSpecial,
+    required VoidCallback onTap,
+  }) {
     return GestureDetector(
       onTap: onTap,
       child: Padding(
@@ -156,7 +169,9 @@ class HomeScreen extends StatelessWidget {
               width: 60.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSpecial ? const Color(0xFF2DD4BF).withOpacity(0.2) : Colors.transparent,
+                color: isSpecial
+                    ? const Color(0xFF2DD4BF).withOpacity(0.2)
+                    : Colors.transparent,
                 border: Border.all(
                   color: const Color(0xFF2DD4BF),
                   width: 2, // Dashed effect could be added here
@@ -172,7 +187,7 @@ class HomeScreen extends StatelessWidget {
                 fontSize: 12.sp,
                 fontWeight: isSpecial ? FontWeight.w600 : FontWeight.w400,
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -192,7 +207,10 @@ class HomeScreen extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(color: Colors.transparent, width: 2),
-                  image: DecorationImage(image: NetworkImage(imgUrl), fit: BoxFit.cover),
+                  image: DecorationImage(
+                    image: NetworkImage(imgUrl),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
               Positioned(
@@ -204,7 +222,10 @@ class HomeScreen extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.green,
                     shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF0E1527), width: 2),
+                    border: Border.all(
+                      color: const Color(0xFF0E1527),
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -214,7 +235,7 @@ class HomeScreen extends StatelessWidget {
           Text(
             name,
             style: TextStyle(color: Colors.white70, fontSize: 12.sp),
-          )
+          ),
         ],
       ),
     );
@@ -274,13 +295,27 @@ class HomeScreen extends StatelessWidget {
               children: [
                 CircleAvatar(
                   radius: 28.r,
-                  backgroundColor: chat.isGroup ? const Color(0xFF2DD4BF).withOpacity(0.2) : Colors.grey[800],
-                  backgroundImage: chat.avatar.isNotEmpty ? NetworkImage(chat.avatar) : null,
+                  backgroundColor: chat.isGroup
+                      ? const Color(0xFF2DD4BF).withOpacity(0.2)
+                      : Colors.grey[800],
+                  backgroundImage: chat.avatar.isNotEmpty
+                      ? NetworkImage(chat.avatar)
+                      : null,
                   child: chat.isGroup
-                      ? Icon(Icons.groups, color: const Color(0xFF2DD4BF), size: 28.sp)
+                      ? Icon(
+                          Icons.groups,
+                          color: const Color(0xFF2DD4BF),
+                          size: 28.sp,
+                        )
                       : (chat.avatar.isEmpty
-                      ? Text(chat.name[0], style: TextStyle(color: Colors.white, fontSize: 18.sp))
-                      : null),
+                            ? Text(
+                                chat.name[0],
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18.sp,
+                                ),
+                              )
+                            : null),
                 ),
                 if (chat.isOnline)
                   Positioned(
@@ -292,7 +327,10 @@ class HomeScreen extends StatelessWidget {
                       decoration: BoxDecoration(
                         color: Colors.green,
                         shape: BoxShape.circle,
-                        border: Border.all(color: const Color(0xFF0E1527), width: 2),
+                        border: Border.all(
+                          color: const Color(0xFF0E1527),
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -319,8 +357,12 @@ class HomeScreen extends StatelessWidget {
                         chat.timestamp,
                         style: TextStyle(
                           fontSize: 11.sp,
-                          color: chat.unreadCount > 0 ? const Color(0xFF2DD4BF) : Colors.white38,
-                          fontWeight: chat.unreadCount > 0 ? FontWeight.bold : FontWeight.normal,
+                          color: chat.unreadCount > 0
+                              ? const Color(0xFF2DD4BF)
+                              : Colors.white38,
+                          fontWeight: chat.unreadCount > 0
+                              ? FontWeight.bold
+                              : FontWeight.normal,
                         ),
                       ),
                     ],
@@ -334,8 +376,12 @@ class HomeScreen extends StatelessWidget {
                           chat.lastMessage,
                           style: TextStyle(
                             fontSize: 13.sp,
-                            color: chat.unreadCount > 0 ? Colors.white : Colors.white54,
-                            fontWeight: chat.unreadCount > 0 ? FontWeight.w500 : FontWeight.normal,
+                            color: chat.unreadCount > 0
+                                ? Colors.white
+                                : Colors.white54,
+                            fontWeight: chat.unreadCount > 0
+                                ? FontWeight.w500
+                                : FontWeight.normal,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -344,7 +390,10 @@ class HomeScreen extends StatelessWidget {
                       if (chat.unreadCount > 0)
                         Container(
                           margin: EdgeInsets.only(left: 8.w),
-                          padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 8.w,
+                            vertical: 4.h,
+                          ),
                           decoration: BoxDecoration(
                             color: const Color(0xFF2DD4BF),
                             borderRadius: BorderRadius.circular(10.r),
@@ -369,7 +418,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState(BuildContext context) => const Center(child: CircularProgressIndicator(color: Color(0xFF2DD4BF)));
+  Widget _buildLoadingState(BuildContext context) =>
+      const Center(child: CircularProgressIndicator(color: Color(0xFF2DD4BF)));
 
   Widget _buildEmptyState(BuildContext context) => Center(
     child: Column(
@@ -377,7 +427,10 @@ class HomeScreen extends StatelessWidget {
       children: [
         Icon(Icons.chat_bubble_outline, size: 60.sp, color: Colors.white24),
         SizedBox(height: 10.h),
-        Text("No chats found", style: TextStyle(color: Colors.white38, fontSize: 16.sp)),
+        Text(
+          "No chats found",
+          style: TextStyle(color: Colors.white38, fontSize: 16.sp),
+        ),
       ],
     ),
   );

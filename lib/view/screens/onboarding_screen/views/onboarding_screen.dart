@@ -24,19 +24,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   List<Map<String, String>> onboardingData = [
     {
       "title": "Secure Messaging",
-      "text": "End-to-end encryption keeps your conversations private and secure.",
+      "text":
+          "End-to-end encryption keeps your conversations private and secure.",
       // "image": AppImages.onboarding1, // আপনার ইমেজের পাথ দিন
       "image": AppImages.onBoardingOne, // Placeholder
     },
-    {
-      "title": "Biometric Access",
-      "text": "Quickly and securely access your chats using fingerprint or Face ID.",
-      // "image": AppImages.onboarding2,
-      "image": AppImages.onBoardingTwo, // Placeholder
-    },
+
     {
       "title": "Recovery Key",
-      "text": "Never lose access to your account with our secure recovery key system.",
+      "text":
+          "Never lose access to your account with our secure recovery key system.",
       // "image": AppImages.onboarding3,
       "image": AppImages.onBoardingThree, // Placeholder
     },
@@ -47,7 +44,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     // সেভ করে রাখা হচ্ছে যে ইউজার অনবোর্ডিং দেখেছে
     await SharePrefsHelper.setBool('seenOnboarding', true);
     // Auth স্ক্রিনে যাওয়া
-    Get.offAll(()=> AuthScreen());
+    Get.offAll(() => AuthScreen());
   }
 
   @override
@@ -102,7 +99,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: List.generate(
                       onboardingData.length,
-                          (index) => buildDot(index: index),
+                      (index) => buildDot(index: index),
                     ),
                   ),
                   SizedBox(height: 30.h),
@@ -184,11 +181,7 @@ class OnboardingContent extends StatelessWidget {
         children: [
           const Spacer(),
           // Image placeholder - use CustomImage if available
-          Image.asset(
-            image,
-            height: 350.h,
-            width: 350.w,
-          ),
+          Image.asset(image, height: 350.h, width: 350.w),
           //const Spacer(),
           Text(
             title,

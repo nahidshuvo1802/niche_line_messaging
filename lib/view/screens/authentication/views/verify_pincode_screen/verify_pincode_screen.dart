@@ -57,29 +57,36 @@ class TwoFactorAuthScreen extends StatelessWidget {
 
               SizedBox(height: 30.h),
 
-              Obx(() => CustomText(
-                text: 'Resend code in 00:${resendTimer.value.toString().padLeft(2, '0')}',
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Colors.white.withOpacity(0.5),
-              )),
+              Obx(
+                () => CustomText(
+                  text:
+                      'Resend code in 00:${resendTimer.value.toString().padLeft(2, '0')}',
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Colors.white.withOpacity(0.5),
+                ),
+              ),
 
               SizedBox(height: 40.h),
 
               // Verify Button
-              Obx(() => CustomButton(
-                height: 50.h,
-                fontSize: 26.sp,
-                width: double.infinity,
-                fillColor: AppColors.loading,
-                title: authController.isOtpVerifying.value ? 'Verifying...' : 'Verify',
-                onTap: authController.isOtpVerifying.value
-                    ? () {}
-                    : () {
-                  // This calls the controller logic which navigates to Recovery Setup
-                  authController.verifyOtp();
-                },
-              )),
+              Obx(
+                () => CustomButton(
+                  height: 50.h,
+                  fontSize: 26.sp,
+                  width: double.infinity,
+                  fillColor: AppColors.loading,
+                  title: authController.isOtpVerifying.value
+                      ? 'Verifying...'
+                      : 'Verify',
+                  onTap: authController.isOtpVerifying.value
+                      ? () {}
+                      : () {
+                          // This calls the controller logic which navigates to Recovery Setup
+                          authController.verifyOtp();
+                        },
+                ),
+              ),
 
               SizedBox(height: 20.h),
 
@@ -89,27 +96,29 @@ class TwoFactorAuthScreen extends StatelessWidget {
                 children: [
                   CustomText(
                     text: AppStrings.iDidntFind,
-                    fontSize: 20.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w400,
                     color: Colors.white.withOpacity(0.7),
                     right: 6.w,
                   ),
-                  Obx(() => GestureDetector(
-                    onTap: resendTimer.value == 0
-                        ? () {
-                      authController.sendAgainOtp();
-                      _startResendTimer();
-                    }
-                        : () {},
-                    child: CustomText(
-                      text: AppStrings.sendAgain,
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.w600,
-                      color: resendTimer.value == 0
-                          ? const Color(0xFF2DD4BF)
-                          : Colors.grey,
+                  Obx(
+                    () => GestureDetector(
+                      onTap: resendTimer.value == 0
+                          ? () {
+                              authController.sendAgainOtp();
+                              _startResendTimer();
+                            }
+                          : () {},
+                      child: CustomText(
+                        text: AppStrings.sendAgain,
+                        fontSize: 13.sp,
+                        fontWeight: FontWeight.w600,
+                        color: resendTimer.value == 0
+                            ? const Color(0xFF2DD4BF)
+                            : Colors.grey,
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               ),
 

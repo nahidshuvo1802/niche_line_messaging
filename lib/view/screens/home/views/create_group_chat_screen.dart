@@ -22,7 +22,11 @@ class CreateGroupScreen extends StatelessWidget {
         ),
         title: Text(
           'New Group',
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600, color: Colors.white),
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+            color: Colors.white,
+          ),
         ),
         centerTitle: true,
       ),
@@ -33,22 +37,14 @@ class CreateGroupScreen extends StatelessWidget {
             padding: EdgeInsets.all(20.w),
             decoration: BoxDecoration(
               color: Colors.white.withOpacity(0.02),
-              borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.r)),
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(20.r),
+              ),
             ),
             child: Row(
               children: [
                 // Group Image Picker (Placeholder)
-                Container(
-                  height: 60.h,
-                  width: 60.h,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.1),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: const Color(0xFF2DD4BF).withOpacity(0.5)),
-                  ),
-                  child: Icon(Icons.camera_alt, color: Colors.white54, size: 24.sp),
-                ),
-                SizedBox(width: 16.w),
+
                 // Group Name Input
                 Expanded(
                   child: TextField(
@@ -57,8 +53,12 @@ class CreateGroupScreen extends StatelessWidget {
                     decoration: InputDecoration(
                       hintText: 'Enter group name',
                       hintStyle: TextStyle(color: Colors.white38),
-                      border: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)),
-                      focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFF2DD4BF))),
+                      border: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white24),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Color(0xFF2DD4BF)),
+                      ),
                     ),
                   ),
                 ),
@@ -87,11 +87,15 @@ class CreateGroupScreen extends StatelessWidget {
                             children: [
                               CircleAvatar(
                                 radius: 24.r,
-                                backgroundImage:
-                                member.avatar.isNotEmpty ? NetworkImage(member.avatar) : null,
+                                backgroundImage: member.avatar.isNotEmpty
+                                    ? NetworkImage(member.avatar)
+                                    : null,
                                 backgroundColor: Colors.grey[800],
                                 child: member.avatar.isEmpty
-                                    ? Text(member.name[0], style: TextStyle(color: Colors.white))
+                                    ? Text(
+                                        member.name[0],
+                                        style: TextStyle(color: Colors.white),
+                                      )
                                     : null,
                               ),
                               Positioned(
@@ -102,17 +106,24 @@ class CreateGroupScreen extends StatelessWidget {
                                   child: CircleAvatar(
                                     radius: 10.r,
                                     backgroundColor: Colors.red,
-                                    child: Icon(Icons.close, size: 12.sp, color: Colors.white),
+                                    child: Icon(
+                                      Icons.close,
+                                      size: 12.sp,
+                                      color: Colors.white,
+                                    ),
                                   ),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                           SizedBox(height: 4.h),
                           Text(
                             member.name.split(" ")[0],
-                            style: TextStyle(color: Colors.white70, fontSize: 11.sp),
-                          )
+                            style: TextStyle(
+                              color: Colors.white70,
+                              fontSize: 11.sp,
+                            ),
+                          ),
                         ],
                       ),
                     );
@@ -147,7 +158,10 @@ class CreateGroupScreen extends StatelessWidget {
           // ================== Members List ==================
           Expanded(
             child: Obx(() {
-              if (controller.isLoading.value) return Center(child: CircularProgressIndicator(color: Color(0xFF2DD4BF)));
+              if (controller.isLoading.value)
+                return Center(
+                  child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
+                );
               return ListView.builder(
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
                 itemCount: controller.filteredRecipients.length,
@@ -160,30 +174,51 @@ class CreateGroupScreen extends StatelessWidget {
                       contentPadding: EdgeInsets.zero,
                       leading: CircleAvatar(
                         radius: 24.r,
-                        backgroundImage:
-                        recipient.avatar.isNotEmpty ? NetworkImage(recipient.avatar) : null,
+                        backgroundImage: recipient.avatar.isNotEmpty
+                            ? NetworkImage(recipient.avatar)
+                            : null,
                         backgroundColor: Colors.grey[800],
                         child: recipient.avatar.isEmpty
                             ? Icon(Icons.person, color: Colors.white54)
                             : null,
                       ),
-                      title: Text(recipient.name,
-                          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w500)),
-                      subtitle: Text(recipient.status,
-                          style: TextStyle(color: Colors.white38, fontSize: 12.sp),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
+                      title: Text(
+                        recipient.name,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      subtitle: Text(
+                        recipient.status,
+                        style: TextStyle(
+                          color: Colors.white38,
+                          fontSize: 12.sp,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       trailing: Container(
                         height: 24.w,
                         width: 24.w,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color: isSelected ? const Color(0xFF2DD4BF) : Colors.transparent,
+                          color: isSelected
+                              ? const Color(0xFF2DD4BF)
+                              : Colors.transparent,
                           border: Border.all(
-                              color: isSelected ? const Color(0xFF2DD4BF) : Colors.white38, width: 2),
+                            color: isSelected
+                                ? const Color(0xFF2DD4BF)
+                                : Colors.white38,
+                            width: 2,
+                          ),
                         ),
                         child: isSelected
-                            ? Icon(Icons.check, size: 16.sp, color: Colors.black)
+                            ? Icon(
+                                Icons.check,
+                                size: 16.sp,
+                                color: Colors.black,
+                              )
                             : null,
                       ),
                     );
@@ -199,8 +234,10 @@ class CreateGroupScreen extends StatelessWidget {
         return FloatingActionButton.extended(
           onPressed: controller.createGroup,
           backgroundColor: const Color(0xFF2DD4BF),
-          label: Text("Create Group",
-              style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          label: Text(
+            "Create Group",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+          ),
           icon: Icon(Icons.check, color: Colors.black),
         );
       }),

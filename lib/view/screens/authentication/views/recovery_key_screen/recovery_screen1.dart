@@ -5,6 +5,7 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
+import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/recovery_screen2.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_line_widget.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_widget.dart';
@@ -168,7 +169,7 @@ class RecoveryKeySetupScreenOne extends StatelessWidget {
     );
   }
 
-
+  final AuthController authController = Get.find<AuthController>();
 
   // ==================== Generate Recovery Key Handler ====================
   void _handleGenerateKey() async {
@@ -176,16 +177,13 @@ class RecoveryKeySetupScreenOne extends StatelessWidget {
     isGenerating.value = true;
 
     try {
-      // TODO: Replace with your actual API call
-      // Example:
-      // final response = await ApiClient.postData(ApiUrl.generateRecoveryKey, {});
-      // recoveryKey.value = response.body['data']['recoveryKey'];
-
-      // Simulate API call
+      // API Call Simulation via Controller
       await Future.delayed(const Duration(seconds: 2));
 
-      // Simulate generated key (পরে API থেকে পাবেন)
-      recoveryKey.value = 'ABCD-EFGH-IJKL-MNOP-QRST-UVWX';
+      authController.generateRecoveryKey();
+
+      // Update local state if needed, or just rely on controller state in next screen
+      recoveryKey.value = authController.recoveryKey.value;
 
       isGenerating.value = false;
 
@@ -199,13 +197,11 @@ class RecoveryKeySetupScreenOne extends StatelessWidget {
       );
 
       //================Get to Next Screen===============================
-   
 
       // Update step to "Generate" complete
       currentStep.value = 1;
-         Get.offAll(RecoveryScreen2());
+      Get.to(() => RecoveryScreen2());
       // Navigate to next screen (Save key screen)
-    
 
       debugPrint('✅ Recovery Key Generated: ${recoveryKey.value}');
     } catch (e) {
