@@ -7,6 +7,7 @@ class RecipientProfileModel {
   final String bio;
   final bool isMuted;
   final bool isEncrypted;
+  final List<Map<String, dynamic>>? members;
 
   RecipientProfileModel({
     required this.userId,
@@ -15,6 +16,7 @@ class RecipientProfileModel {
     required this.bio,
     this.isMuted = false,
     this.isEncrypted = true,
+    this.members,
   });
 
   // From JSON (Backend থেকে আসবে)
@@ -26,6 +28,9 @@ class RecipientProfileModel {
       bio: json['bio'] ?? '',
       isMuted: json['isMuted'] ?? false,
       isEncrypted: json['isEncrypted'] ?? true,
+      members: json['members'] != null
+          ? List<Map<String, dynamic>>.from(json['members'])
+          : null,
     );
   }
 
@@ -38,6 +43,7 @@ class RecipientProfileModel {
       'bio': bio,
       'isMuted': isMuted,
       'isEncrypted': isEncrypted,
+      'members': members,
     };
   }
 
@@ -49,6 +55,7 @@ class RecipientProfileModel {
     String? bio,
     bool? isMuted,
     bool? isEncrypted,
+    List<Map<String, dynamic>>? members,
   }) {
     return RecipientProfileModel(
       userId: userId ?? this.userId,
@@ -57,6 +64,7 @@ class RecipientProfileModel {
       bio: bio ?? this.bio,
       isMuted: isMuted ?? this.isMuted,
       isEncrypted: isEncrypted ?? this.isEncrypted,
+      members: members ?? this.members,
     );
   }
 }

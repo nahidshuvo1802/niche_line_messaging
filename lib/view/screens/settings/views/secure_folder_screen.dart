@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/secure_media_library/views/secure_media_screen.dart';
+import 'package:niche_line_messaging/view/screens/settings/controller/secure_folder_controller.dart';
 
 class SecureFolderScreen extends StatefulWidget {
   const SecureFolderScreen({super.key});
@@ -11,9 +12,14 @@ class SecureFolderScreen extends StatefulWidget {
 }
 
 class _SecureFolderScreenState extends State<SecureFolderScreen> {
-  final RxBool isAuthenticated = false.obs;
+  final SecureFolderController controller = Get.put(SecureFolderController());
+
   final List<String> pin = ['', '', '', ''];
   int currentIndex = 0;
+
+  // New Account Creation State
+  String? firstPin;
+  bool isConfirming = false;
 
   void _onPinEntered(String value) {
     if (currentIndex < 4) {
@@ -23,29 +29,62 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
       });
 
       if (currentIndex == 4) {
-        // Verify PIN (demo: 1234)
         final enteredPin = pin.join();
-        if (enteredPin == '1234') {
-          Get.snackbar(
-            'Success',
-            'Folder unlocked successfully',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.green,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
-          );
-          // Navigate to secure folder content
+
+        // Logic Branch
+        if (controller.hasCreatedAccount.value) {
+          _handleLogin(enteredPin);
         } else {
-          Get.snackbar(
-            'Error',
-            'Incorrect PIN. Please try again.',
-            snackPosition: SnackPosition.BOTTOM,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-            duration: const Duration(seconds: 2),
-          );
-          _resetPin();
+          _handleCreation(enteredPin);
         }
+      }
+    }
+  }
+
+  void _handleLogin(String enteredPin) async {
+    bool success = await controller.verifyOrCreatePin(enteredPin);
+    if (success) {
+      Get.off(() => SecureMediaScreen());
+    } else {
+      _resetPin();
+    }
+  }
+
+  void _handleCreation(String enteredPin) async {
+    if (!isConfirming) {
+      // First Step: Capture PIN, ask for confirmation
+      setState(() {
+        firstPin = enteredPin;
+        isConfirming = true;
+        _resetPinUIOnly();
+      });
+    } else {
+      // Second Step: Confirm PIN
+      if (enteredPin == firstPin) {
+        bool success = await controller.verifyOrCreatePin(enteredPin);
+        if (success) {
+          Get.off(() => SecureMediaScreen());
+        } else {
+          // Creation failed at API level
+          setState(() {
+            isConfirming = false;
+            firstPin = null;
+            _resetPinUIOnly();
+          });
+        }
+      } else {
+        Get.snackbar(
+          'Error',
+          'PINs do not match. Please try again.',
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+        setState(() {
+          isConfirming = false;
+          firstPin = null;
+          _resetPinUIOnly();
+        });
       }
     }
   }
@@ -55,6 +94,11 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
       pin.fillRange(0, 4, '');
       currentIndex = 0;
     });
+  }
+
+  void _resetPinUIOnly() {
+    pin.fillRange(0, 4, '');
+    currentIndex = 0;
   }
 
   @override
@@ -83,147 +127,110 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
             end: Alignment.bottomCenter,
           ),
         ),
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            children: [
-              SizedBox(height: 40.h),
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
+            );
+          }
 
-              // Lock Icon
-              Container(
-                width: 80.w,
-                height: 80.w,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: const Color(0xFF2DD4BF).withOpacity(0.15),
+          String title = "Secure Folder";
+          String subtitle = "Access your encrypted media.";
+
+          if (!controller.hasCreatedAccount.value) {
+            if (isConfirming) {
+              title = "Confirm PIN";
+              subtitle = "Please re-enter your PIN to confirm.";
+            } else {
+              title = "Create PIN";
+              subtitle = "Set a 4-digit PIN for your secure folder.";
+            }
+          } else {
+            title = "Enter PIN";
+            subtitle = "Enter your PIN to access secure folder.";
+          }
+
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 24.w),
+            child: Column(
+              children: [
+                SizedBox(height: 40.h),
+
+                // Lock Icon
+                Container(
+                  width: 80.w,
+                  height: 80.w,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: const Color(0xFF2DD4BF).withOpacity(0.15),
+                  ),
+                  child: Icon(
+                    Icons.lock,
+                    size: 40.sp,
+                    color: const Color(0xFF2DD4BF),
+                  ),
                 ),
-                child: Icon(
-                  Icons.lock,
-                  size: 40.sp,
-                  color: const Color(0xFF2DD4BF),
+
+                SizedBox(height: 24.h),
+
+                // Title
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 24.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 24.h),
+                SizedBox(height: 12.h),
 
-              // Title
-              Text(
-                'Secure Folder',
-                style: TextStyle(
-                  fontSize: 24.sp,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+                // Subtitle
+                Text(
+                  subtitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.white.withOpacity(0.6),
+                    height: 1.5,
+                  ),
                 ),
-              ),
 
-              SizedBox(height: 12.h),
-
-              // Subtitle
-              Text(
-                'Access your encrypted media. Only you can unlock it.',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.white.withOpacity(0.6),
-                  height: 1.5,
-                ),
-              ),
-
-              SizedBox(height: 40.h),
-
-              // Biometric Authentication Button
-              SizedBox(height: 32.h),
-
-              // OR Divider
-              SizedBox(height: 32.h),
-
-              // PIN Input Dots
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(4, (index) {
-                  return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 8.w),
-                    width: 16.w,
-                    height: 16.w,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: pin[index].isNotEmpty
-                          ? const Color(0xFF2DD4BF)
-                          : Colors.transparent,
-                      border: Border.all(
+                SizedBox(height: 60.h), // More spacing
+                // PIN Input Dots
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: List.generate(4, (index) {
+                    return Container(
+                      margin: EdgeInsets.symmetric(horizontal: 8.w),
+                      width: 16.w,
+                      height: 16.w,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
                         color: pin[index].isNotEmpty
                             ? const Color(0xFF2DD4BF)
-                            : Colors.white.withOpacity(0.3),
-                        width: 2,
+                            : Colors.transparent,
+                        border: Border.all(
+                          color: pin[index].isNotEmpty
+                              ? const Color(0xFF2DD4BF)
+                              : Colors.white.withOpacity(0.3),
+                          width: 2,
+                        ),
                       ),
-                    ),
-                  );
-                }),
-              ),
-
-              SizedBox(height: 16.h),
-
-              // Hint Text
-              SizedBox(height: 32.h),
-
-              // Unlock Folder Button
-              SizedBox(
-                width: double.infinity,
-                height: 50.h,
-                child: ElevatedButton(
-                  onPressed: currentIndex == 4
-                      ? () {
-                          // Verify PIN
-                          final enteredPin = pin.join();
-                          if (enteredPin == '1234') {
-                            Get.to(() => SecureMediaScreen());
-                            Get.snackbar(
-                              'Success',
-                              'Folder unlocked successfully',
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.green,
-                              colorText: Colors.white,
-                            );
-                          } else {
-                            Get.snackbar(
-                              'Error',
-                              'Incorrect PIN',
-                              snackPosition: SnackPosition.BOTTOM,
-                              backgroundColor: Colors.red,
-                              colorText: Colors.white,
-                            );
-                            _resetPin();
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF5A6B8C),
-                    disabledBackgroundColor: const Color(0xFF3A4A6C),
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                  ),
-                  child: Text(
-                    'Unlock Folder',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),
-                  ),
+                    );
+                  }),
                 ),
-              ),
 
-              SizedBox(height: 40.h),
+                SizedBox(height: 80.h),
 
-              // Number Pad
-              _buildNumberPad(),
+                // Number Pad
+                _buildNumberPad(),
 
-              SizedBox(height: 40.h),
-            ],
-          ),
-        ),
+                SizedBox(height: 40.h),
+              ],
+            ),
+          );
+        }),
       ),
     );
   }

@@ -85,6 +85,9 @@ dependencies:
   wakelock_plus: ^1.4.0
   camera: ^0.11.3
   device_info_plus: ^12.3.0
+  package_info_plus: ^9.0.0
+  flutter_staggered_animations: ^1.1.1
+  pdf: ^3.11.3
   
 
 dependency_overrides:

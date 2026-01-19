@@ -3,31 +3,19 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/view/screens/secure_media_library/controller/secure_media_data_controller.dart';
 
 // ============ SECURE MEDIA SCREEN ============
 class SecureMediaScreen extends StatelessWidget {
-  SecureMediaScreen({super.key});
-
-  final RxString selectedTab = 'Photos'.obs;
-
-  // Demo image URLs
-  final List<String> photos = [
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
-    'https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=400',
-    'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=400',
-    'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=400',
-    'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400',
-    'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400',
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
-    'https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=400',
-    'https://images.unsplash.com/photo-1505142468610-359e7d316be0?w=400',
-    'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400',
-    'https://images.unsplash.com/photo-1542397284385-6010376c5337?w=400',
-    'https://images.unsplash.com/photo-1495954484750-af469f2f9be5?w=400',
-  ];
+  const SecureMediaScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final SecureMediaDataController controller = Get.put(
+      SecureMediaDataController(),
+    );
+
     return Scaffold(
       backgroundColor: const Color(0xFF1A1F3A),
       appBar: AppBar(
@@ -39,154 +27,96 @@ class SecureMediaScreen extends StatelessWidget {
         ),
         title: const Text(
           'Secure Folder',
-          style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w600,
-          ),
+          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w600),
         ),
         centerTitle: true,
       ),
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFF000000),
-              Color(0xFF1A1F3A),
-            ],
+            colors: [Color(0xFF000000), Color(0xFF1A1F3A)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
         ),
-        child: Column(
-          children: [
-            SizedBox(height: 16.h),
+        child: Obx(() {
+          if (controller.isLoading.value) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
+            );
+          }
 
-            // Tab Selector
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w),
-              child: Obx(() => Row(
-                    children: [
-                      Expanded(
-                        child: _buildTabButton(
-                          'Photos',
-                          selectedTab.value == 'Photos',
-                          () => selectedTab.value = 'Photos',
-                        ),
-                      ),
-                      SizedBox(width: 12.w),
-                      Expanded(
-                        child: _buildTabButton(
-                          'Videos',
-                          selectedTab.value == 'Videos',
-                          () => selectedTab.value = 'Videos',
-                        ),
-                      ),
-                    ],
-                  )),
+          if (controller.allMedia.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.lock_open_rounded,
+                    size: 64.sp,
+                    color: Colors.white.withOpacity(0.3),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'No secure media found',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: Colors.white.withOpacity(0.5),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          return GridView.builder(
+            controller: controller.scrollController,
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 3,
+              crossAxisSpacing: 8.w,
+              mainAxisSpacing: 8.h,
+              childAspectRatio: 1,
             ),
+            itemCount:
+                controller.allMedia.length +
+                (controller.isMoreLoading.value ? 1 : 0),
+            itemBuilder: (context, index) {
+              if (index == controller.allMedia.length) {
+                return const Center(
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Color(0xFF2DD4BF),
+                  ),
+                );
+              }
 
-            SizedBox(height: 16.h),
+              final item = controller.allMedia[index];
+              // Assuming 'url' or 'mediaUrl' fields. Adjust based on real API response if known, otherwise best guess.
+              // Taking a safe bet on 'url' and 'type'.
+              String url =
+                  item['url'] ?? item['fileUrl'] ?? item['mediaUrl'] ?? '';
+              String type = item['type'] ?? 'image'; // Default to image
 
-            // Media Grid
-            Expanded(
-              child: Obx(() {
-                if (selectedTab.value == 'Photos') {
-                  return _buildPhotoGrid();
-                } else {
-                  return _buildVideosGrid();
-                }
-              }),
-            ),
-          ],
-        ),
+              // If url is relative, make it absolute
+              if (!url.startsWith('http')) {
+                url = ApiUrl.getImageUrl(url);
+              }
+
+              bool isVideo =
+                  type.toLowerCase().contains('video') || url.endsWith('.mp4');
+
+              return _buildMediaItem(url, isVideo, index);
+            },
+          );
+        }),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(() => const EncryptedCameraScreen());
         },
         backgroundColor: const Color(0xFF2DD4BF),
-        child: const Icon(
-          Icons.add_a_photo,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabButton(String title, bool isSelected, VoidCallback onTap) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 12.h),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(0xFF2DD4BF)
-              : const Color(0xFF2A3B5A).withOpacity(0.5),
-          borderRadius: BorderRadius.circular(8.r),
-          border: Border.all(
-            color: isSelected
-                ? const Color(0xFF2DD4BF)
-                : Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
-        ),
-        child: Center(
-          child: Text(
-            title,
-            style: TextStyle(
-              fontSize: 15.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildPhotoGrid() {
-    return GridView.builder(
-      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
-        crossAxisSpacing: 8.w,
-        mainAxisSpacing: 8.h,
-        childAspectRatio: 1,
-      ),
-      itemCount: photos.length,
-      itemBuilder: (context, index) {
-        return _buildMediaItem(photos[index], false, index);
-      },
-    );
-  }
-
-  Widget _buildVideosGrid() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            Icons.video_library_outlined,
-            size: 64.sp,
-            color: Colors.white.withOpacity(0.3),
-          ),
-          SizedBox(height: 16.h),
-          Text(
-            'No videos yet',
-            style: TextStyle(
-              fontSize: 16.sp,
-              color: Colors.white.withOpacity(0.5),
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            'Videos you add will appear here',
-            style: TextStyle(
-              fontSize: 13.sp,
-              color: Colors.white.withOpacity(0.3),
-            ),
-          ),
-        ],
+        child: const Icon(Icons.add_a_photo, color: Colors.white),
       ),
     );
   }
@@ -195,20 +125,19 @@ class SecureMediaScreen extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         // Navigate to media detail screen
-        Get.to(() => MediaDetailScreen(
-              imageUrl: imageUrl,
-              mediaIndex: index,
-              isVideo: isVideo,
-            ));
+        Get.to(
+          () => MediaDetailScreen(
+            imageUrl: imageUrl,
+            mediaIndex: index,
+            isVideo: isVideo,
+          ),
+        );
       },
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8.r),
           color: const Color(0xFF2A3B5A),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(8.r),
@@ -237,7 +166,7 @@ class SecureMediaScreen extends StatelessWidget {
                       child: CircularProgressIndicator(
                         value: loadingProgress.expectedTotalBytes != null
                             ? loadingProgress.cumulativeBytesLoaded /
-                                loadingProgress.expectedTotalBytes!
+                                  loadingProgress.expectedTotalBytes!
                             : null,
                         color: const Color(0xFF2DD4BF),
                       ),
@@ -333,7 +262,7 @@ class MediaDetailScreen extends StatelessWidget {
                         child: CircularProgressIndicator(
                           value: loadingProgress.expectedTotalBytes != null
                               ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
+                                    loadingProgress.expectedTotalBytes!
                               : null,
                           color: const Color(0xFF2DD4BF),
                         ),
@@ -463,16 +392,9 @@ class MediaDetailScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: color.withOpacity(0.2),
               shape: BoxShape.circle,
-              border: Border.all(
-                color: color.withOpacity(0.5),
-                width: 1,
-              ),
+              border: Border.all(color: color.withOpacity(0.5), width: 1),
             ),
-            child: Icon(
-              icon,
-              color: color,
-              size: 24.sp,
-            ),
+            child: Icon(icon, color: color, size: 24.sp),
           ),
           SizedBox(height: 8.h),
           Text(
@@ -494,10 +416,7 @@ class MediaDetailScreen extends StatelessWidget {
         backgroundColor: const Color(0xFF1A1F3A),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
-          side: BorderSide(
-            color: Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
+          side: BorderSide(color: Colors.white.withOpacity(0.1), width: 1),
         ),
         child: Padding(
           padding: EdgeInsets.all(24.w),
@@ -539,9 +458,7 @@ class MediaDetailScreen extends StatelessWidget {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.r),
                         ),
-                        side: BorderSide(
-                          color: Colors.white.withOpacity(0.3),
-                        ),
+                        side: BorderSide(color: Colors.white.withOpacity(0.3)),
                       ),
                       child: const Text('Cancel'),
                     ),
@@ -675,8 +592,9 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
   Future<void> _switchCamera() async {
     if (_cameras == null || _cameras!.length < 2) return;
 
-    final currentCameraIndex =
-        _cameras!.indexOf(_cameraController!.description);
+    final currentCameraIndex = _cameras!.indexOf(
+      _cameraController!.description,
+    );
     final newCameraIndex = (currentCameraIndex + 1) % _cameras!.length;
 
     final newCamera = _cameras![newCameraIndex];
@@ -710,14 +628,10 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
         children: [
           // Camera Preview
           if (_isCameraInitialized && _cameraController != null)
-            Positioned.fill(
-              child: CameraPreview(_cameraController!),
-            )
+            Positioned.fill(child: CameraPreview(_cameraController!))
           else
             const Center(
-              child: CircularProgressIndicator(
-                color: Color(0xFF2DD4BF),
-              ),
+              child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
             ),
 
           // Top Bar
@@ -736,20 +650,14 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.7),
-                    Colors.transparent,
-                  ],
+                  colors: [Colors.black.withOpacity(0.7), Colors.transparent],
                 ),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back,
-                      color: Colors.white,
-                    ),
+                    icon: const Icon(Icons.arrow_back, color: Colors.white),
                     onPressed: () => Get.back(),
                   ),
                   Text(
@@ -779,10 +687,7 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
                   shape: BoxShape.circle,
                   color: Color(0xFF2DD4BF),
                 ),
-                child: const Icon(
-                  Icons.flip_camera_ios,
-                  color: Colors.white,
-                ),
+                child: const Icon(Icons.flip_camera_ios, color: Colors.white),
               ),
             ),
           ),
@@ -803,59 +708,55 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
                 gradient: LinearGradient(
                   begin: Alignment.bottomCenter,
                   end: Alignment.topCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.8),
-                    Colors.transparent,
-                  ],
+                  colors: [Colors.black.withOpacity(0.8), Colors.transparent],
                 ),
               ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Photo/Video Toggle
-                  Obx(() => Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          _buildModeButton(
-                              'Photo', captureMode.value == 'Photo'),
-                          SizedBox(width: 12.w),
-                          _buildModeButton(
-                              'Video', captureMode.value == 'Video'),
-                        ],
-                      )),
+                  Obx(
+                    () => Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        _buildModeButton('Photo', captureMode.value == 'Photo'),
+                        SizedBox(width: 12.w),
+                        _buildModeButton('Video', captureMode.value == 'Video'),
+                      ],
+                    ),
+                  ),
 
                   SizedBox(height: 32.h),
 
                   // Capture Button
-                  Obx(() => GestureDetector(
-                        onTap: () {
-                          if (captureMode.value == 'Photo') {
-                            _capturePhoto();
-                          } else {
-                            _toggleVideoRecording();
-                          }
-                        },
+                  Obx(
+                    () => GestureDetector(
+                      onTap: () {
+                        if (captureMode.value == 'Photo') {
+                          _capturePhoto();
+                        } else {
+                          _toggleVideoRecording();
+                        }
+                      },
+                      child: Container(
+                        width: 70.w,
+                        height: 70.w,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 4),
+                        ),
                         child: Container(
-                          width: 70.w,
-                          height: 70.w,
+                          margin: EdgeInsets.all(5.w),
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
-                            border: Border.all(
-                              color: Colors.white,
-                              width: 4,
-                            ),
-                          ),
-                          child: Container(
-                            margin: EdgeInsets.all(5.w),
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: isRecording.value
-                                  ? Colors.red
-                                  : const Color(0xFF2DD4BF),
-                            ),
+                            color: isRecording.value
+                                ? Colors.red
+                                : const Color(0xFF2DD4BF),
                           ),
                         ),
-                      )),
+                      ),
+                    ),
+                  ),
 
                   SizedBox(height: 16.h),
 
@@ -915,10 +816,7 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
 class CapturedPhotoPreviewScreen extends StatelessWidget {
   final String imagePath;
 
-  const CapturedPhotoPreviewScreen({
-    super.key,
-    required this.imagePath,
-  });
+  const CapturedPhotoPreviewScreen({super.key, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -967,10 +865,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(20.r),
-                    child: Image.file(
-                      File(imagePath),
-                      fit: BoxFit.contain,
-                    ),
+                    child: Image.file(File(imagePath), fit: BoxFit.contain),
                   ),
                 ),
               ),
@@ -1102,10 +997,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
 class CapturedVideoPreviewScreen extends StatelessWidget {
   final String videoPath;
 
-  const CapturedVideoPreviewScreen({
-    super.key,
-    required this.videoPath,
-  });
+  const CapturedVideoPreviewScreen({super.key, required this.videoPath});
 
   @override
   Widget build(BuildContext context) {

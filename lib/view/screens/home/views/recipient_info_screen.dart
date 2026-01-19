@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
+
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/recipient_controller.dart';
+import 'package:niche_line_messaging/view/components/shimmer/shimmer_loading.dart';
+import 'package:niche_line_messaging/service/api_url.dart';
 
 // ==================== Chat Info Screen ====================
 class ChatInfoScreen extends StatelessWidget {
@@ -62,10 +64,7 @@ class ChatInfoScreen extends StatelessWidget {
       width: double.infinity,
       decoration: const BoxDecoration(
         gradient: LinearGradient(
-          colors: [
-            Color(0xFF000000),
-            Color.fromARGB(255, 31, 41, 55),
-          ],
+          colors: [Color(0xFF000000), Color.fromARGB(255, 31, 41, 55)],
           tileMode: TileMode.mirror,
           begin: Alignment.centerLeft,
           end: Alignment.centerRight,
@@ -103,8 +102,7 @@ class ChatInfoScreen extends StatelessWidget {
               subtitle: 'Your messages are end-to-end encrypted',
               onTap: controller.viewEncryptionInfo,
               iconColor: const Color(0xFF2DD4BF),
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(12.r)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(12.r)),
             ),
             //========================DIVIDER===============================
             Container(
@@ -117,37 +115,164 @@ class ChatInfoScreen extends StatelessWidget {
               title: 'Export Chat (Encrypted)',
               subtitle: 'Save a secure backup of this conversation',
               onTap: controller.exportChat,
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(12.r)),
+              borderRadius: BorderRadius.vertical(
+                bottom: Radius.circular(12.r),
+              ),
             ),
-            SizedBox(height: 20.h),
-            _buildNavigationOption(
-              icon: Icons.delete_outline,
-              title: 'Delete Chat',
-              subtitle: 'Remove all messages from this chat on your device',
-              onTap: controller.deleteChat,
-              iconColor: Colors.red,
-              titleColor: Colors.red,
-              borderRadius:
-                  BorderRadius.vertical(top: Radius.circular(12.r)),
-            ),
-            //========================DIVIDER===============================
-            Container(
-              height: 0.3.h,
-              width: 350.w,
-              color: const Color.fromARGB(209, 255, 255, 255),
-            ),
+            if (controller.chatType != 'groupchat') ...[
+              SizedBox(height: 20.h),
+              _buildNavigationOption(
+                icon: Icons.delete_outline,
+                title: 'Delete Chat',
+                subtitle: 'Remove all messages from this chat on your device',
+                onTap: controller.deleteChat,
+                iconColor: Colors.red,
+                titleColor: Colors.red,
+                borderRadius: BorderRadius.all(Radius.circular(12.r)),
+              ),
+            ],
 
-            _buildNavigationOption(
-              icon: Icons.block_outlined,
-              title: 'Block or Report User',
-              subtitle: 'Prevent future messages and optionally report abuse',
-              onTap: controller.blockOrReportUser,
-              iconColor: Colors.red,
-              titleColor: Colors.red,
-              borderRadius:
-                  BorderRadius.vertical(bottom: Radius.circular(12.r)),
-            ),
+            // Members Section for Group Chat
+            if (chatInfo.members != null && chatInfo.members!.isNotEmpty) ...[
+              SizedBox(height: 24.h),
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    CustomText(
+                      text: 'Group Members',
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                    GestureDetector(
+                      onTap: controller.addPeople,
+                      child: Row(
+                        children: [
+                          Icon(
+                            Icons.add,
+                            color: const Color(0xFF2DD4BF),
+                            size: 18.sp,
+                          ),
+                          SizedBox(width: 4.w),
+                          CustomText(
+                            text: 'Add People',
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF2DD4BF),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 12.h),
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 14, 21, 39),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Column(
+                  children: [
+                    ListView.separated(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      padding: EdgeInsets.zero,
+                      // Show max 5 members
+                      itemCount: (chatInfo.members!.length > 5)
+                          ? 5
+                          : chatInfo.members!.length,
+                      separatorBuilder: (context, index) => Divider(
+                        height: 1,
+                        color: Colors.white.withOpacity(0.05),
+                        indent: 60.w,
+                      ),
+                      itemBuilder: (context, index) {
+                        final member = chatInfo.members![index];
+                        String name = member['name'] ?? 'Unknown';
+                        String photo = member['profileImage'] ?? '';
+                        bool isAdmin = member['role'] == 'admin';
+
+                        return ListTile(
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 8.h,
+                          ),
+                          leading: ClipOval(
+                            child: Container(
+                              width: 40.r,
+                              height: 40.r,
+                              color: Colors.grey[700],
+                              child: photo.isNotEmpty
+                                  ? Image.network(
+                                      ApiUrl.getImageUrl(photo),
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) =>
+                                              Center(
+                                                child: Text(
+                                                  name.isNotEmpty
+                                                      ? name[0].toUpperCase()
+                                                      : '?',
+                                                  style: TextStyle(
+                                                    color: Colors.white,
+                                                    fontSize: 18.sp,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                    )
+                                  : Center(
+                                      child: Text(
+                                        name.isNotEmpty
+                                            ? name[0].toUpperCase()
+                                            : '?',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 18.sp,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                            ),
+                          ),
+                          title: CustomText(
+                            text: name,
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                            textAlign: TextAlign.left,
+                          ),
+                          subtitle: isAdmin
+                              ? CustomText(
+                                  text: 'Admin',
+                                  fontSize: 11.sp,
+                                  color: const Color(0xFF2DD4BF),
+                                  textAlign: TextAlign.left,
+                                )
+                              : null,
+                        );
+                      },
+                    ),
+                    if (chatInfo.members!.length > 5) ...[
+                      Divider(color: Colors.white.withOpacity(0.05), height: 1),
+                      TextButton(
+                        onPressed: controller.seeAllMembers,
+                        child: CustomText(
+                          text: 'See All Members',
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF2DD4BF),
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
             SizedBox(height: 32.h),
             _buildFooterNote(),
             SizedBox(height: 40.h),
@@ -159,9 +284,7 @@ class ChatInfoScreen extends StatelessWidget {
 
   // ==================== Loading State ====================
   Widget _buildLoadingState() {
-    return Center(
-      child: CircularProgressIndicator(color: const Color(0xFF2DD4BF)),
-    );
+    return const ProfileShimmer();
   }
 
   // ==================== Error State ====================
@@ -195,8 +318,7 @@ class ChatInfoScreen extends StatelessWidget {
   }
 
   // ==================== Profile Section ====================
-  Widget _buildProfileSection(
-      dynamic chatInfo, ChatInfoController controller) {
+  Widget _buildProfileSection(dynamic chatInfo, ChatInfoController controller) {
     return Container(
       width: 370.w,
       padding: EdgeInsets.symmetric(vertical: 30.h),
@@ -218,7 +340,9 @@ class ChatInfoScreen extends StatelessWidget {
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 32.w),
             child: CustomText(
-              text: chatInfo.bio ?? 'No bio available',
+              text: (controller.chatType == 'groupchat')
+                  ? "${chatInfo.members?.length ?? 0} members"
+                  : (chatInfo.bio ?? 'No bio available'),
               fontSize: 13.sp,
               fontWeight: FontWeight.w400,
               color: Colors.white.withOpacity(0.6),
@@ -232,53 +356,43 @@ class ChatInfoScreen extends StatelessWidget {
   }
 
   // ==================== Profile Avatar with Edit ====================
-  Widget _buildProfileAvatar(
-      dynamic chatInfo, ChatInfoController controller) {
+  Widget _buildProfileAvatar(dynamic chatInfo, ChatInfoController controller) {
     final hasImage =
         chatInfo.profileImage != null && chatInfo.profileImage!.isNotEmpty;
 
-    return Stack(
-      children: [
-        CircleAvatar(
-          radius: 50.r,
-          backgroundColor: Colors.grey[700],
-          backgroundImage:
-              hasImage ? NetworkImage(chatInfo.profileImage!) : null,
-          child: !hasImage
-              ? Text(
+    return ClipOval(
+      child: Container(
+        width: 100.r,
+        height: 100.r,
+        color: Colors.grey[700],
+        child: hasImage
+            ? Image.network(
+                chatInfo.profileImage!,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Center(
+                    child: Text(
+                      chatInfo.name[0].toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 32.sp,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  );
+                },
+              )
+            : Center(
+                child: Text(
                   chatInfo.name[0].toUpperCase(),
                   style: TextStyle(
                     fontSize: 32.sp,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
-                )
-              : null,
-        ),
-        Positioned(
-          right: 2,
-          bottom: 2,
-          child: GestureDetector(
-            onTap: () => _showImagePickerOptions(controller),
-            child: Container(
-              padding: EdgeInsets.all(6.w),
-              decoration: BoxDecoration(
-                color: const Color(0xFF2DD4BF),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: const Color.fromARGB(255, 14, 21, 39),
-                  width: 3,
                 ),
               ),
-              child: Icon(
-                Icons.edit,
-                size: 12.sp,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 
@@ -363,10 +477,7 @@ class ChatInfoScreen extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white.withOpacity(0.05),
           borderRadius: BorderRadius.circular(12.r),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.1),
-            width: 1,
-          ),
+          border: Border.all(color: Colors.white.withOpacity(0.1), width: 1),
         ),
         child: Row(
           children: [

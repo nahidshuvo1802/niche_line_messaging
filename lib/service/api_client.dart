@@ -408,7 +408,6 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:mime/mime.dart';
 
-
 import '../helper/shared_prefe/shared_prefe.dart';
 import '../utils/app_const/app_const.dart';
 import 'api_url.dart';
@@ -422,24 +421,23 @@ class ApiClient extends GetxService {
   static String bearerToken =
       "zI0NTAwODI4fQ.dTr7dcjgfk9ChQ2oZQ39MGZBQSntiT8YjvZTZowUXas";
 
-
-  static Future<Response> getData(String uri,
-      {Map<String, dynamic>? query, Map<String, String>? headers}) async {
+  static Future<Response> getData(
+    String uri, {
+    Map<String, dynamic>? query,
+    Map<String, String>? headers,
+  }) async {
     bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
     var mainHeaders = {
       'Content-Type': 'application/x-www-form-urlencoded',
       'Accept': 'application/json',
-      'Authorization': bearerToken
+      'Authorization': bearerToken,
     };
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
 
       http.Response response = await client
-          .get(
-            Uri.parse(ApiUrl.baseUrl + uri),
-            headers: headers ?? mainHeaders,
-          )
+          .get(Uri.parse(ApiUrl.baseUrl + uri), headers: headers ?? mainHeaders)
           .timeout(const Duration(seconds: timeoutInSeconds));
       return handleResponse(response, uri);
     } catch (e) {
@@ -451,38 +449,33 @@ class ApiClient extends GetxService {
   ///========================= Review create or update =========================
   /// patient, therapist, rating, comment
 
-static Future<Response> submitFeedback({
-  required String patientId,
-  required String therapistId,
-  required double rating,
-  required String comment,
-}) async {
-  final body = jsonEncode({
-    "patient": patientId,
-    "therapist": therapistId,
-    "rating": rating,
-    "comment": comment,
-  });
+  static Future<Response> submitFeedback({
+    required String patientId,
+    required String therapistId,
+    required double rating,
+    required String comment,
+  }) async {
+    final body = jsonEncode({
+      "patient": patientId,
+      "therapist": therapistId,
+      "rating": rating,
+      "comment": comment,
+    });
 
-  return await postData(
-    ApiUrl.feedbackCreateOrUpdate,
-    body,
-  );
-}
+    return await postData(ApiUrl.feedbackCreateOrUpdate, body);
+  }
 
-  static Future<Response> postData(String uri, dynamic body,
-      {Map<String, String>? headers, bool isContentType = true}) async {
+  static Future<Response> postData(
+    String uri,
+    dynamic body, {
+    Map<String, String>? headers,
+    bool isContentType = true,
+  }) async {
     bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
     var mainHeaders = isContentType
-        ? {
-            'Content-Type': 'application/json',
-            'Authorization': bearerToken
-          }
-        : {
-            'Accept': 'application/json',
-            'Authorization': bearerToken
-          };
+        ? {'Content-Type': 'application/json', 'Authorization': bearerToken}
+        : {'Accept': 'application/json', 'Authorization': bearerToken};
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
       debugPrint('====> API Body: $body');
@@ -490,7 +483,7 @@ static Future<Response> submitFeedback({
       http.Response response = await client
           .post(
             Uri.parse(ApiUrl.baseUrl + uri),
-            body: body,
+            body: (isContentType && body is! String) ? jsonEncode(body) : body,
             headers: headers ?? mainHeaders,
           )
           .timeout(const Duration(seconds: timeoutInSeconds));
@@ -503,55 +496,52 @@ static Future<Response> submitFeedback({
     }
   }
 
+  static Future<Response> patchData(
+    String uri,
+    dynamic body, {
+    Map<String, String>? headers,
+    bool isContentType = true,
+  }) async {
+    bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
-  static Future<Response> patchData(String uri, dynamic body,
-    {Map<String, String>? headers, bool isContentType = true}) async {
-  bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
+    var mainHeaders = isContentType
+        ? {'Content-Type': 'application/json', 'Authorization': bearerToken}
+        : {'Accept': 'application/json', 'Authorization': bearerToken};
 
-  var mainHeaders = isContentType
-      ? {
-          'Content-Type': 'application/json',
-          'Authorization': bearerToken
-        }
-      : {
-          'Accept': 'application/json',
-          'Authorization': bearerToken
-        };
+    try {
+      debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
+      debugPrint('====> API Body: $body');
 
-  try {
-    debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
-    debugPrint('====> API Body: $body');
+      // ✅ FIX: ensure body is JSON string if content-type is application/json
+      final requestBody = (isContentType && body is! String)
+          ? jsonEncode(body)
+          : body;
 
-    // ✅ FIX: ensure body is JSON string if content-type is application/json
-    final requestBody =
-        (isContentType && body is! String) ? jsonEncode(body) : body;
+      http.Response response = await client
+          .patch(
+            Uri.parse(ApiUrl.baseUrl + uri),
+            body: requestBody,
+            headers: headers ?? mainHeaders,
+          )
+          .timeout(const Duration(seconds: timeoutInSeconds));
 
-    http.Response response = await client
-        .patch(
-          Uri.parse(ApiUrl.baseUrl + uri),
-          body: requestBody,
-          headers: headers ?? mainHeaders,
-        )
-        .timeout(const Duration(seconds: timeoutInSeconds));
-
-    return handleResponse(response, uri);
-  } catch (e) {
-    debugPrint('------------${e.toString()}');
-    return const Response(statusCode: 1, statusText: somethingWentWrong);
+      return handleResponse(response, uri);
+    } catch (e) {
+      debugPrint('------------${e.toString()}');
+      return const Response(statusCode: 1, statusText: somethingWentWrong);
+    }
   }
-}
 
-
-
-
-
-  static Future<Response> putData(String uri, dynamic body,
-      {Map<String, String>? headers}) async {
+  static Future<Response> putData(
+    String uri,
+    dynamic body, {
+    Map<String, String>? headers,
+  }) async {
     bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
     var mainHeaders = {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': 'Bearer $bearerToken'
+      'Authorization': 'Bearer $bearerToken',
     };
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
@@ -570,53 +560,60 @@ static Future<Response> submitFeedback({
     }
   }
 
-
-  static Future<Response> postMultipartData(String uri, dynamic body,
-      {List<MultipartBody>? multipartBody,
-        Map<String, String>? headers}) async {
+  static Future<Response> postMultipartData(
+    String uri,
+    dynamic body, {
+    List<MultipartBody>? multipartBody,
+    Map<String, String>? headers,
+  }) async {
     try {
       bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
       var mainHeaders = {
         'Accept': 'application/json',
-        'Authorization': bearerToken
+        'Authorization': bearerToken,
       };
 
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
       debugPrint('====> API Body: $body with ${multipartBody?.length} picture');
 
-      var request =
-      http.MultipartRequest('POST', Uri.parse(ApiUrl.baseUrl + uri));
-      request.fields.addAll(body);
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(ApiUrl.baseUrl + uri),
+      );
+      if (body is Map) {
+        request.fields.addAll(
+          body.map((key, value) => MapEntry(key.toString(), value.toString())),
+        );
+      }
 
-      if (multipartBody!.isNotEmpty) {
-        // ignore: avoid_function_literals_in_foreach_calls
-        multipartBody.forEach((element) async {
+      if (multipartBody != null && multipartBody.isNotEmpty) {
+        for (var element in multipartBody) {
           debugPrint("path : ${element.file.path}");
-
           var mimeType = lookupMimeType(element.file.path);
-
           debugPrint("MimeType================$mimeType");
 
           var multipartImg = await http.MultipartFile.fromPath(
             element.key,
             element.file.path,
-            contentType: MediaType.parse(mimeType!),
+            contentType: mimeType != null ? MediaType.parse(mimeType) : null,
           );
           request.files.add(multipartImg);
-        });
+        }
       }
 
       request.headers.addAll(mainHeaders);
       http.StreamedResponse response = await request.send();
       final content = await response.stream.bytesToString();
       debugPrint(
-          '====> API Response: [${response.statusCode}}] $uri\n$content');
+        '====> API Response: [${response.statusCode}}] $uri\n$content',
+      );
 
       return Response(
-          statusCode: response.statusCode,
-          statusText: somethingWentWrong,
-          body: content);
+        statusCode: response.statusCode,
+        statusText: somethingWentWrong,
+        body: content,
+      );
     } catch (e) {
       debugPrint('------------${e.toString()}');
 
@@ -624,34 +621,41 @@ static Future<Response> submitFeedback({
     }
   }
 
-
-  static Future<Response> patchMultipartData(String uri, dynamic body, {List<MultipartBody>? multipartBody, Map<String, String>? headers}) async {
+  static Future<Response> patchMultipartData(
+    String uri,
+    dynamic body, {
+    List<MultipartBody>? multipartBody,
+    Map<String, String>? headers,
+  }) async {
     bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
     var mainHeaders = {
       'Accept': 'application/json',
-      'Authorization': bearerToken
+      'Authorization': bearerToken,
     };
 
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
       debugPrint('====> API Body: $body with ${multipartBody?.length} picture');
 
-      var request = http.MultipartRequest('PATCH', Uri.parse(ApiUrl.baseUrl + uri));
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse(ApiUrl.baseUrl + uri),
+      );
 
-      // 1. FIX: Ensure the body is a Map<String, String>
       if (body is Map) {
-        request.fields.addAll(body.map((key, value) => MapEntry(key.toString(), value.toString())));
+        request.fields.addAll(
+          body.map((key, value) => MapEntry(key.toString(), value.toString())),
+        );
       }
 
-      // 2. FIX: Use a proper for...of loop instead of forEach with async
       if (multipartBody != null && multipartBody.isNotEmpty) {
         for (var element in multipartBody) {
           debugPrint("path : ${element.file.path}");
-          
+
           var mimeType = lookupMimeType(element.file.path);
           debugPrint("MimeType================$mimeType");
-          
+
           var multipartImg = await http.MultipartFile.fromPath(
             element.key,
             element.file.path,
@@ -663,33 +667,35 @@ static Future<Response> submitFeedback({
 
       request.headers.addAll(mainHeaders);
 
-      // Send request and get response
-      http.StreamedResponse streamedResponse = await request.send().timeout(const Duration(seconds: timeoutInSeconds));
+      http.StreamedResponse streamedResponse = await request.send().timeout(
+        const Duration(seconds: timeoutInSeconds),
+      );
       http.Response response = await http.Response.fromStream(streamedResponse);
 
-      debugPrint('====> API Response: [${response.statusCode}}] $uri\n${response.body}');
+      debugPrint(
+        '====> API Response: [${response.statusCode}}] $uri\n${response.body}',
+      );
 
-      // 3. FIX: Use your handleResponse function for consistency
       return handleResponse(response, uri);
-
     } catch (e) {
       debugPrint('------------ ERROR in patchMultipartData: ${e.toString()}');
-      // On network failure or other exception, return a response that ApiChecker can handle
       return const Response(statusCode: 1, statusText: somethingWentWrong);
     }
   }
 
-
-  static Future<Response> putMultipartData(String uri, Map<String, String> body,
-      {List<MultipartBody>? multipartBody,
-      List<MultipartListBody>? multipartListBody,
-      Map<String, String>? headers}) async {
+  static Future<Response> putMultipartData(
+    String uri,
+    Map<String, String> body, {
+    List<MultipartBody>? multipartBody,
+    List<MultipartListBody>? multipartListBody,
+    Map<String, String>? headers,
+  }) async {
     try {
       bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
       var mainHeaders = {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': bearerToken
+        'Authorization': bearerToken,
       };
 
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
@@ -707,8 +713,10 @@ static Future<Response> submitFeedback({
       //   }
       // }
 
-      var request =
-          http.MultipartRequest('PUT', Uri.parse(ApiUrl.baseUrl + uri));
+      var request = http.MultipartRequest(
+        'PUT',
+        Uri.parse(ApiUrl.baseUrl + uri),
+      );
       request.fields.addAll(body);
 
       if (multipartBody!.isNotEmpty) {
@@ -718,22 +726,26 @@ static Future<Response> submitFeedback({
 
           if (element.file.path.contains(".mp4")) {
             debugPrint("media type mp4 ==== ${element.file.path}");
-            request.files.add(http.MultipartFile(
-              element.key,
-              element.file.readAsBytes().asStream(),
-              element.file.lengthSync(),
-              filename: 'video.mp4',
-              contentType: MediaType('video', 'mp4'),
-            ));
+            request.files.add(
+              http.MultipartFile(
+                element.key,
+                element.file.readAsBytes().asStream(),
+                element.file.lengthSync(),
+                filename: 'video.mp4',
+                contentType: MediaType('video', 'mp4'),
+              ),
+            );
           } else if (element.file.path.contains(".png")) {
             debugPrint("media type png ==== ${element.file.path}");
-            request.files.add(http.MultipartFile(
-              element.key,
-              element.file.readAsBytes().asStream(),
-              element.file.lengthSync(),
-              filename: 'image.png',
-              contentType: MediaType('image', 'png'),
-            ));
+            request.files.add(
+              http.MultipartFile(
+                element.key,
+                element.file.readAsBytes().asStream(),
+                element.file.lengthSync(),
+                filename: 'image.png',
+                contentType: MediaType('image', 'png'),
+              ),
+            );
           }
 
           //request.files.add(await http.MultipartFile.fromPath(element.key, element.file.path,contentType: MediaType('video', 'mp4')));
@@ -744,32 +756,40 @@ static Future<Response> submitFeedback({
       http.StreamedResponse response = await request.send();
       final content = await response.stream.bytesToString();
       debugPrint(
-          '====> API Response: [${response.statusCode}}] $uri\n$content');
+        '====> API Response: [${response.statusCode}}] $uri\n$content',
+      );
 
       return Response(
-          statusCode: response.statusCode,
-          statusText: somethingWentWrong,
-          body: content);
+        statusCode: response.statusCode,
+        statusText: somethingWentWrong,
+        body: content,
+      );
     } catch (e) {
       return const Response(statusCode: 1, statusText: somethingWentWrong);
     }
   }
 
-  static Future<Response> deleteData(String uri,
-      {Map<String, String>? headers, dynamic body}) async {
+  static Future<Response> deleteData(
+    String uri, {
+    Map<String, String>? headers,
+    dynamic body,
+  }) async {
     bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
     var mainHeaders = {
       'Content-Type': 'application/json',
-      'Authorization': bearerToken
+      'Authorization': bearerToken,
     };
     try {
       debugPrint('====> API Call: $uri\nHeader: ${headers ?? mainHeaders}');
       debugPrint('====> API Call: $uri\n Body: $body');
 
       http.Response response = await http
-          .delete(Uri.parse(ApiUrl.baseUrl + uri),
-              headers: headers ?? mainHeaders, body: body)
+          .delete(
+            Uri.parse(ApiUrl.baseUrl + uri),
+            headers: headers ?? mainHeaders,
+            body: body,
+          )
           .timeout(const Duration(seconds: timeoutInSeconds));
       return handleResponse(response, uri);
     } catch (e) {
@@ -788,9 +808,10 @@ static Future<Response> submitFeedback({
       body: body ?? response.body,
       bodyString: response.body.toString(),
       request: Request(
-          headers: response.request!.headers,
-          method: response.request!.method,
-          url: response.request!.url),
+        headers: response.request!.headers,
+        method: response.request!.method,
+        url: response.request!.url,
+      ),
       headers: response.headers,
       statusCode: response.statusCode,
       statusText: response.reasonPhrase,
@@ -801,9 +822,10 @@ static Future<Response> submitFeedback({
         response0.body is! String) {
       ErrorResponse errorResponse = ErrorResponse.fromJson(response0.body);
       response0 = Response(
-          statusCode: response0.statusCode,
-          body: response0.body,
-          statusText: errorResponse.message);
+        statusCode: response0.statusCode,
+        body: response0.body,
+        statusText: errorResponse.message,
+      );
 
       // if(_response.body.toString().startsWith('{errors: [{code:')) {
       //   ErrorResponse _errorResponse = ErrorResponse.fromJson(_response.body);
@@ -820,54 +842,54 @@ static Future<Response> submitFeedback({
     }
 
     debugPrint(
-        '====> API Response: [${response0.statusCode}] $uri\n${response0.body}');
+      '====> API Response: [${response0.statusCode}] $uri\n${response0.body}',
+    );
     // log.e("Handle Response error} ");
     return response0;
   }
 
   static Future<Response> uploadAudioFile(File audioFile) async {
-  try {
-    // Get token if required
-    bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
+    try {
+      // Get token if required
+      bearerToken = await SharePrefsHelper.getString(AppConstants.bearerToken);
 
-    var headers = {
-      'Accept': 'application/json',
-      'Authorization': bearerToken,
-    };
+      var headers = {
+        'Accept': 'application/json',
+        'Authorization': bearerToken,
+      };
 
-    var uri = Uri.parse(ApiUrl.baseUrl + ApiUrl.audioupload);
+      var uri = Uri.parse(ApiUrl.baseUrl + ApiUrl.audioupload);
 
-    var request = http.MultipartRequest('POST', uri);
+      var request = http.MultipartRequest('POST', uri);
 
-    // ✅ Attach audio file
-    var mimeType = lookupMimeType(audioFile.path) ?? 'audio/aac';
-    request.files.add(
-      await http.MultipartFile.fromPath(
-        'files', // change this key name if your API expects a different field
-        audioFile.path,
-        contentType: MediaType.parse(mimeType),
-      ),
-    );
+      // ✅ Attach audio file
+      var mimeType = lookupMimeType(audioFile.path) ?? 'audio/aac';
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'files', // change this key name if your API expects a different field
+          audioFile.path,
+          contentType: MediaType.parse(mimeType),
+        ),
+      );
 
-    request.headers.addAll(headers);
+      request.headers.addAll(headers);
 
-    debugPrint("🎵 Uploading audio to: $uri");
-    debugPrint("🎧 File: ${audioFile.path}");
+      debugPrint("🎵 Uploading audio to: $uri");
+      debugPrint("🎧 File: ${audioFile.path}");
 
-    http.StreamedResponse response = await request.send();
-    final responseBody = await response.stream.bytesToString();
+      http.StreamedResponse response = await request.send();
+      final responseBody = await response.stream.bytesToString();
 
-    debugPrint("✅ Audio upload response [${response.statusCode}]: $responseBody");
+      debugPrint(
+        "✅ Audio upload response [${response.statusCode}]: $responseBody",
+      );
 
-    return Response(
-      statusCode: response.statusCode,
-      body: responseBody,
-    );
-  } catch (e) {
-    debugPrint("❌ Audio upload failed: $e");
-    return const Response(statusCode: 1, statusText: somethingWentWrong);
+      return Response(statusCode: response.statusCode, body: responseBody);
+    } catch (e) {
+      debugPrint("❌ Audio upload failed: $e");
+      return const Response(statusCode: 1, statusText: somethingWentWrong);
+    }
   }
-}
 }
 
 class MultipartBody {
@@ -888,20 +910,14 @@ class ErrorResponse {
   final int? statusCode;
   final String? message;
 
-  ErrorResponse({
-    this.status,
-    this.statusCode,
-    this.message,
-  });
+  ErrorResponse({this.status, this.statusCode, this.message});
 
   factory ErrorResponse.fromJson(Map<String, dynamic> json) => ErrorResponse(
-        status: json["status"],
-        statusCode: json["statusCode"],
-        message: json["message"],
-      );
+    status: json["status"],
+    statusCode: json["statusCode"],
+    message: json["message"],
+  );
 }
 
 //======reshcedule booking====
 // ================== Reschedule Booking ==================
-
-

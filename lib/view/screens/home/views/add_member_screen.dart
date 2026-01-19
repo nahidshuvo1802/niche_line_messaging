@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:niche_line_messaging/view/screens/home/controller/create_group_controller.dart';
+import 'package:niche_line_messaging/view/screens/home/controller/add_member_controller.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
 
-class CreateGroupScreen extends StatelessWidget {
-  CreateGroupScreen({super.key});
+class AddMemberScreen extends StatelessWidget {
+  AddMemberScreen({super.key});
 
-  final CreateGroupController controller = Get.put(CreateGroupController());
+  final AddMemberController controller = Get.put(AddMemberController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +21,7 @@ class CreateGroupScreen extends StatelessWidget {
           icon: Icon(Icons.arrow_back, color: const Color(0xFF2DD4BF)),
         ),
         title: Text(
-          'New Group',
+          'Add People',
           style: TextStyle(
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
@@ -32,41 +32,6 @@ class CreateGroupScreen extends StatelessWidget {
       ),
       body: Column(
         children: [
-          // ================== Header: Group Info ==================
-          Container(
-            padding: EdgeInsets.all(20.w),
-            decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.02),
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(20.r),
-              ),
-            ),
-            child: Row(
-              children: [
-                // Group Name Input
-                Expanded(
-                  child: TextField(
-                    controller: controller.groupNameController,
-                    style: TextStyle(color: Colors.white, fontSize: 16.sp),
-                    decoration: InputDecoration(
-                      hintText: 'Enter group name',
-                      hintStyle: TextStyle(color: Colors.white38),
-                      border: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white24),
-                      ),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Color(0xFF2DD4BF)),
-                      ),
-                      prefixIcon: Icon(Icons.group, color: Colors.white38),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 16.h),
-
           // ================== Selected Members Section ==================
           Obx(() {
             if (controller.selectedMembers.isNotEmpty) {
@@ -270,7 +235,7 @@ class CreateGroupScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: Obx(() {
-        if (controller.isCreating.value) {
+        if (controller.isAdding.value) {
           return FloatingActionButton(
             backgroundColor: const Color(0xFF2DD4BF),
             onPressed: () {},
@@ -281,10 +246,10 @@ class CreateGroupScreen extends StatelessWidget {
         if (controller.selectedMembers.isEmpty) return SizedBox.shrink();
 
         return FloatingActionButton.extended(
-          onPressed: controller.createGroup,
+          onPressed: controller.addMembers,
           backgroundColor: const Color(0xFF2DD4BF),
           label: Text(
-            "Create Group",
+            "Add Members",
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           icon: Icon(Icons.check, color: Colors.black),

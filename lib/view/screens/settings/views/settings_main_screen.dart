@@ -1,4 +1,4 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
@@ -8,9 +8,12 @@ import 'package:niche_line_messaging/view/screens/settings/views/apperance_scree
 import 'package:niche_line_messaging/view/screens/settings/views/notification_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/privacy_security_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/secure_folder_screen.dart';
+import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
 
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  SettingsScreen({super.key});
+
+  final AuthController controller = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.to(() => const HomeScreen()),
+          onPressed: () => Get.to(() => HomeScreen()),
         ),
         title: const Text('Settings'),
         centerTitle: true,
@@ -45,7 +48,9 @@ class SettingsScreen extends StatelessWidget {
                     child: Container(
                       padding: EdgeInsets.all(12.w),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(10.r),
                       ),
                       child: Icon(
@@ -102,7 +107,7 @@ class SettingsScreen extends StatelessWidget {
                   subtitle: 'Manage your account and devices',
                   onTap: () {
                     debugPrint('Account clicked');
-                    Get.to(() => const AccountScreen());
+                    Get.to(() => AccountScreen());
                   },
                 ),
                 _buildDivider(context),
@@ -110,7 +115,8 @@ class SettingsScreen extends StatelessWidget {
                   context,
                   icon: Icons.lock_outline,
                   title: 'Privacy & Security',
-                  subtitle: 'Control who sees your info and how your data is protected',
+                  subtitle:
+                      'Control who sees your info and how your data is protected',
                   onTap: () {
                     debugPrint('Privacy & Security clicked');
                     Get.to(() => PrivacySecurityScreen());
@@ -149,6 +155,14 @@ class SettingsScreen extends StatelessWidget {
                     Get.to(() => const AboutScreen());
                   },
                 ),
+                _buildDivider(context),
+                _buildSettingOption(
+                  context,
+                  icon: Icons.logout_rounded,
+                  title: 'Logout',
+                  subtitle: 'Sign out securely from your account',
+                  onTap: () => _showLogoutDialog(context),
+                ),
               ],
             ),
             SizedBox(height: 40.h),
@@ -158,7 +172,8 @@ class SettingsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingOption(BuildContext context, {
+  Widget _buildSettingOption(
+    BuildContext context, {
     required IconData icon,
     required String title,
     required String subtitle,
@@ -216,6 +231,60 @@ class SettingsScreen extends StatelessWidget {
       color: Theme.of(context).dividerColor,
       height: 1,
       thickness: 1,
+    );
+  }
+
+  void _showLogoutDialog(BuildContext context) {
+    Get.defaultDialog(
+      title: "Logout",
+      titleStyle: TextStyle(
+        fontSize: 20.sp,
+        fontWeight: FontWeight.bold,
+        color: Theme.of(context).textTheme.titleLarge?.color,
+      ),
+      content: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 16.w),
+        child: Text(
+          "Are you sure you want to log out?",
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: Theme.of(context).textTheme.bodyMedium?.color,
+          ),
+        ),
+      ),
+      confirm: SizedBox(
+        width: 100.w,
+        child: ElevatedButton(
+          onPressed: () {
+            // Close dialog
+            //Get.back();
+            // Call logout
+            controller.logoutUser();
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.redAccent,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+          child: const Text("Logout"),
+        ),
+      ),
+      cancel: SizedBox(
+        width: 100.w,
+        child: OutlinedButton(
+          onPressed: () => Get.back(),
+          style: OutlinedButton.styleFrom(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.r),
+            ),
+          ),
+          child: const Text("Cancel"),
+        ),
+      ),
+      radius: 12.r,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     );
   }
 }
