@@ -127,6 +127,7 @@ class AddMemberController extends GetxController {
     if (selectedMembers.contains(user)) {
       selectedMembers.remove(user);
     } else {
+      selectedMembers.clear();
       selectedMembers.add(user);
     }
   }
@@ -194,14 +195,14 @@ class AddMemberController extends GetxController {
         Get.back(); // Close Screen
         Get.snackbar(
           'Success',
-          'Members added successfully!',
+          'Member added successfully!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
         );
       } else {
         Get.snackbar(
           'Error',
-          'Some members could not be added. $errorMessage',
+          'Member could not be added. $errorMessage',
           backgroundColor: Colors.red,
           colorText: Colors.white,
         );

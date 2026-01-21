@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/change_password_screen.dart';
 
+import 'package:niche_line_messaging/view/screens/settings/controller/privacy_security_controller.dart';
+
 class PrivacySecurityScreen extends StatefulWidget {
   const PrivacySecurityScreen({super.key});
 
@@ -11,6 +13,10 @@ class PrivacySecurityScreen extends StatefulWidget {
 }
 
 class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
+  final PrivacySecurityController controller = Get.put(
+    PrivacySecurityController(),
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,7 +113,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                       ),
                       SizedBox(height: 20.h),
                       GestureDetector(
-                        onTap: () => _showDeleteConfirmation(),
+                        onTap: () => controller.beginDeleteAllMessagesFlow(),
                         child: Row(
                           children: [
                             Icon(
@@ -230,40 +236,6 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showDeleteConfirmation() {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: const Color(0xFF1A1F3A),
-        title: const Text(
-          'Delete All Messages?',
-          style: TextStyle(color: Colors.white),
-        ),
-        content: Text(
-          'This will permanently delete all your messages.',
-          style: TextStyle(color: Colors.white.withOpacity(0.7)),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              Get.snackbar(
-                'Success',
-                'All messages deleted',
-                backgroundColor: Colors.green,
-                colorText: Colors.white,
-              );
-            },
-            child: const Text('Delete', style: TextStyle(color: Colors.red)),
-          ),
-        ],
       ),
     );
   }

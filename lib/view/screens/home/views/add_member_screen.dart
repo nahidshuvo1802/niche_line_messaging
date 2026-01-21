@@ -249,7 +249,7 @@ class AddMemberScreen extends StatelessWidget {
           onPressed: controller.addMembers,
           backgroundColor: const Color(0xFF2DD4BF),
           label: Text(
-            "Add Members",
+            "Add Member",
             style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
           ),
           icon: Icon(Icons.check, color: Colors.black),

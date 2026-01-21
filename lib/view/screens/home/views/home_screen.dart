@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 
@@ -13,6 +14,7 @@ import 'package:niche_line_messaging/view/screens/home/views/new_chat_screen.dar
 import 'package:niche_line_messaging/view/screens/settings/views/settings_main_screen.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
 import 'package:niche_line_messaging/view/components/shimmer/shimmer_loading.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/secure_folder_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -32,7 +34,10 @@ class HomeScreen extends StatelessWidget {
             // ================== Quick Actions & Active Users ==================
             _buildQuickActionsRow(context),
 
-            SizedBox(height: 16.h),
+            // ================== Secure Folder Banner ==================
+            _buildSecureFolderBanner(context),
+
+            SizedBox(height: 20.h),
 
             // ================== Filter Tabs ==================
             _buildFilterTabs(context),
@@ -131,10 +136,12 @@ class HomeScreen extends StatelessWidget {
                     height: 36.r,
                     color: Theme.of(context).dividerColor,
                     child: imageUrl.isNotEmpty
-                        ? Image.network(
-                            ApiUrl.getImageUrl(imageUrl),
+                        ? CachedNetworkImage(
+                            imageUrl: ApiUrl.getImageUrl(imageUrl),
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
+                            placeholder: (context, url) =>
+                                ShimmerCircle(size: 36.r),
+                            errorWidget: (context, url, error) {
                               return Icon(
                                 Icons.person,
                                 size: 24.sp,
@@ -234,6 +241,105 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  Widget _buildSecureFolderBanner(BuildContext context) {
+    return GestureDetector(
+      onTap: () => Get.to(() => const SecureFolderScreen()),
+      child: Container(
+        margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+        padding: EdgeInsets.all(20.w),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20.r),
+          gradient: const LinearGradient(
+            colors: [Color(0xFF0F2027), Color(0xFF203A43), Color(0xFF2C5364)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFF203A43).withOpacity(0.5),
+              offset: const Offset(0, 8),
+              blurRadius: 16,
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: EdgeInsets.all(12.w),
+              decoration: BoxDecoration(
+                color: const Color(0xFF2DD4BF).withOpacity(0.15),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: const Color(0xFF2DD4BF).withOpacity(0.3),
+                  width: 1,
+                ),
+              ),
+              child: Icon(
+                Icons.security_rounded,
+                color: const Color(0xFF2DD4BF),
+                size: 28.sp,
+              ),
+            ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        "Secure Folder",
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                      SizedBox(width: 6.w),
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 6.w,
+                          vertical: 2.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2DD4BF),
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          "NEW",
+                          style: TextStyle(
+                            fontSize: 8.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4.h),
+                  Text(
+                    "Now you have secure folder to store all your data",
+                    style: TextStyle(
+                      fontSize: 12.sp,
+                      color: Colors.white.withOpacity(0.7),
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_rounded,
+              color: Colors.white.withOpacity(0.5),
+              size: 20.sp,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildShimmerUserItem(BuildContext context) {
     return Padding(
       padding: EdgeInsets.only(right: 16.w),
@@ -327,10 +433,12 @@ class HomeScreen extends StatelessWidget {
                     width: 60.h,
                     color: Theme.of(context).cardColor,
                     child: imgUrl.isNotEmpty
-                        ? Image.network(
-                            ApiUrl.getImageUrl(imgUrl),
+                        ? CachedNetworkImage(
+                            imageUrl: ApiUrl.getImageUrl(imgUrl),
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
+                            placeholder: (context, url) =>
+                                ShimmerCircle(size: 60.h),
+                            errorWidget: (context, url, error) {
                               return Icon(
                                 Icons.person,
                                 size: 30.sp,
@@ -509,10 +617,12 @@ class HomeScreen extends StatelessWidget {
                                 size: 28.sp,
                               )
                             : (avatar != null && avatar.isNotEmpty)
-                            ? Image.network(
-                                ApiUrl.getImageUrl(avatar),
+                            ? CachedNetworkImage(
+                                imageUrl: ApiUrl.getImageUrl(avatar),
                                 fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
+                                placeholder: (context, url) =>
+                                    ShimmerCircle(size: 50.r),
+                                errorWidget: (context, url, error) {
                                   return Center(
                                     child: Text(
                                       name.isNotEmpty

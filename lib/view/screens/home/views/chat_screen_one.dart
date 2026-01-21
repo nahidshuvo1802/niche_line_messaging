@@ -704,78 +704,93 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Preview Section
+            // Preview Section
             Obx(() {
-              if (controller.selectedFile.value != null) {
+              if (controller.selectedFiles.isNotEmpty) {
                 return Container(
+                  height: 100.h,
                   margin: EdgeInsets.only(bottom: 12.h),
-                  padding: EdgeInsets.all(8.w),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surface,
-                    borderRadius: BorderRadius.circular(12.r),
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        width: 50.w,
-                        height: 50.w,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8.r),
-                          color: Colors.grey[200],
-                          image:
-                              (controller.selectedFileType.value ==
-                                      MessageType
-                                          .file && // Assuming simple check for now
-                                  (controller.selectedFile.value!.path
-                                          .toLowerCase()
-                                          .endsWith('.jpg') ||
-                                      controller.selectedFile.value!.path
-                                          .toLowerCase()
-                                          .endsWith('.png') ||
-                                      controller.selectedFile.value!.path
-                                          .toLowerCase()
-                                          .endsWith('.jpeg')))
-                              ? DecorationImage(
-                                  image: FileImage(
-                                    controller.selectedFile.value!,
+                  child: ListView.separated(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.selectedFiles.length,
+                    separatorBuilder: (context, index) => SizedBox(width: 8.w),
+                    itemBuilder: (context, index) {
+                      File file = controller.selectedFiles[index];
+                      bool isImage =
+                          controller.selectedFileType.value ==
+                          MessageType.image;
+
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            width: 80.w,
+                            padding: EdgeInsets.all(4.w),
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.surface,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: Theme.of(context).dividerColor,
+                              ),
+                            ),
+                            child: isImage
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8.r),
+                                    child: Image.file(
+                                      file,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    ),
+                                  )
+                                : Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.insert_drive_file,
+                                        color: Colors.grey,
+                                        size: 24.sp,
+                                      ),
+                                      SizedBox(height: 4.h),
+                                      Expanded(
+                                        child: Text(
+                                          file.path.split('/').last,
+                                          style: TextStyle(fontSize: 10.sp),
+                                          textAlign: TextAlign.center,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  fit: BoxFit.cover,
-                                )
-                              : null,
-                        ),
-                        child:
-                            (controller.selectedFileType.value !=
-                                    MessageType.file ||
-                                (!controller.selectedFile.value!.path
-                                        .toLowerCase()
-                                        .endsWith('.jpg') &&
-                                    !controller.selectedFile.value!.path
-                                        .toLowerCase()
-                                        .endsWith('.png') &&
-                                    !controller.selectedFile.value!.path
-                                        .toLowerCase()
-                                        .endsWith('.jpeg')))
-                            ? Icon(
-                                Icons.insert_drive_file,
-                                color: Colors.grey[600],
-                              )
-                            : null,
-                      ),
-                      SizedBox(width: 8.w),
-                      Flexible(
-                        child: Text(
-                          controller.selectedFile.value!.path.split('/').last,
-                          style: TextStyle(fontSize: 12.sp),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: controller.clearAttachment,
-                        icon: Icon(Icons.close, size: 20.sp, color: Colors.red),
-                      ),
-                    ],
+                          ),
+                          Positioned(
+                            top: -5,
+                            right: -5,
+                            child: GestureDetector(
+                              onTap: () {
+                                controller.selectedFiles.removeAt(index);
+                                if (controller.selectedFiles.isEmpty) {
+                                  controller.clearAttachment();
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(4.w),
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  Icons.close,
+                                  size: 12.sp,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
                   ),
                 );
               }

@@ -218,6 +218,9 @@ class ApiUrl {
   static String deleteMessage(String messageId) =>
       "/api/v1/message/delete_message/$messageId";
 
+  static const String deleteAllConversation =
+      "/api/v1/conversation/delete_all_conversation";
+
   ///========================= salon api all implementation =========================
   static String salonProfileShow({required String outletId}) =>
       "/outlet/retrive/$outletId";
@@ -331,4 +334,6 @@ class ApiUrl {
       "/api/v1/secure_folder/create_secure_folder";
   static const String findByMySecureData =
       "/api/v1/secure_media_stores/find_by_my_secure_data";
+  static const String uploadMediaFile =
+      "/api/v1/secure_media_stores/upload_media_file";
 }

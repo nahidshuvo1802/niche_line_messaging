@@ -31,7 +31,7 @@ class ChatDetailController extends GetxController {
   final RxString message = ''.obs;
 
   // Attachment & Recording State
-  final Rx<File?> selectedFile = Rx<File?>(null);
+  final RxList<File> selectedFiles = <File>[].obs;
   final Rx<MessageType?> selectedFileType = Rx<MessageType?>(null);
   final RxBool isRecording = false.obs;
   final AudioRecorder _audioRecorder = AudioRecorder();
@@ -337,7 +337,7 @@ class ChatDetailController extends GetxController {
   Future<void> sendMessage() async {
     final messageText = messageController.text.trim();
     // Allow send if text is not empty OR file is selected
-    if (messageText.isEmpty && selectedFile.value == null) return;
+    if (messageText.isEmpty && selectedFiles.isEmpty) return;
 
     // Determine Receiver ID
     String? targetReceiverId;
@@ -383,136 +383,66 @@ class ChatDetailController extends GetxController {
     }
     String convId = currentConversationId ?? "";
 
-    // Optimistic Update
-    final messageType = selectedFile.value != null
-        ? (selectedFileType.value ?? MessageType.file)
-        : MessageType.text;
+    // Handle Messages
+    if (selectedFiles.isNotEmpty) {
+      // Send multiple files as separate messages
+      // First file gets the caption (text)
+      for (int i = 0; i < selectedFiles.length; i++) {
+        File file = selectedFiles[i];
+        String caption = (i == 0) ? messageText : " ";
+        // Note: Using " " (space) because backend might require text field.
 
-    final newMessage = MessageModel(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
-      senderId: 'me',
-      content: messageText,
-      timestamp: _formatTime(DateTime.now()),
-      type: messageType,
-      isDelivered: false,
-      isRead: false,
-      fileName: selectedFile.value?.path.split('/').last,
-      attachmentUrl: selectedFile.value?.path,
-    );
+        // Optimistic Update
+        final messageType = (selectedFileType.value ?? MessageType.file);
 
-    messages.insert(0, newMessage);
-
-    // Clear Input
-    messageController.clear();
-    message.value = '';
-    File? fileToSend = selectedFile.value;
-    clearAttachment(); // Clear immediately for UI
-
-    // Send Logic
-    if (fileToSend != null) {
-      // Multipart Send (New Chat or Existing with Image)
-      try {
-        Map<String, dynamic> dataMap = {
-          "receiverId": targetReceiverId,
-          "currentSubId": currentSubscriptionId,
-          "chat": chatType,
-          "text": messageText.isEmpty
-              ? " "
-              : messageText, // Ensure text is not empty for some APIs
-        };
-
-        // Determine correct key for the file based on type
-        String fileKey =
-            'imageUrl'; // Default for images and generic files as per current setup
-        if (selectedFileType.value == MessageType.voice) {
-          fileKey = 'audioUrl';
-        }
-
-        List<MultipartBody> multipartList = [
-          MultipartBody(fileKey, fileToSend),
-        ];
-
-        if (convId.isNotEmpty) {
-          dataMap["conversationId"] = convId;
-        }
-
-        // The body has 'data' key which is JSON string
-        // The body has 'data' key which is JSON string
-        Map<String, String> body = {'data': jsonEncode(dataMap)};
-
-        // Note: We DO NOT add conversationId/receiverId/chat to top-level body
-        // because the user provided Postman example shows ONLY 'data' (json string) and 'imageUrl'.
-        // Adding them might confuse the ID creation logic on backend.
-
-        debugPrint('📤 Sending Multipart Message...');
-        debugPrint('   Data Payload: $body');
-
-        Response response = await ApiClient.postMultipartData(
-          ApiUrl.sendMessage,
-          body,
-          multipartBody: multipartList,
+        final newMessage = MessageModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString() + "_$i",
+          senderId: 'me',
+          content: caption.trim(),
+          timestamp: _formatTime(DateTime.now()),
+          type: messageType,
+          isDelivered: false,
+          isRead: false,
+          fileName: file.path.split('/').last,
+          attachmentUrl: file.path,
         );
 
-        if (response.statusCode == 200 || response.statusCode == 201) {
-          debugPrint('✅ Multipart Message Sent Successfully');
-          try {
-            var resData = response.body;
-            debugPrint('📥 Response Data: $resData');
+        messages.insert(0, newMessage);
 
-            if (resData is String) {
-              resData = jsonDecode(resData);
-            }
-
-            // Robust Extraction of conversationId from Response
-            String? newId;
-            if (resData is Map) {
-              // Path 1: data -> data -> conversationId (Matches user's JSON)
-              if (resData['data'] is Map) {
-                if (resData['data']['data'] is Map) {
-                  newId = resData['data']['data']['conversationId'];
-                }
-                // Path 2: data -> conversationId
-                if (newId == null &&
-                    resData['data']['conversationId'] != null) {
-                  newId = resData['data']['conversationId'];
-                }
-              }
-              // Path 3: data (root) -> conversationId
-              if (newId == null && resData['conversationId'] != null) {
-                newId = resData['conversationId'];
-              }
-            }
-
-            if (newId != null && newId.isNotEmpty) {
-              // Update current conversation ID if it was null or empty
-              // This ensures subsequent messages use this ID
-              if (currentConversationId == null ||
-                  currentConversationId!.isEmpty) {
-                currentConversationId = newId;
-
-                debugPrint(
-                  '✅ New Conversation Created! ID updated: $currentConversationId',
-                );
-              }
-            } else {
-              debugPrint('⚠️ conversationId not found in response');
-            }
-          } catch (e) {
-            debugPrint(
-              '⚠️ Could not extract conversation ID from API response: $e',
-            );
-          }
-        } else {
-          debugPrint(
-            '❌ Failed to send multipart message: ${response.statusCode} - ${response.statusText}',
-          );
-        }
-      } catch (e) {
-        debugPrint('❌ Error sending multipart message: $e');
+        // Send API
+        _sendFileMessage(
+          targetReceiverId: targetReceiverId!,
+          convId: convId,
+          text: caption,
+          file: file,
+          fileKey: (selectedFileType.value == MessageType.voice)
+              ? 'audioUrl'
+              : 'imageUrl',
+        );
       }
+
+      // Clear Input after queuing all
+      messageController.clear();
+      message.value = '';
+      clearAttachment();
     } else {
-      // Socket Send (Text Only)
-      // Logic remains same as established - first text message via socket should also trigger ID creation events if backend supports it
+      // Text Only
+      // Optimistic
+      final newMessage = MessageModel(
+        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        senderId: 'me',
+        content: messageText,
+        timestamp: _formatTime(DateTime.now()),
+        type: MessageType.text,
+        isDelivered: false,
+        isRead: false,
+      );
+
+      messages.insert(0, newMessage);
+      messageController.clear();
+      message.value = '';
+
+      // Socket Send
       SocketApi.sendMessage(
         text: messageText,
         receiverId: targetReceiverId!,
@@ -523,78 +453,188 @@ class ChatDetailController extends GetxController {
     }
   }
 
+  Future<void> _sendFileMessage({
+    required String targetReceiverId,
+    required String convId,
+    required String text,
+    required File file,
+    required String fileKey,
+  }) async {
+    try {
+      Map<String, dynamic> dataMap = {
+        "receiverId": targetReceiverId,
+        "currentSubId": currentSubscriptionId,
+        "chat": chatType,
+        "text": text.isEmpty ? " " : text,
+      };
+
+      if (convId.isNotEmpty) {
+        dataMap["conversationId"] = convId;
+      }
+
+      List<MultipartBody> multipartList = [MultipartBody(fileKey, file)];
+
+      Map<String, String> body = {'data': jsonEncode(dataMap)};
+
+      debugPrint('📤 Sending File Message...');
+      Response response = await ApiClient.postMultipartData(
+        ApiUrl.sendMessage,
+        body,
+        multipartBody: multipartList,
+      );
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        debugPrint('✅ File Message Sent Successfully');
+        // Start conversation if needed
+        _checkAndUpdateConversationId(response.body);
+      } else {
+        debugPrint('❌ Failed to send file message: ${response.statusCode}');
+      }
+    } catch (e) {
+      debugPrint('❌ Error sending file message: $e');
+    }
+  }
+
+  void _checkAndUpdateConversationId(dynamic resData) {
+    if (resData is String) resData = jsonDecode(resData);
+    String? newId;
+    if (resData is Map) {
+      if (resData['data'] is Map) {
+        if (resData['data']['data'] is Map)
+          newId = resData['data']['data']['conversationId'];
+        if (newId == null) newId = resData['data']['conversationId'];
+      }
+      if (newId == null) newId = resData['conversationId'];
+    }
+
+    if (newId != null && newId.isNotEmpty) {
+      if (currentConversationId == null || currentConversationId!.isEmpty) {
+        currentConversationId = newId;
+        debugPrint(
+          '✅ New Conversation Created! ID updated: $currentConversationId',
+        );
+      }
+    }
+  }
+
   // ==================== Attachment Logic ====================
 
   void showAttachmentOptions() {
     Get.bottomSheet(
       Container(
-        padding: EdgeInsets.all(24.w),
+        padding: EdgeInsets.all(20.w),
         decoration: BoxDecoration(
-          color: AppColors.primary,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+          color: Get.isDarkMode ? const Color(0xFF1E293B) : Colors.white,
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(20.r),
+            topRight: Radius.circular(20.r),
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildAttachmentOption(Icons.camera_alt, 'Camera', () {
-              Get.back();
-              _pickImage(ImageSource.camera);
-            }),
-            _buildAttachmentOption(Icons.image, 'Gallery', () {
-              Get.back();
-              _pickImage(ImageSource.gallery);
-            }),
-            _buildAttachmentOption(Icons.videocam, 'Video', () {
-              Get.back();
-              _pickVideo();
-            }),
-            _buildAttachmentOption(Icons.insert_drive_file, 'Document', () {
-              Get.back();
-              _pickDocument();
-            }),
+            Container(
+              width: 40.w,
+              height: 4.h,
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(2.r),
+              ),
+            ),
+            SizedBox(height: 20.h),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildAttachmentOption(
+                  icon: Icons.image,
+                  color: Colors.purple,
+                  label: "Gallery",
+                  onTap: () {
+                    Get.back();
+                    _pickImage(ImageSource.gallery);
+                  },
+                ),
+                _buildAttachmentOption(
+                  icon: Icons.camera_alt,
+                  color: Colors.blue,
+                  label: "Camera",
+                  onTap: () {
+                    Get.back();
+                    _pickImage(ImageSource.camera);
+                  },
+                ),
+                _buildAttachmentOption(
+                  icon: Icons.videocam,
+                  color: Colors.red,
+                  label: "Video",
+                  onTap: () {
+                    Get.back();
+                    _pickVideo();
+                  },
+                ),
+                _buildAttachmentOption(
+                  icon: Icons.insert_drive_file,
+                  color: Colors.orange,
+                  label: "File",
+                  onTap: () {
+                    Get.back();
+                    _pickDocument();
+                  },
+                ),
+              ],
+            ),
+            SizedBox(height: 20.h),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAttachmentOption(
-    IconData icon,
-    String label,
-    VoidCallback onTap,
-  ) {
-    return InkWell(
+  Widget _buildAttachmentOption({
+    required IconData icon,
+    required Color color,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
       onTap: onTap,
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 16.h),
-        child: Row(
-          children: [
-            Icon(icon, color: const Color(0xFF2DD4BF), size: 24.sp),
-            SizedBox(width: 16.w),
-            CustomText(
-              text: label,
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-              color: Colors.white,
+      child: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(12.w),
+            decoration: BoxDecoration(
+              color: color.withOpacity(0.1),
+              shape: BoxShape.circle,
             ),
-          ],
-        ),
+            child: Icon(icon, color: color, size: 28.sp),
+          ),
+          SizedBox(height: 8.h),
+          CustomText(text: label, fontSize: 12, fontWeight: FontWeight.w500),
+        ],
       ),
     );
   }
 
   Future<void> _pickImage(ImageSource source) async {
-    final XFile? image = await _picker.pickImage(source: source);
-    if (image != null) {
-      selectedFile.value = File(image.path);
-      selectedFileType.value = MessageType.image;
+    if (source == ImageSource.gallery) {
+      final List<XFile> images = await _picker.pickMultiImage();
+      if (images.isNotEmpty) {
+        selectedFiles.assignAll(images.map((e) => File(e.path)));
+        selectedFileType.value = MessageType.image;
+      }
+    } else {
+      final XFile? image = await _picker.pickImage(source: source);
+      if (image != null) {
+        selectedFiles.assignAll([File(image.path)]);
+        selectedFileType.value = MessageType.image;
+      }
     }
   }
 
   Future<void> _pickVideo() async {
     final XFile? video = await _picker.pickVideo(source: ImageSource.gallery);
     if (video != null) {
-      selectedFile.value = File(video.path);
+      selectedFiles.assignAll([File(video.path)]);
       selectedFileType.value = MessageType.file;
     }
   }
@@ -606,13 +646,13 @@ class ChatDetailController extends GetxController {
     );
 
     if (result != null) {
-      selectedFile.value = File(result.files.single.path!);
+      selectedFiles.assignAll([File(result.files.single.path!)]);
       selectedFileType.value = MessageType.file;
     }
   }
 
   void clearAttachment() {
-    selectedFile.value = null;
+    selectedFiles.clear();
     selectedFileType.value = null;
   }
 
@@ -653,37 +693,9 @@ class ChatDetailController extends GetxController {
 
       if (path != null) {
         debugPrint('mic Recording stopped, file saved at: $path');
-        selectedFile.value = File(path);
-        // Check if it's considered a voice message
+        selectedFiles.assignAll([File(path)]);
         selectedFileType.value = MessageType.voice;
 
-        // Optionally auto-send or show preview.
-        // Auto-send as per user request ("cchobi jemne jay omnei jabe" - usually means instant for voice notes)
-        // However, if they want it EXACTLY like images (preview first), I should assume manual send.
-        // BUT, standard voice note UX is "release to send" or "stop and send".
-        // The UI shows a send button when hasFile is true.
-        // User said "audio recording *o* pathabo... cchobi jemne jay omnei jabe"
-        // It implies the mechanism of *sending data* should be same (multipart), not necessarily the UX flow.
-        // But to be safe and responsive, let's stick to manual send for now as the UI supports it.
-        // If I auto-send, the UI might flicker or user might not have chance to review.
-        // Let's NOT auto-send, but standard UX usually does.
-        // I will stick to what the code does: set selectedFile.
-        // Wait, the user said "omnei jabe" - implies consistent behavior.
-        // Images have a preview step. So audio should too.
-        // Existing code sets selectedFile, showing preview (if UI supports audio preview).
-        // Let's verify UI audio preview support.
-
-        // Actually, looking at UI _buildMessageInput:
-        /*
-          child: (controller.selectedFileType.value != MessageType.file || ... ) 
-                  ? Icon(Icons.insert_drive_file...)
-        */
-        // It shows a generic file icon if not image.
-        // So for audio, it will show generic file icon.
-        // This is "like images" in terms of "Preview -> Send".
-        // So I will NOT add auto-send here. The user just wanted the *functionality* to work.
-        // My previous edit fixed the upload Key. That should be enough.
-        // I will just add a debug print here.
         debugPrint('🎤 Audio ready to send. Type: ${selectedFileType.value}');
       }
     } catch (e) {
