@@ -88,6 +88,8 @@ dependencies:
   package_info_plus: ^9.0.0
   flutter_staggered_animations: ^1.1.1
   pdf: ^3.11.3
+  purchases_flutter: ^9.10.7
+  purchases_ui_flutter: ^9.10.7
   
 
 dependency_overrides:

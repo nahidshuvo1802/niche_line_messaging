@@ -4,9 +4,10 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
-import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_pricing.dart';
 
 import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
+
+import 'package:niche_line_messaging/view/screens/subscription/controller/revenue_cat_controller.dart';
 
 class SubscriptionScreenOne extends StatelessWidget {
   const SubscriptionScreenOne({super.key});
@@ -135,14 +136,9 @@ class SubscriptionScreenOne extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    Get.to(() => SubscriptionUpgradeScreen());
-                    Get.snackbar(
-                      'Upgrade',
-                      'Opening upgrade options...',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: const Color(0xFF2DD4BF),
-                      colorText: Colors.white,
-                    );
+                    final revenueCatController =
+                        Get.find<RevenueCatController>();
+                    revenueCatController.showPaywall();
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF2DD4BF),

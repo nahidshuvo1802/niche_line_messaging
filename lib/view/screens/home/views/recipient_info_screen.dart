@@ -119,18 +119,6 @@ class ChatInfoScreen extends StatelessWidget {
                 bottom: Radius.circular(12.r),
               ),
             ),
-            if (controller.chatType != 'groupchat') ...[
-              SizedBox(height: 20.h),
-              _buildNavigationOption(
-                icon: Icons.delete_outline,
-                title: 'Delete Chat',
-                subtitle: 'Remove all messages from this chat on your device',
-                onTap: controller.deleteChat,
-                iconColor: Colors.red,
-                titleColor: Colors.red,
-                borderRadius: BorderRadius.all(Radius.circular(12.r)),
-              ),
-            ],
 
             // Members Section for Group Chat
             if (chatInfo.members != null && chatInfo.members!.isNotEmpty) ...[

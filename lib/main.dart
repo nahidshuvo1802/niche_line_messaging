@@ -7,9 +7,12 @@ import 'package:niche_line_messaging/view/screens/settings/views/apperance_scree
 import 'package:permission_handler/permission_handler.dart';
 import 'core/app_routes/app_routes.dart';
 
+import 'package:niche_line_messaging/view/screens/subscription/controller/revenue_cat_controller.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   Get.put(ThemeController(), permanent: true);
+  Get.put(RevenueCatController(), permanent: true); // Initialize RevenueCat
   await Permission.microphone.request();
   await Permission.storage.request();
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
