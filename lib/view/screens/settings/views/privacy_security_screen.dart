@@ -65,22 +65,6 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 ),
                 SizedBox(height: 16.h),
 
-                // ==================== Messaging Privacy Section ====================
-                _buildSectionCard(
-                  title: 'Messaging Privacy',
-                  children: [
-                    // Blocked Contacts
-                    _buildNavigationOption(
-                      icon: Icons.block,
-                      title: 'Blocked Contacts',
-                      subtitle: 'View and manage blocked users',
-                      onTap: () {},
-                    ),
-                  ],
-                ),
-
-                SizedBox(height: 16.h),
-
                 // ==================== Danger Zone Section ====================
                 Container(
                   padding: EdgeInsets.all(20.w),

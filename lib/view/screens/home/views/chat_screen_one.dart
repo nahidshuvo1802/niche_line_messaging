@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
@@ -420,11 +421,24 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             borderRadius: BorderRadius.circular(12.r),
             child: message.attachmentUrl != null
                 ? (isLocal
-                      ? Image.file(
-                          File(message.attachmentUrl!),
-                          width: 200.w,
-                          height: 200.w,
-                          fit: BoxFit.cover,
+                      ? Stack(
+                          alignment: Alignment.center,
+                          children: [
+                            Image.file(
+                              File(message.attachmentUrl!),
+                              width: 200.w,
+                              height: 200.w,
+                              fit: BoxFit.cover,
+                            ),
+                            Container(
+                              width: 200.w,
+                              height: 200.w,
+                              color: Colors.black26,
+                              child: const CupertinoActivityIndicator(
+                                color: Colors.white,
+                              ),
+                            ),
+                          ],
                         )
                       : Image.network(
                           ApiUrl.getImageUrl(message.attachmentUrl),
