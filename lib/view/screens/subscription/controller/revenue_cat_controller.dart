@@ -25,25 +25,26 @@ class RevenueCatController extends GetxController {
   Future<void> initPlatformState() async {
     isLoading.value = true;
     try {
+      // শুধু অ্যান্ড্রয়েড প্ল্যাটফর্ম চেক করছি বা iOS এ সেফ থাকার জন্য লজিক দিচ্ছি
       if (Platform.isAndroid || Platform.isIOS) {
         await Purchases.setLogLevel(LogLevel.debug);
 
         PurchasesConfiguration configuration;
+
         if (Platform.isAndroid) {
-          configuration = PurchasesConfiguration(_apiKey);
-        } else if (Platform.isIOS) {
-          configuration = PurchasesConfiguration(_apiKey);
-        } else {
-          // Fallback or handle web/desktop if needed
-          debugPrint(
-            "RevenueCat only supports Android/iOS via official SDK usually. Skipping init.",
+          // 🔴 খুব গুরুত্বপূর্ণ: এখানে RevenueCat থেকে পাওয়া আপনার 'goog_' দিয়ে শুরু হওয়া কি-টি বসান
+          configuration = PurchasesConfiguration(
+            "goog_আপনার_অ্যান্ড্রয়েড_কী_এখানে",
           );
-          isLoading.value = false;
+        } else if (Platform.isIOS) {
+          // আপাতত iOS কনফিগার না করলেও চলবে, অথবা ফাঁকা স্ট্রিং বা null হ্যান্ডেল করতে পারেন
+          // পরে যখন অ্যাপ স্টোরে আপলোড করবেন তখন 'appl_' কি বসাবেন
+          configuration = PurchasesConfiguration("appl_placeholder_for_later");
+        } else {
           return;
         }
 
         await Purchases.configure(configuration);
-
         await _checkEntitlement();
       }
     } on PlatformException catch (e) {

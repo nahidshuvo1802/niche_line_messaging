@@ -1,4 +1,5 @@
 // ==================== Chat Detail Controller ====================
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -17,11 +18,8 @@ import 'package:niche_line_messaging/helper/shared_prefe/shared_prefe.dart';
 import 'package:niche_line_messaging/utils/app_const/app_const.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:record/record.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:just_audio/just_audio.dart'; // Audio Player
+import 'package:path_provider/path_provider.dart'; // Audio Player
 
 class ChatDetailController extends GetxController {
   final RxBool isLoading = true.obs;
@@ -34,7 +32,6 @@ class ChatDetailController extends GetxController {
   final RxList<File> selectedFiles = <File>[].obs;
   final Rx<MessageType?> selectedFileType = Rx<MessageType?>(null);
   final RxBool isRecording = false.obs;
-  final AudioRecorder _audioRecorder = AudioRecorder();
   final ImagePicker _picker = ImagePicker();
 
   String? currentRecipientId;
@@ -46,7 +43,6 @@ class ChatDetailController extends GetxController {
   String chatType = 'singlechat'; // Store chat type
 
   // Audio Player State
-  final AudioPlayer _audioPlayer = AudioPlayer();
   final RxString currentlyPlayingUrl = ''.obs;
   final RxBool isAudioPlaying = false
       .obs; // Renamed to avoid conflict with isRecording or isLoading if any
@@ -54,15 +50,6 @@ class ChatDetailController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _audioPlayer.playerStateStream.listen((state) {
-      isAudioPlaying.value = state.playing;
-      if (state.processingState == ProcessingState.completed) {
-        isAudioPlaying.value = false;
-        currentlyPlayingUrl.value = '';
-        _audioPlayer.stop();
-        _audioPlayer.seek(Duration.zero);
-      }
-    });
   }
 
   void onClose() {
@@ -656,53 +643,6 @@ class ChatDetailController extends GetxController {
     selectedFileType.value = null;
   }
 
-  // ==================== Voice Recording ====================
-
-  Future<void> startVoiceRecording() async {
-    if (await Permission.microphone.request().isGranted) {
-      if (isRecording.value) {
-        await stopVoiceRecording();
-      } else {
-        try {
-          final Directory appDir = await getApplicationDocumentsDirectory();
-          final String filePath =
-              '${appDir.path}/${DateTime.now().millisecondsSinceEpoch}.m4a';
-
-          await _audioRecorder.start(
-            const RecordConfig(encoder: AudioEncoder.aacLc),
-            path: filePath,
-          );
-
-          isRecording.value = true;
-          debugPrint('🎙️ Recording started: $filePath');
-        } catch (e) {
-          debugPrint('❌ Error starting recording: $e');
-        }
-      }
-    } else {
-      Get.snackbar('Permission Denied', 'Microphone permission is required');
-    }
-  }
-
-  Future<void> stopVoiceRecording() async {
-    if (!isRecording.value) return;
-
-    try {
-      final String? path = await _audioRecorder.stop();
-      isRecording.value = false;
-
-      if (path != null) {
-        debugPrint('mic Recording stopped, file saved at: $path');
-        selectedFiles.assignAll([File(path)]);
-        selectedFileType.value = MessageType.voice;
-
-        debugPrint('🎤 Audio ready to send. Type: ${selectedFileType.value}');
-      }
-    } catch (e) {
-      debugPrint('❌ Error stopping recording: $e');
-    }
-  }
-
   String _formatTime(DateTime time) {
     final now = DateTime.now();
     final isToday =
@@ -854,53 +794,6 @@ class ChatDetailController extends GetxController {
           'existingMemberIds': <String>[],
         },
       );
-    }
-  }
-
-  // ==================== Audio Playback ====================
-  Future<void> playAudio(String? url) async {
-    if (url == null || url.isEmpty) return;
-
-    try {
-      // Construct full URL if needed (similar to image handling)
-      String fullUrl = url;
-      bool isLocal = !url.startsWith('http');
-
-      if (!isLocal) {
-        fullUrl = ApiUrl.getImageUrl(
-          url,
-        ); // Should work for audio path too if relative
-      }
-
-      if (currentlyPlayingUrl.value == url) {
-        // Toggle Pause/Play
-        if (isAudioPlaying.value) {
-          await _audioPlayer.pause();
-        } else {
-          await _audioPlayer.play();
-        }
-      } else {
-        // New Audio
-        await _audioPlayer.stop();
-        currentlyPlayingUrl.value = url;
-
-        if (isLocal) {
-          await _audioPlayer.setFilePath(fullUrl);
-        } else {
-          await _audioPlayer.setUrl(fullUrl);
-        }
-
-        await _audioPlayer.play();
-      }
-    } catch (e) {
-      debugPrint("❌ Error playing audio: $e");
-      Get.snackbar(
-        "Error",
-        "Could not play audio",
-        snackPosition: SnackPosition.BOTTOM,
-      );
-      currentlyPlayingUrl.value = '';
-      isAudioPlaying.value = false;
     }
   }
 }

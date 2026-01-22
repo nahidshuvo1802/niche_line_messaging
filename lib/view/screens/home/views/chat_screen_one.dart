@@ -384,8 +384,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         return _buildTextMessage(context, message, isMe);
       case MessageType.file:
         return _buildFileMessage(context, message, isMe);
-      case MessageType.voice:
-        return _buildVoiceMessage(context, message, isMe);
       case MessageType.typing:
         return _buildTypingIndicator(context);
       case MessageType.image:
@@ -579,98 +577,6 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         ],
       ),
     );
-  }
-
-  Widget _buildVoiceMessage(
-    BuildContext context,
-    MessageModel message,
-    bool isMe,
-  ) {
-    // For now, using a simple Play icon to represent functionality.
-    // In a full implementation, this should be a StatefulWidget with audio player controller
-    // or use GetX to manage player state for each message.
-    // Given the request "audio player er option o thakbe", basic interaction is key.
-
-    // Check if playing (this would require tracking playing state per message)
-    // For simplicity in this iteration, we keep the UI but make it clickable to "fake" play or log it.
-    // Ideally, we'd use 'just_audio' or 'audioplayers' here.
-    // Since 'just_audio' is in pubspec, let's use a functional approach if possible,
-    // but without converting this to StatefulWidget, we can't easily manage individual player states.
-    // We will make it look interactive.
-
-    return Obx(() {
-      final isPlaying =
-          controller.isAudioPlaying.value &&
-          controller.currentlyPlayingUrl.value == message.attachmentUrl;
-
-      return Container(
-        padding: EdgeInsets.all(12.w),
-        decoration: BoxDecoration(
-          color: isMe
-              ? Theme.of(context).colorScheme.primary
-              : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            GestureDetector(
-              onTap: () => controller.playAudio(message.attachmentUrl),
-              child: Container(
-                padding: EdgeInsets.all(8.w),
-                decoration: BoxDecoration(
-                  color: isMe
-                      ? Theme.of(context).colorScheme.onPrimary.withOpacity(0.2)
-                      : Theme.of(
-                          context,
-                        ).colorScheme.onSurface.withOpacity(0.1),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  isPlaying ? Icons.pause : Icons.play_arrow,
-                  color: isMe
-                      ? Theme.of(context).colorScheme.onPrimary
-                      : Theme.of(context).colorScheme.onSurface,
-                  size: 20.sp,
-                ),
-              ),
-            ),
-            SizedBox(width: 8.w),
-            // Waveform visual placeholder
-            Row(
-              children: List.generate(
-                15,
-                (index) => Container(
-                  margin: EdgeInsets.symmetric(horizontal: 1.w),
-                  width: 3.w,
-                  height:
-                      (index % 3 + 1) * 8.h, // Dynamic height could be added
-                  decoration: BoxDecoration(
-                    color: isMe
-                        ? Theme.of(context).colorScheme.onPrimary.withOpacity(
-                            isPlaying ? 0.9 : 0.6,
-                          )
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(
-                            isPlaying ? 0.9 : 0.4,
-                          ),
-                    borderRadius: BorderRadius.circular(2.r),
-                  ),
-                ),
-              ),
-            ),
-            SizedBox(width: 8.w),
-            CustomText(
-              text: message.voiceDuration ?? 'Voice',
-              fontSize: 12,
-              fontWeight: FontWeight.w500,
-              color: isMe
-                  ? Theme.of(context).colorScheme.onPrimary
-                  : Theme.of(context).colorScheme.onSurface,
-            ),
-          ],
-        ),
-      );
-    });
   }
 
   Widget _buildTypingIndicator(BuildContext context) {
