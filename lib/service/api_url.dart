@@ -2,10 +2,10 @@ class ApiUrl {
   /// Socket URL for real-time connection - uses user ID
   static String socketUrl({required String userId}) =>
       // "http://10.10.20.13:3058?id=$userId";
-      "https://tampa-floral-motivated-now.trycloudflare.com?id=$userId";
+      "https://estimates-knight-grade-schema.trycloudflare.com?id=$userId";
 
   static const String baseUrl =
-      "https://tampa-floral-motivated-now.trycloudflare.com";
+      "https://estimates-knight-grade-schema.trycloudflare.com";
   // "https://loading-purposes-finger-plays.trycloudflare.com";
 
   /// Helper to construct full image URL from a path
