@@ -13,7 +13,11 @@ class MessageModel {
   final String? dateLabel;
   final String? fileName;
   final String? fileSize;
-  final String? voiceDuration;
+  final String? voiceDuration; // Restored
+  final dynamic originalMessage; // Restored
+  final String? senderName;
+  final String? senderAvatar;
+  final String? attachmentUrl; // New field for image/media URL or path
 
   MessageModel({
     required this.id,
@@ -28,6 +32,10 @@ class MessageModel {
     this.fileName,
     this.fileSize,
     this.voiceDuration,
+    this.originalMessage,
+    this.senderName,
+    this.senderAvatar,
+    this.attachmentUrl,
   });
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
@@ -44,6 +52,9 @@ class MessageModel {
       fileName: json['fileName'],
       fileSize: json['fileSize'],
       voiceDuration: json['voiceDuration'],
+      senderName: json['senderName'],
+      senderAvatar: json['senderAvatar'],
+      attachmentUrl: json['attachmentUrl'],
     );
   }
 }

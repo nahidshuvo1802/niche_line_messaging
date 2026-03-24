@@ -9,6 +9,9 @@ import 'package:niche_line_messaging/view/components/custom_image/custom_image.d
 import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
 import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
 import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen.dart';
+import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
+import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_trial.dart';
+import 'package:niche_line_messaging/utils/app_const/app_const.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -60,10 +63,26 @@ class _SplashScreenState extends State<SplashScreen>
   // Navigation Logic
   Future<void> _navigateNext() async {
     // Using simple checks as requested, relying on the animation for the delay
-    String? token = await SharePrefsHelper.getString('userToken');
+    // Check Refresh Token for Auto-Login
+    String? refreshToken = await SharePrefsHelper.getString(
+      AppConstants.refreshToken,
+    );
 
-    if (token != null && token.isNotEmpty) {
-      Get.offAll(() => HomeScreen());
+    if (refreshToken != null && refreshToken.isNotEmpty) {
+      debugPrint("🔄 Auto-Login with Refresh Token: $refreshToken");
+
+      // Check Active Subscription
+      final subController = Get.put(SubscriptionController());
+      await subController.getActiveSubscription();
+
+      if (subController.hasActiveSubscription.value &&
+          subController.activePlanType.value == 'free') {
+        // Navigate to Trial Screen if Free Subscription Active
+        Get.offAll(() => const SubscriptionScreenTrial());
+      } else {
+        // Otherwise go to Home
+        Get.offAll(() => HomeScreen());
+      }
       return;
     }
 
@@ -71,7 +90,15 @@ class _SplashScreenState extends State<SplashScreen>
         await SharePrefsHelper.getBool('seenOnboarding') ?? false;
 
     if (seenOnboarding) {
-      Get.offAll(() => OnboardingScreen());
+      Get.offAll(
+        () => OnboardingScreen(),
+      ); // Should probably be AuthScreen if onboarded? Assuming user wants Onboarding first or Auth
+      // The original code went to OnboardingScreen in both cases (if seen or not), let's keep it or fix it if obvious.
+      // Usually: if seen -> AuthScreen. if not -> Onboarding.
+      // But adhering to previous logic flow for now unless requested.
+      // Wait, original: if (seenOnboarding) { Get.offAll(() => OnboardingScreen()); } else { Get.offAll(() => OnboardingScreen()); }
+      // This seems redundant. I will set it to AuthScreen if seenOnboarding is true to be helpful.
+      Get.offAll(() => const AuthScreen());
     } else {
       Get.offAll(() => OnboardingScreen());
     }

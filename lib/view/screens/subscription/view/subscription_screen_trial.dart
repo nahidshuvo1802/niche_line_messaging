@@ -5,11 +5,14 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
 import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_pricing.dart';
 
+import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
+
 class SubscriptionScreenTrial extends StatelessWidget {
   const SubscriptionScreenTrial({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(SubscriptionController());
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: SafeArea(
@@ -17,7 +20,15 @@ class SubscriptionScreenTrial extends StatelessWidget {
           padding: EdgeInsets.symmetric(horizontal: 32.w),
           child: Column(
             children: [
-              SizedBox(height: 80.h),
+              SizedBox(height: 16.h),
+              Align(
+                alignment: Alignment.topRight,
+                child: IconButton(
+                  onPressed: () => Get.to(() => HomeScreen()),
+                  icon: Icon(Icons.close, color: Colors.white, size: 28.sp),
+                ),
+              ),
+              SizedBox(height: 40.h),
 
               // Shield Icon
               Container(
@@ -26,10 +37,7 @@ class SubscriptionScreenTrial extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: const Color(0xFF1A3A4A),
-                  border: Border.all(
-                    color: const Color(0xFF2DD4BF),
-                    width: 3,
-                  ),
+                  border: Border.all(color: const Color(0xFF2DD4BF), width: 3),
                   boxShadow: [
                     BoxShadow(
                       color: const Color(0xFF2DD4BF).withOpacity(0.3),
@@ -74,21 +82,23 @@ class SubscriptionScreenTrial extends StatelessWidget {
 
               SizedBox(height: 48.h),
 
-              // Days Active
-              Text(
-                '7',
-                style: TextStyle(
-                  fontSize: 56.sp,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF2DD4BF),
-                  height: 1,
+              // Days Remaining
+              Obx(
+                () => Text(
+                  '${controller.remainingDays.value}',
+                  style: TextStyle(
+                    fontSize: 56.sp,
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2DD4BF),
+                    height: 1,
+                  ),
                 ),
               ),
 
               SizedBox(height: 8.h),
 
               Text(
-                'Days Active',
+                'Days Remaining',
                 style: TextStyle(
                   fontSize: 16.sp,
                   color: Colors.white.withOpacity(0.6),
@@ -98,31 +108,27 @@ class SubscriptionScreenTrial extends StatelessWidget {
               SizedBox(height: 32.h),
 
               // Message
-              Text(
-                'You\'ve been using NichLine for 1 week! How\'s your\nsecure messaging going?',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.white.withOpacity(0.7),
-                  height: 1.5,
+              Obx(
+                () => Text(
+                  'You\'ve been using NichLine for ${controller.activeDays.value} day${controller.activeDays.value > 1 ? 's' : ''}! How\'s your\nsecure messaging going?',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.white.withOpacity(0.7),
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
 
               const Spacer(),
 
-              // Continue Button
+              // Upgrade Button
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.to(() => HomeScreen());
-                    Get.snackbar(
-                      'Welcome Back',
-                      'Continuing to NichLine...',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: const Color(0xFF2DD4BF),
-                      colorText: Colors.white,
-                    );
+                    // Navigate to Pricing
+                    Get.to(() => const SubscriptionUpgradeScreen());
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),
@@ -134,7 +140,34 @@ class SubscriptionScreenTrial extends StatelessWidget {
                     elevation: 0,
                   ),
                   child: Text(
-                    'Continue to Enjoy NichLine',
+                    'Upgrade Plan',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ),
+
+              SizedBox(height: 16.h),
+
+              // Go to Chats Button
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton(
+                  onPressed: () {
+                    Get.to(() => HomeScreen());
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: BorderSide(color: Colors.white.withOpacity(0.3)),
+                    padding: EdgeInsets.symmetric(vertical: 16.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                  ),
+                  child: Text(
+                    'Go to Chats',
                     style: TextStyle(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,
@@ -155,23 +188,35 @@ class SubscriptionScreenTrial extends StatelessWidget {
                     size: 16.sp,
                   ),
                   SizedBox(width: 8.w),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: Colors.white.withOpacity(0.5),
-                      ),
-                      children: [
-                        const TextSpan(text: 'Don\'t forget! Your trial ends in '),
-                        TextSpan(
-                          text: '53 days',
-                          style: TextStyle(
-                            color: const Color(0xFF2DD4BF),
-                            fontWeight: FontWeight.w600,
+                  Obx(
+                    () => controller.activeDays.value == 0
+                        ? Text(
+                            "You've just started using NichLine",
+                            style: TextStyle(
+                              fontSize: 13.sp,
+                              color: Colors.white.withOpacity(0.5),
+                            ),
+                          )
+                        : RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: Colors.white.withOpacity(0.5),
+                              ),
+                              children: [
+                                const TextSpan(
+                                  text: 'You have been active for ',
+                                ),
+                                TextSpan(
+                                  text: '${controller.activeDays.value} days',
+                                  style: TextStyle(
+                                    color: const Color(0xFF2DD4BF),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
                   ),
                 ],
               ),
@@ -236,12 +281,10 @@ class _NichLineTrialStatusAnimatedState
       vsync: this,
     );
 
-    _pulseAnimation = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ),
-    );
+    _pulseAnimation = Tween<double>(
+      begin: 1.0,
+      end: 1.1,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
 
     _counterAnimation = IntTween(begin: 0, end: 7).animate(
       CurvedAnimation(
@@ -427,7 +470,9 @@ class _NichLineTrialStatusAnimatedState
                         color: Colors.white.withOpacity(0.5),
                       ),
                       children: [
-                        const TextSpan(text: 'Don\'t forget! Your trial ends in '),
+                        const TextSpan(
+                          text: 'Don\'t forget! Your trial ends in ',
+                        ),
                         TextSpan(
                           text: '53 days',
                           style: TextStyle(

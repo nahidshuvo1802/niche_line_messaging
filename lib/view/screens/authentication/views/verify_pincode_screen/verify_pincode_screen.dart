@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
-import 'package:niche_line_messaging/view/components/custom_pin_code/custom_pin_code.dart';
+import 'package:niche_line_messaging/view/components/custom_text_field/custom_text_field.dart';
 import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
 import '../../../../../utils/app_strings/app_strings.dart';
 import '../../../../components/custom_button/custom_button.dart';
@@ -52,8 +52,27 @@ class TwoFactorAuthScreen extends StatelessWidget {
               ),
               SizedBox(height: 40.h),
 
-              // PIN Code Input (Connected to Controller)
-              CustomPinCode(controller: authController.otpController),
+              // PIN Code Input
+              CustomTextField(
+                textEditingController: authController.otpController,
+                hintText: 'Enter Code',
+                keyboardType: TextInputType.number,
+                textAlign: TextAlign.center,
+                fillColor: Colors.white.withOpacity(0.05),
+                fieldBorderColor: const Color(0xFF2DD4BF).withOpacity(0.5),
+                fieldBorderRadius: 12.r,
+                inputTextStyle: TextStyle(
+                  fontSize: 18.sp,
+                  fontWeight: FontWeight.bold,
+                  color: const Color(0xFF2DD4BF),
+                  letterSpacing: 10,
+                ),
+                hintStyle: TextStyle(
+                  color: const Color(0xFF2DD4BF).withOpacity(0.3),
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
 
               SizedBox(height: 30.h),
 

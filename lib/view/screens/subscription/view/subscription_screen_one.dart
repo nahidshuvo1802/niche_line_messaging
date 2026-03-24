@@ -4,14 +4,17 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
-import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_pricing.dart';
-import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_trial.dart';
+
+import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
+
+import 'package:niche_line_messaging/view/screens/subscription/controller/revenue_cat_controller.dart';
 
 class SubscriptionScreenOne extends StatelessWidget {
   const SubscriptionScreenOne({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.put(SubscriptionController());
     return Scaffold(
       backgroundColor: AppColors.primary,
       body: SafeArea(
@@ -29,9 +32,16 @@ class SubscriptionScreenOne extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                     Transform.scale(scale: 1.2,child: CustomImage(imageSrc: AppImages.splashScreenTwo,height: 250,width: 250,)),
+                      Transform.scale(
+                        scale: 1.2,
+                        child: CustomImage(
+                          imageSrc: AppImages.splashScreenTwo,
+                          height: 250,
+                          width: 250,
+                        ),
+                      ),
                       // SizedBox(width: 8.w),
-                     /*  Text(
+                      /*  Text(
                         'NichLine',
                         style: TextStyle(
                           fontSize: 28.sp,
@@ -77,7 +87,12 @@ class SubscriptionScreenOne extends StatelessWidget {
               Center(
                 child: Icon(
                   Icons.lock,
-                  color: const Color.fromARGB(29, 45, 212, 190).withOpacity(0.22),
+                  color: const Color.fromARGB(
+                    29,
+                    45,
+                    212,
+                    190,
+                  ).withOpacity(0.22),
                   size: 120.sp,
                 ),
               ),
@@ -89,14 +104,9 @@ class SubscriptionScreenOne extends StatelessWidget {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.to(() => SubscriptionScreenTrial());
-                    Get.snackbar(
-                      'Trial Started',
-                      'Your 60-day free trial has begun!',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: const Color(0xFF2DD4BF),
-                      colorText: Colors.white,
-                    );
+                    if (!controller.isPurchasing.value) {
+                      controller.purchaseSubscription();
+                    }
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),
@@ -126,14 +136,9 @@ class SubscriptionScreenOne extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    Get.to(() => SubscriptionUpgradeScreen());
-                    Get.snackbar(
-                      'Upgrade',
-                      'Opening upgrade options...',
-                      snackPosition: SnackPosition.BOTTOM,
-                      backgroundColor: const Color(0xFF2DD4BF),
-                      colorText: Colors.white,
-                    );
+                    final revenueCatController =
+                        Get.find<RevenueCatController>();
+                    revenueCatController.showPaywall();
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF2DD4BF),
@@ -204,12 +209,10 @@ class _NichLineWelcomeScreenAnimatedState
       vsync: this,
     );
 
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _controller,
-        curve: Curves.elasticOut,
-      ),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 0.5,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -251,10 +254,7 @@ class _NichLineWelcomeScreenAnimatedState
                         height: 80.w,
                         decoration: BoxDecoration(
                           gradient: const LinearGradient(
-                            colors: [
-                              Color(0xFF2DD4BF),
-                              Color(0xFF14B8A6),
-                            ],
+                            colors: [Color(0xFF2DD4BF), Color(0xFF14B8A6)],
                             begin: Alignment.topLeft,
                             end: Alignment.bottomRight,
                           ),

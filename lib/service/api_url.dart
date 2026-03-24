@@ -1,8 +1,21 @@
 class ApiUrl {
-  static String socketUrl({required String id}) =>
-      "http://3.23.1.245:5002?userId=$id";
-  static const String baseUrl =
-      "https://under-lib-offline-hundreds.trycloudflare.com";
+  /// Socket URL for real-time connection - uses user ID
+  static String socketUrl({required String userId}) =>
+      // "http://10.10.20.13:3058?id=$userId";
+      "http://13.61.60.192:5000?id=$userId";
+
+  static const String baseUrl = "http://13.61.60.192:5000";
+  // "https://loading-purposes-finger-plays.trycloudflare.com";
+
+  /// Helper to construct full image URL from a path
+  /// Handles paths that may or may not start with /
+  static String getImageUrl(String? path) {
+    if (path == null || path.isEmpty) return '';
+    if (path.startsWith('http')) return path;
+    // Remove leading slash if present to avoid double slashes
+    final cleanPath = path.startsWith('/') ? path.substring(1) : path;
+    return "$baseUrl/$cleanPath";
+  }
 
   // ... (comments)
 
@@ -10,15 +23,41 @@ class ApiUrl {
   static const String userRegister = "/api/v1/users/create_user";
   static const String therapistRegister = "/user/create";
   static const String otpVerify =
-      "/api/v1/users/verify-otp"; // Adjust if needed
+      "/api/v1/users/user_verification"; // Updated OTP URL
+  static String getMessagesByConversation(String conversationId) =>
+      "/api/v1/message/find_by_specific_conversation/$conversationId";
   static const String emailVerify = "/user/auth/verify-email";
-  static const String signIn = "/api/v1/users/login_user"; // Adjust if needed
+  static const String signIn = "/api/v1/auth/login_user"; // Adjust if needed
   static const String signUp = "/api/v1/users/create_user";
   static const String socialAuth = "/api/v1/user/google_auth";
   static const String verifyOtp = "/api/v1/user/user_verification";
+  static const String insertRecoveryKey = "/api/v1/users/insert_recovery_key";
+  static const String submitRecoveryKeyAuth = "/api/v1/auth/recoveryKey";
   static String sendAgainOtp({required String email}) =>
-      "/api/v1/user/resend_verification_otp/$email";
+      "/api/v1/users/resend_verification_otp/$email";
   static const String verifyOtpForget = "/api/v1/user/verification_forgot_user";
+  static String getAllUsersChatList({required int page, int limit = 20}) =>
+      "/api/v1/auth/find_by_all_user_chat_list?page=$page&limit=$limit";
+
+  static String getConversationList({
+    required int page,
+    int limit = 10,
+    String? searchTerm,
+  }) {
+    String base =
+        "/api/v1/conversation/get_single_conversation?page=$page&limit=$limit";
+    if (searchTerm != null && searchTerm.isNotEmpty) {
+      return "$base&searchTerm=$searchTerm";
+    }
+    return base;
+  }
+
+  static String getSingleConversationDetails(String conversationId) =>
+      "/api/v1/conversation/get_single_conversation?conversationId=$conversationId";
+
+  static const String addMembersToGroup =
+      "/api/v1/conversation/added_new_user_conversation";
+  static const String createGroup = "/api/v1/conversation/create_group";
 
   ///============================Profile====================================
 
@@ -27,8 +66,23 @@ class ApiUrl {
   static String updateUserProfile = "/api/v1/auth/update_my_profile";
   static String updateProfile = "/api/v1/auth/update_my_profile";
   static String updateProfileImage = "/api/v1/auth/update_my_profile";
+  static String getOtherUserProfile(String id) =>
+      "/api/v1/auth/find_by_specific_user_profile/$id";
+
+  ///============================Subscription====================================
+  static const String getMyActiveSubscription =
+      "/api/v1/current_subscription/find_my_active_current_subscription";
+
   static String deleteProfile({required String userId}) =>
       "/api/v1/auth/delete_account/$userId";
+
+  ///========================= Subscription =========================
+  static const String recordedSubscription =
+      "/api/v1/current_subscription/recorded_subscription";
+  static const String findMyActiveSubscription =
+      "/api/v1/current_subscription/find_my_active_current_subscription";
+  static const String allSubscription =
+      "/api/v1/subscription/find_by_all_subscription";
 
   ///====================Social Feed =========================================
   static const String getAllSocialFeeds =
@@ -159,7 +213,12 @@ class ApiUrl {
 
   //============================= Send Message =======================
 
-  static String sendMessage = '/message/send';
+  static String sendMessage = '/api/v1/message/new_message';
+  static String deleteMessage(String messageId) =>
+      "/api/v1/message/delete_message/$messageId";
+
+  static const String deleteAllConversation =
+      "/api/v1/conversation/delete_all_conversation";
 
   ///========================= salon api all implementation =========================
   static String salonProfileShow({required String outletId}) =>
@@ -224,7 +283,7 @@ class ApiUrl {
 
   //======================================Change Password===============================================
 
-  static const String changePassword = "/api/v1/user/change_password";
+  static const String changePassword = "/api/v1/users/change_password";
 
   //============================= Next Appointment ==========================
 
@@ -266,4 +325,14 @@ class ApiUrl {
 
   ///========================= Review create or update =========================
   static const String feedbackCreateOrUpdate = "/feedback/create-or-update";
+
+  ///========================= Secure Folder =========================
+  static const String isCreateAccountSecureFolder =
+      "/api/v1/secure_folder/is_create_account_secure_folder";
+  static const String createSecureFolder =
+      "/api/v1/secure_folder/create_secure_folder";
+  static const String findByMySecureData =
+      "/api/v1/secure_media_stores/find_by_my_secure_data";
+  static const String uploadMediaFile =
+      "/api/v1/secure_media_stores/upload_media_file";
 }

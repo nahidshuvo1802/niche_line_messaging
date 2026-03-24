@@ -5,6 +5,8 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/new_chat_controller.dart';
 import 'package:niche_line_messaging/view/screens/home/views/create_group_chat_screen.dart';
+import 'package:niche_line_messaging/view/screens/home/model/all_user_chat_list_model.dart';
+import 'package:niche_line_messaging/service/api_url.dart';
 
 // ==================== New Chat Screen ====================
 class NewChatScreen extends StatefulWidget {
@@ -79,10 +81,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
       child: TextField(
         controller: controller.searchController,
         onChanged: controller.searchRecipients,
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16.sp,
-        ),
+        style: TextStyle(color: Colors.white, fontSize: 16.sp),
         decoration: InputDecoration(
           hintText: 'Search recipients',
           hintStyle: TextStyle(
@@ -125,10 +124,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
-            borderSide: const BorderSide(
-              color: Color(0xFF2DD4BF),
-              width: 2,
-            ),
+            borderSide: const BorderSide(color: Color(0xFF2DD4BF), width: 2),
           ),
         ),
       ),
@@ -138,8 +134,11 @@ class _NewChatScreenState extends State<NewChatScreen> {
   // ==================== Recipients List ====================
   Widget _buildRecipientsList() {
     return ListView.separated(
+      controller: controller.scrollController,
       padding: EdgeInsets.symmetric(horizontal: 16.w),
-      itemCount: controller.filteredRecipients.length,
+      itemCount:
+          controller.filteredRecipients.length +
+          (controller.isMoreLoading.value ? 1 : 0),
       separatorBuilder: (context, index) => Divider(
         color: Colors.white.withOpacity(0.1),
         height: 1,
@@ -148,6 +147,14 @@ class _NewChatScreenState extends State<NewChatScreen> {
         endIndent: 0,
       ),
       itemBuilder: (context, index) {
+        if (index == controller.filteredRecipients.length) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(8.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
         final recipient = controller.filteredRecipients[index];
         return _buildRecipientItem(recipient);
       },
@@ -155,48 +162,33 @@ class _NewChatScreenState extends State<NewChatScreen> {
   }
 
   // ==================== Recipient Item ====================
-  Widget _buildRecipientItem(RecipientModel recipient) {
+  Widget _buildRecipientItem(AllUser user) {
     return InkWell(
-      onTap: () => controller.startChat(recipient),
+      onTap: () => controller.startChat(user),
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 12.h),
         child: Row(
           children: [
-            // Avatar with online indicator
-            Stack(
-              children: [
-                CircleAvatar(
-                  radius: 26.r,
-                  backgroundColor: Colors.grey,
-                  backgroundImage: recipient.avatar.isNotEmpty
-                      ? NetworkImage(recipient.avatar)
-                      : null,
-                  child: recipient.avatar.isEmpty
-                      ? Icon(
-                          Icons.person,
-                          color: Colors.white,
-                          size: 26.sp,
-                        )
-                      : null,
-                ),
-                if (recipient.isOnline)
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 14.w,
-                      height: 14.w,
-                      decoration: BoxDecoration(
-                        color: Colors.green,
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.primary,
-                          width: 2,
-                        ),
-                      ),
-                    ),
-                  ),
-              ],
+            // Avatar
+            ClipOval(
+              child: Container(
+                width: 52.r,
+                height: 52.r,
+                color: Colors.grey[700],
+                child: (user.photo != null && user.photo!.isNotEmpty)
+                    ? Image.network(
+                        ApiUrl.getImageUrl(user.photo),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Icon(
+                            Icons.person,
+                            size: 26.sp,
+                            color: Colors.white,
+                          );
+                        },
+                      )
+                    : Icon(Icons.person, size: 26.sp, color: Colors.white),
+              ),
             ),
 
             SizedBox(width: 12.w),
@@ -207,7 +199,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CustomText(
-                    text: recipient.name,
+                    text: user.name ?? "Unknown",
                     fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
@@ -217,7 +209,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
                   ),
                   SizedBox(height: 4.h),
                   CustomText(
-                    text: recipient.status,
+                    text: "Available", // No Status in API yet
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                     color: Colors.white.withOpacity(0.6),
@@ -236,10 +228,43 @@ class _NewChatScreenState extends State<NewChatScreen> {
 
   // ==================== Loading State ====================
   Widget _buildLoadingState() {
-    return Center(
-      child: CircularProgressIndicator(
-        color: const Color(0xFF2DD4BF),
-      ),
+    return ListView.separated(
+      padding: EdgeInsets.symmetric(horizontal: 16.w),
+      itemCount: 10,
+      separatorBuilder: (context, index) => SizedBox(height: 16.h),
+      itemBuilder: (context, index) => _buildShimmerItem(),
+    );
+  }
+
+  Widget _buildShimmerItem() {
+    return Row(
+      children: [
+        Container(
+          width: 52.r,
+          height: 52.r,
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.1),
+            shape: BoxShape.circle,
+          ),
+        ),
+        SizedBox(width: 12.w),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              height: 16.h,
+              width: 120.w,
+              color: Colors.white.withOpacity(0.1),
+            ),
+            SizedBox(height: 8.h),
+            Container(
+              height: 12.h,
+              width: 80.w,
+              color: Colors.white.withOpacity(0.1),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
@@ -282,22 +307,11 @@ class _NewChatScreenState extends State<NewChatScreen> {
     return FloatingActionButton(
       onPressed: () {
         // TODO: Navigate to create group screen
-        Get.to(()=>CreateGroupScreen());
+        Get.to(() => CreateGroupScreen());
         debugPrint('Create group tapped');
-        Get.snackbar(
-          'Create Group',
-          'Group creation feature coming soon',
-          snackPosition: SnackPosition.BOTTOM,
-          backgroundColor: const Color(0xFF2DD4BF),
-          colorText: AppColors.primary,
-        );
       },
       backgroundColor: const Color(0xFF2DD4BF),
-      child: Icon(
-        Icons.group_add,
-        color: AppColors.primary,
-        size: 28.sp,
-      ),
+      child: Icon(Icons.group_add, color: AppColors.primary, size: 28.sp),
     );
   }
 }
@@ -340,4 +354,3 @@ class RecipientModel {
     };
   }
 }
-

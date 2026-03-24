@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
+import 'package:niche_line_messaging/view/screens/settings/controller/settings_content_controller.dart';
+import 'package:niche_line_messaging/view/screens/settings/views/content_display_screen.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -135,16 +137,14 @@ class AboutScreen extends StatelessWidget {
                       // Privacy Policy
                       _buildDocumentOption(
                         icon: Icons.privacy_tip_outlined,
-                        title: 'Privacy Policy',
+                        title: 'About Us',
                         subtitle: 'Learn how we protect your data',
                         onTap: () {
-                          Get.snackbar(
-                            'Privacy Policy',
-                            'Opening privacy policy...',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: const Color(0xFF2DD4BF),
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 1),
+                          Get.to(
+                            () => const ContentDisplayScreen(
+                              title: 'About Us',
+                              contentType: ContentType.aboutUs,
+                            ),
                           );
                         },
                       ),
@@ -154,16 +154,14 @@ class AboutScreen extends StatelessWidget {
                       // Security Whitepaper
                       _buildDocumentOption(
                         icon: Icons.security_outlined,
-                        title: 'Security Whitepaper',
+                        title: 'Terms & Conditions',
                         subtitle: 'Understand NichLine\'s encryption methods',
                         onTap: () {
-                          Get.snackbar(
-                            'Security Whitepaper',
-                            'Opening security whitepaper...',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: const Color(0xFF2DD4BF),
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 1),
+                          Get.to(
+                            () => const ContentDisplayScreen(
+                              title: 'Terms & Conditions',
+                              contentType: ContentType.terms,
+                            ),
                           );
                         },
                       ),
@@ -173,23 +171,20 @@ class AboutScreen extends StatelessWidget {
                       // Terms of Service
                       _buildDocumentOption(
                         icon: Icons.description_outlined,
-                        title: 'Terms of Service',
-                        subtitle: 'Read our terms and conditions',
+                        title: 'Privacy Policy',
+                        subtitle: 'Read our privacy policy',
                         onTap: () {
-                          Get.snackbar(
-                            'Terms of Service',
-                            'Opening terms of service...',
-                            snackPosition: SnackPosition.BOTTOM,
-                            backgroundColor: const Color(0xFF2DD4BF),
-                            colorText: Colors.white,
-                            duration: const Duration(seconds: 1),
+                          Get.to(
+                            () => const ContentDisplayScreen(
+                              title: 'Privacy Policy',
+                              contentType: ContentType.privacyPolicy,
+                            ),
                           );
                         },
                       ),
                     ],
                   ),
                 ),
-
 
                 // ==================== Footer ====================
                 SizedBox(height: 20.h),

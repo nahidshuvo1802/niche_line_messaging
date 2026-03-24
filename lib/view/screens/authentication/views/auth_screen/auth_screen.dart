@@ -8,8 +8,6 @@ import 'package:niche_line_messaging/view/components/custom_from_card/custom_fro
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
 
-import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
-
 // ==================== Auth Screen - Login & SignUp Combined ====================
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -140,14 +138,11 @@ class _AuthScreenState extends State<AuthScreen> {
                     onPressed: () {
                       if (isLoginTab.value) {
                         // Login button press
-                        // authController.loginUser();
-                        Get.offAll(() => const HomeScreen());
+                        authController.loginUser();
                       } else {
                         // Create Account button press
                         // Skip 2FA/OTP screen logic as requested
                         authController.initializeRegistration();
-                        //Get.offAll(() => const HomeScreen());
-                        // Get.to(() => TwoFactorAuthScreen());
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -249,8 +244,8 @@ class _AuthScreenState extends State<AuthScreen> {
         children: [
           // Email/Phone Field
           CustomFormCard(
-            title: 'Email or Phone',
-            hintText: 'Enter email or phone number',
+            title: 'Email',
+            hintText: 'Enter email',
             controller: controller.loginEmailController,
             titleColor: Colors.black87,
             fontSize: 14.sp,
@@ -260,6 +255,7 @@ class _AuthScreenState extends State<AuthScreen> {
               size: 20.sp,
             ),
             keyboardType: TextInputType.emailAddress,
+            maxLine: 1,
           ),
 
           // Password Field

@@ -6,12 +6,13 @@ import 'package:niche_line_messaging/view/screens/settings/controller/theme_cont
 import 'package:niche_line_messaging/view/screens/settings/views/apperance_screen.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'core/app_routes/app_routes.dart';
-import 'utils/app_colors/app_colors.dart';
 
+import 'package:niche_line_messaging/view/screens/subscription/controller/revenue_cat_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-   Get.put(ThemeController(), permanent: true);
+  Get.put(ThemeController(), permanent: true);
+  Get.put(RevenueCatController(), permanent: true); // Initialize RevenueCat
   await Permission.microphone.request();
   await Permission.storage.request();
   // await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -37,8 +38,8 @@ class MyApp extends StatelessWidget {
           themeMode: themeController.themeMode.value == 'light'
               ? ThemeMode.light
               : themeController.themeMode.value == 'dark'
-                  ? ThemeMode.dark
-                  : ThemeMode.system,
+              ? ThemeMode.dark
+              : ThemeMode.system,
           debugShowCheckedModeBanner: false,
           defaultTransition: Transition.fadeIn,
           transitionDuration: const Duration(milliseconds: 200),

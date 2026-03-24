@@ -32,10 +32,13 @@ class RecoveryScreen2 extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.primary, // Dark navy background
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
-          child: Obx(
-            () => isLoading.value ? _buildLoadingState() : _buildMainContent(),
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+            child: Obx(
+              () =>
+                  isLoading.value ? _buildLoadingState() : _buildMainContent(),
+            ),
           ),
         ),
       ),
@@ -220,7 +223,7 @@ class RecoveryScreen2 extends StatelessWidget {
           ],
         ),
 
-        Spacer(flex: 1),
+        SizedBox(height: 40.h),
 
         // ==================== Continue Button ====================
         SizedBox(
@@ -242,7 +245,77 @@ class RecoveryScreen2 extends StatelessWidget {
             ),
           ),
         ),
+
+        SizedBox(height: 16.h),
+
+        // ==================== Cancel Registration Button ====================
+        TextButton(
+          onPressed: () => _showCancelDialog(),
+          child: Text(
+            'Cancel Registration',
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: Colors.white.withOpacity(0.6),
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ),
       ],
+    );
+  }
+
+  // ==================== Cancel Registration Dialog ====================
+  void _showCancelDialog() {
+    Get.dialog(
+      AlertDialog(
+        backgroundColor: AppColors.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+          side: BorderSide(color: Colors.red.withOpacity(0.5), width: 1.5),
+        ),
+        title: Text(
+          'Cancel Registration?',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18.sp,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        content: Text(
+          'Are you sure you want to cancel? All your progress will be lost.',
+          style: TextStyle(
+            color: Colors.white.withOpacity(0.8),
+            fontSize: 14.sp,
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'No, Continue',
+              style: TextStyle(
+                color: const Color(0xFF2DD4BF),
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              authController.cancelRegistration();
+            },
+            child: Text(
+              'Yes, Cancel',
+              style: TextStyle(
+                color: Colors.red,
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

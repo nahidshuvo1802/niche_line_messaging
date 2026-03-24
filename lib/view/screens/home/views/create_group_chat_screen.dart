@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/create_group_controller.dart';
-import 'package:niche_line_messaging/view/screens/home/views/new_chat_screen.dart'; // For RecipientModel
+import 'package:niche_line_messaging/service/api_url.dart';
 
 class CreateGroupScreen extends StatelessWidget {
   CreateGroupScreen({super.key});
@@ -43,8 +43,6 @@ class CreateGroupScreen extends StatelessWidget {
             ),
             child: Row(
               children: [
-                // Group Image Picker (Placeholder)
-
                 // Group Name Input
                 Expanded(
                   child: TextField(
@@ -59,6 +57,7 @@ class CreateGroupScreen extends StatelessWidget {
                       focusedBorder: UnderlineInputBorder(
                         borderSide: BorderSide(color: Color(0xFF2DD4BF)),
                       ),
+                      prefixIcon: Icon(Icons.group, color: Colors.white38),
                     ),
                   ),
                 ),
@@ -79,24 +78,47 @@ class CreateGroupScreen extends StatelessWidget {
                   itemCount: controller.selectedMembers.length,
                   itemBuilder: (context, index) {
                     final member = controller.selectedMembers[index];
+                    final name = member.name ?? "Unknown";
+                    final photo = member.photo ?? "";
+
                     return Padding(
                       padding: EdgeInsets.only(right: 12.w),
                       child: Column(
                         children: [
                           Stack(
                             children: [
-                              CircleAvatar(
-                                radius: 24.r,
-                                backgroundImage: member.avatar.isNotEmpty
-                                    ? NetworkImage(member.avatar)
-                                    : null,
-                                backgroundColor: Colors.grey[800],
-                                child: member.avatar.isEmpty
-                                    ? Text(
-                                        member.name[0],
-                                        style: TextStyle(color: Colors.white),
-                                      )
-                                    : null,
+                              ClipOval(
+                                child: Container(
+                                  width: 48.r,
+                                  height: 48.r,
+                                  color: Colors.grey[800],
+                                  child: photo.isNotEmpty
+                                      ? Image.network(
+                                          ApiUrl.getImageUrl(photo),
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                                return Center(
+                                                  child: Text(
+                                                    name.isNotEmpty
+                                                        ? name[0]
+                                                        : "?",
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                    ),
+                                                  ),
+                                                );
+                                              },
+                                        )
+                                      : Center(
+                                          child: Text(
+                                            name.isNotEmpty ? name[0] : "?",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                            ),
+                                          ),
+                                        ),
+                                ),
                               ),
                               Positioned(
                                 right: 0,
@@ -118,11 +140,13 @@ class CreateGroupScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            member.name.split(" ")[0],
+                            name.split(" ")[0],
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 11.sp,
                             ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ],
                       ),
@@ -158,45 +182,61 @@ class CreateGroupScreen extends StatelessWidget {
           // ================== Members List ==================
           Expanded(
             child: Obx(() {
-              if (controller.isLoading.value)
+              if (controller.isLoading.value) {
                 return Center(
                   child: CircularProgressIndicator(color: Color(0xFF2DD4BF)),
                 );
+              }
               return ListView.builder(
+                controller: controller.scrollController,
                 padding: EdgeInsets.symmetric(horizontal: 16.w),
-                itemCount: controller.filteredRecipients.length,
+                itemCount:
+                    controller.filteredRecipients.length +
+                    (controller.isMoreLoading.value ? 1 : 0),
                 itemBuilder: (context, index) {
+                  if (index == controller.filteredRecipients.length) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(8),
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    );
+                  }
+
                   final recipient = controller.filteredRecipients[index];
                   return Obx(() {
                     final isSelected = controller.isMemberSelected(recipient);
+                    final name = recipient.name ?? "Unknown";
+                    final photo = recipient.photo ?? "";
+
                     return ListTile(
                       onTap: () => controller.toggleMember(recipient),
                       contentPadding: EdgeInsets.zero,
-                      leading: CircleAvatar(
-                        radius: 24.r,
-                        backgroundImage: recipient.avatar.isNotEmpty
-                            ? NetworkImage(recipient.avatar)
-                            : null,
-                        backgroundColor: Colors.grey[800],
-                        child: recipient.avatar.isEmpty
-                            ? Icon(Icons.person, color: Colors.white54)
-                            : null,
+                      leading: ClipOval(
+                        child: Container(
+                          width: 48.r,
+                          height: 48.r,
+                          color: Colors.grey[800],
+                          child: photo.isNotEmpty
+                              ? Image.network(
+                                  ApiUrl.getImageUrl(photo),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Icon(
+                                      Icons.person,
+                                      color: Colors.white54,
+                                    );
+                                  },
+                                )
+                              : Icon(Icons.person, color: Colors.white54),
+                        ),
                       ),
                       title: Text(
-                        recipient.name,
+                        name,
                         style: TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                         ),
-                      ),
-                      subtitle: Text(
-                        recipient.status,
-                        style: TextStyle(
-                          color: Colors.white38,
-                          fontSize: 12.sp,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
                       ),
                       trailing: Container(
                         height: 24.w,
@@ -230,7 +270,16 @@ class CreateGroupScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: Obx(() {
+        if (controller.isCreating.value) {
+          return FloatingActionButton(
+            backgroundColor: const Color(0xFF2DD4BF),
+            onPressed: () {},
+            child: CircularProgressIndicator(color: Colors.black),
+          );
+        }
+
         if (controller.selectedMembers.isEmpty) return SizedBox.shrink();
+
         return FloatingActionButton.extended(
           onPressed: controller.createGroup,
           backgroundColor: const Color(0xFF2DD4BF),
