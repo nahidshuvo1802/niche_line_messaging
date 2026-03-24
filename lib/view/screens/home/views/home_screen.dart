@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:intl/intl.dart';
@@ -16,14 +18,42 @@ import 'package:niche_line_messaging/service/api_url.dart';
 import 'package:niche_line_messaging/view/components/shimmer/shimmer_loading.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/secure_folder_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  HomeScreen({super.key});
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
 
-  final controller = Get.put(ChatListController());
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final ChatListController controller;
+  DateTime? _lastBackPress;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = Get.put(ChatListController());
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) return;
+        final now = DateTime.now();
+        if (_lastBackPress == null ||
+            now.difference(_lastBackPress!) > const Duration(seconds: 2)) {
+          _lastBackPress = now;
+          Fluttertoast.showToast(
+            msg: 'Press back again to exit',
+            toastLength: Toast.LENGTH_SHORT,
+          );
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
@@ -89,6 +119,7 @@ class HomeScreen extends StatelessWidget {
           size: 28.sp,
         ),
       ),
+    ),
     );
   }
 

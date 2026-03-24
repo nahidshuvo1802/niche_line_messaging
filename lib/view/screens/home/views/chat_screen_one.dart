@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/chat_detail_controller.dart';
 import 'package:niche_line_messaging/view/screens/home/model/chat_details_model.dart';
@@ -66,7 +67,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   PreferredSizeWidget _buildAppBar(BuildContext context) {
     return AppBar(
       leading: IconButton(
-        onPressed: () => Get.back(),
+        onPressed: () => AppNav.back(),
         icon: Icon(Icons.arrow_back_ios, size: 20.sp),
       ),
       title: Transform.translate(
@@ -202,7 +203,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Get.back(result: false),
+                onPressed: () => AppNav.back(result: false),
                 child: const Text(
                   'Cancel',
                   style: TextStyle(color: Colors.grey),
@@ -210,7 +211,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               ),
               TextButton(
                 onPressed: () async {
-                  Get.back(result: true); // Close dialog first
+                  AppNav.back(result: true); // Close dialog first
                   await controller.deleteMessage(message.id);
                 },
                 child: const Text(

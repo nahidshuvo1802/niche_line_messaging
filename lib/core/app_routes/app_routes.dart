@@ -57,7 +57,7 @@ class AppRoutes {
     // Recovery সব স্টেপ শেষ হলে এখানে আসবে
     GetPage(name: finalRecoveryScreen, page: () => const FinalRecoveryScreen()),
 
-    GetPage(name: homeScreen, page: () => HomeScreen()),
+    GetPage(name: homeScreen, page: () => const HomeScreen()),
     GetPage(
       name: subscriptionScreen,
       page: () => const SubscriptionScreenOne(),

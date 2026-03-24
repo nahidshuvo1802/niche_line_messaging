@@ -6,6 +6,7 @@ import 'package:niche_line_messaging/view/components/custom_button/custom_button
 import 'package:niche_line_messaging/view/components/custom_text/custom_text.dart';
 import 'package:niche_line_messaging/view/components/custom_text_field/custom_text_field.dart';
 import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class RecoveryKeyInputScreen extends StatelessWidget {
   RecoveryKeyInputScreen({super.key});
@@ -21,7 +22,7 @@ class RecoveryKeyInputScreen extends StatelessWidget {
         backgroundColor: AppColors.primary,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
           icon: Icon(
             Icons.arrow_back_ios,
             color: const Color(0xFF2DD4BF),
@@ -37,11 +38,13 @@ class RecoveryKeyInputScreen extends StatelessWidget {
         centerTitle: true,
       ),
       body: SafeArea(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 24.w),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24.w).copyWith(bottom: 16.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
               SizedBox(height: 32.h),
 
               // Lock Icon
@@ -128,6 +131,7 @@ class RecoveryKeyInputScreen extends StatelessWidget {
                       ),
               ),
             ],
+            ),
           ),
         ),
       ),

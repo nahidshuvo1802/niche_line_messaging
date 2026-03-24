@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/screens/settings/controller/theme_controller.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/settings_main_screen.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Appearance Screen ====================
 class AppearanceScreen extends StatelessWidget {
@@ -18,7 +19,7 @@ class AppearanceScreen extends StatelessWidget {
         appBar: AppBar(
           leading: IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: () => Get.back()
+            onPressed: () => AppNav.back()
           ),
           title: const Text('Appearance'),
           centerTitle: true,

@@ -3,6 +3,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class EncryptedCameraScreen extends StatefulWidget {
   const EncryptedCameraScreen({super.key});
@@ -174,7 +175,7 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
                       Icons.arrow_back,
                       color: Colors.white,
                     ),
-                    onPressed: () => Get.back(),
+                    onPressed: () => AppNav.back(),
                   ),
                   Text(
                     'Encrypted Camera',
@@ -357,7 +358,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Get.back(),
+                    onPressed: () => AppNav.back(),
                   ),
                   Text(
                     'Preview',
@@ -442,7 +443,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2DD4BF),
@@ -478,7 +479,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF2DD4BF),
@@ -546,7 +547,7 @@ class CapturedVideoPreviewScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Get.back(),
+                    onPressed: () => AppNav.back(),
                   ),
                   Text(
                     'Video Preview',
@@ -640,7 +641,7 @@ class CapturedVideoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2DD4BF),
@@ -675,7 +676,7 @@ class CapturedVideoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF2DD4BF),

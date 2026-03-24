@@ -9,6 +9,7 @@ import 'package:niche_line_messaging/view/screens/authentication/controller/auth
 import '../../../../../utils/app_strings/app_strings.dart';
 import '../../../../components/custom_button/custom_button.dart';
 import '../../../../components/custom_text/custom_text.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Two-Factor Authentication OTP Screen ====================
 class TwoFactorAuthScreen extends StatelessWidget {
@@ -145,7 +146,7 @@ class TwoFactorAuthScreen extends StatelessWidget {
 
               // Back Button
               TextButton(
-                onPressed: () => Get.back(),
+                onPressed: () => AppNav.back(),
                 child: CustomText(
                   text: 'Back',
                   fontSize: 14.sp,

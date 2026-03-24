@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class NotificationsScreen extends StatelessWidget {
   NotificationsScreen({super.key});
@@ -20,7 +21,7 @@ class NotificationsScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'Notifications',

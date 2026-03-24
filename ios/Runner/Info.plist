@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
@@ -24,42 +26,40 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>This app uses Bluetooth to connect to external devices.</string>
+	<key>NSBluetoothPeripheralUsageDescription</key>
+	<string>This app uses Bluetooth to connect to external devices.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>This app needs camera access to take photos and videos for messages and secure folder.</string>
+	<key>NSFaceIDUsageDescription</key>
+	<string>This app uses FaceID to secure your private folder.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app needs microphone access to record voice messages and videos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>This app needs permission to save photos and videos to your gallery.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This app needs access to your gallery to send images/videos and save decrypted media.</string>
+	<key>UIApplicationSupportsIndirectInputEvents</key>
+	<true/>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>UIStatusBarHidden</key>
+	<true/>
+	<key>UIStatusBarStyle</key>
+	<string>UIStatusBarStyleDarkContent</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationLandscapeLeft</string>
-		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
+		<string>UIInterfaceOrientationPortrait</string>
+		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
-	<key>CADisableMinimumFrameDurationOnPhone</key>
-	<true/>
-	<key>UIApplicationSupportsIndirectInputEvents</key>
-	<true/>
-
-    <!-- PERMISSIONS DESCRIPTIONS -->
-	<key>NSCameraUsageDescription</key>
-	<string>This app needs camera access to take photos and videos for messages and secure folder.</string>
-	<key>NSMicrophoneUsageDescription</key>
-	<string>This app needs microphone access to record voice messages and videos.</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>This app needs access to your gallery to send images/videos and save decrypted media.</string>
-    <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>This app needs permission to save photos and videos to your gallery.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>This app uses FaceID to secure your private folder.</string>
-    <key>NSBluetoothAlwaysUsageDescription</key>
-    <string>This app uses Bluetooth to connect to external devices.</string>
-    <key>NSBluetoothPeripheralUsageDescription</key>
-    <string>This app uses Bluetooth to connect to external devices.</string>
 </dict>
 </plist>

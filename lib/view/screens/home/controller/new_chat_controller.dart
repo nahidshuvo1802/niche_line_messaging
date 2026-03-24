@@ -6,6 +6,7 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/view/screens/home/model/all_user_chat_list_model.dart';
 import 'package:niche_line_messaging/view/screens/home/views/chat_screen_one.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/chatlist_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class NewChatController extends GetxController {
   // ==================== Reactive Variables ====================
@@ -131,7 +132,7 @@ class NewChatController extends GetxController {
   // ==================== Start Chat ====================
   void startChat(AllUser user) {
     debugPrint('✅ Starting chat with: ${user.name}');
-    Get.back(); // Close new chat screen
+    AppNav.back(); // Close new chat screen
 
     Get.to(
       () => ChatDetailScreen(

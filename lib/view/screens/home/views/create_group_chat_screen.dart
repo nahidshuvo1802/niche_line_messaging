@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/create_group_controller.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class CreateGroupScreen extends StatelessWidget {
   CreateGroupScreen({super.key});
@@ -17,7 +18,7 @@ class CreateGroupScreen extends StatelessWidget {
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
           icon: Icon(Icons.arrow_back, color: const Color(0xFF2DD4BF)),
         ),
         title: Text(

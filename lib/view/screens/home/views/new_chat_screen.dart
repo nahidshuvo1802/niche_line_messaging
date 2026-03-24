@@ -7,6 +7,7 @@ import 'package:niche_line_messaging/view/screens/home/controller/new_chat_contr
 import 'package:niche_line_messaging/view/screens/home/views/create_group_chat_screen.dart';
 import 'package:niche_line_messaging/view/screens/home/model/all_user_chat_list_model.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== New Chat Screen ====================
 class NewChatScreen extends StatefulWidget {
@@ -57,7 +58,7 @@ class _NewChatScreenState extends State<NewChatScreen> {
       backgroundColor: AppColors.primary,
       elevation: 0,
       leading: IconButton(
-        onPressed: () => Get.back(),
+        onPressed: () => AppNav.back(),
         icon: Icon(
           Icons.arrow_back_ios,
           color: const Color(0xFF2DD4BF),

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 import 'package:niche_line_messaging/view/screens/media_library/controller/media-controller.dart' hide Colors;
 import 'package:niche_line_messaging/view/screens/media_library/model/media-model.dart';
+import 'package:niche_line_messaging/view/screens/media_library/views/chat_media_fullscreen_viewer.dart';
 
 
 
@@ -22,7 +23,7 @@ class MediaGalleryScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: Text(
           'Media Gallery',
@@ -160,8 +161,13 @@ class MediaGalleryScreen extends StatelessWidget {
         final photo = photos[index];
         return GestureDetector(
           onTap: () {
-            // TODO: Open full screen image viewer
-            debugPrint('Photo clicked: ${photo.id}');
+            Get.to(
+              () => ChatMediaFullscreenViewer(
+                kind: ChatMediaPreviewKind.photo,
+                items: List<MediaItem>.from(photos),
+                initialIndex: index,
+              ),
+            );
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.r),
@@ -217,8 +223,13 @@ class MediaGalleryScreen extends StatelessWidget {
         final video = videos[index];
         return GestureDetector(
           onTap: () {
-            // TODO: Open video player
-            debugPrint('Video clicked: ${video.id}');
+            Get.to(
+              () => ChatMediaFullscreenViewer(
+                kind: ChatMediaPreviewKind.video,
+                items: [video],
+                initialIndex: 0,
+              ),
+            );
           },
           child: ClipRRect(
             borderRadius: BorderRadius.circular(12.r),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 
@@ -20,17 +21,12 @@ class ThemeController extends GetxController {
   void setThemeMode(String mode) {
     themeMode.value = mode;
     updateTheme();
-
-    // optional feedback
-    Future.delayed(const Duration(milliseconds: 10), () {
-      Get.snackbar(
-        'Theme Updated',
-        'App theme changed to ${mode.capitalizeFirst} Mode',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: AppColors.green,
-        colorText: Colors.white,
-      );
-    });
+    update();
+    Fluttertoast.showToast(
+      msg: 'Theme: ${mode.capitalizeFirst} mode',
+      backgroundColor: AppColors.green,
+      textColor: Colors.white,
+    );
   }
 
   void updateTheme() {
@@ -46,5 +42,6 @@ class ThemeController extends GetxController {
   // ============ Font Size Update ============
   void updateFontSize(double newSize) {
     fontSize.value = newSize;
+    update();
   }
 }

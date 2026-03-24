@@ -9,6 +9,7 @@ import 'package:niche_line_messaging/view/screens/authentication/controller/auth
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/recovery_screen2.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_line_widget.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_widget.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Recovery Key Setup Screen ====================
 // User-কে recovery key setup করতে guide করে
@@ -212,7 +213,7 @@ class RecoveryKeySetupScreenOne extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => AppNav.back(),
             child: Text(
               'No, Continue',
               style: TextStyle(
@@ -224,7 +225,7 @@ class RecoveryKeySetupScreenOne extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Get.back();
+              AppNav.back();
               authController.cancelRegistration();
             },
             child: Text(

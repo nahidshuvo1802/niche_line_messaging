@@ -7,7 +7,7 @@ import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/auth_screen/auth_screen.dart';
-import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/view/screens/onboarding_screen/views/onboarding_screen.dart';
 import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
 import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_trial.dart';
@@ -81,7 +81,7 @@ class _SplashScreenState extends State<SplashScreen>
         Get.offAll(() => const SubscriptionScreenTrial());
       } else {
         // Otherwise go to Home
-        Get.offAll(() => HomeScreen());
+        Get.offAllNamed(AppRoutes.homeScreen);
       }
       return;
     }

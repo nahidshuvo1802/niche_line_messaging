@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/about_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/accounts_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/apperance_screen.dart';
@@ -9,6 +8,7 @@ import 'package:niche_line_messaging/view/screens/settings/views/notification_sc
 import 'package:niche_line_messaging/view/screens/settings/views/privacy_security_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/secure_folder_screen.dart';
 import 'package:niche_line_messaging/view/screens/authentication/controller/auth_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({super.key});
@@ -21,7 +21,7 @@ class SettingsScreen extends StatelessWidget {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Get.to(() => HomeScreen()),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text('Settings'),
         centerTitle: true,
@@ -257,7 +257,7 @@ class SettingsScreen extends StatelessWidget {
         child: ElevatedButton(
           onPressed: () {
             // Close dialog
-            //Get.back();
+            //AppNav.back();
             // Call logout
             controller.logoutUser();
           },
@@ -274,7 +274,7 @@ class SettingsScreen extends StatelessWidget {
       cancel: SizedBox(
         width: 100.w,
         child: OutlinedButton(
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
           style: OutlinedButton.styleFrom(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.r),

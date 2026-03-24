@@ -8,6 +8,7 @@ import 'package:niche_line_messaging/view/screens/settings/controller/profile_co
 import 'package:niche_line_messaging/view/screens/settings/model/profile_model.dart';
 
 import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Data? initialData; // Data from ProfileModel
@@ -64,7 +65,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                Get.back();
+                AppNav.back();
                 _pickImage(ImageSource.camera);
               },
             ),
@@ -78,7 +79,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 style: TextStyle(color: Colors.white),
               ),
               onTap: () {
-                Get.back();
+                AppNav.back();
                 _pickImage(ImageSource.gallery);
               },
             ),
@@ -97,7 +98,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'Edit Profile',

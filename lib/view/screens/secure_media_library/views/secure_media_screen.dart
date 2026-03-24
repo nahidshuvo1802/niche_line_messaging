@@ -3,10 +3,10 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
 import 'package:niche_line_messaging/view/screens/secure_media_library/controller/secure_media_data_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ============ SECURE MEDIA SCREEN ============
 class SecureMediaScreen extends StatelessWidget {
@@ -25,7 +25,7 @@ class SecureMediaScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'Secure Folder',
@@ -354,7 +354,7 @@ class MediaDetailScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: Text(
           'IMG_${mediaIndex + 2025}.jpg',
@@ -619,7 +619,7 @@ class _EncryptedCameraScreenState extends State<EncryptedCameraScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back, color: Colors.white),
-                    onPressed: () => Get.back(),
+                    onPressed: () => AppNav.back(),
                   ),
                   Text(
                     'Encrypted Camera',
@@ -794,7 +794,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Get.back(),
+                    onPressed: () => AppNav.back(),
                   ),
                   Text(
                     'Preview',
@@ -875,7 +875,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2DD4BF),
@@ -910,7 +910,7 @@ class CapturedPhotoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF2DD4BF),
@@ -975,7 +975,7 @@ class CapturedVideoPreviewScreen extends StatelessWidget {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.close, color: Colors.white),
-                    onPressed: () => Get.back(),
+                    onPressed: () => AppNav.back(),
                   ),
                   Text(
                     'Video Preview',
@@ -1068,7 +1068,7 @@ class CapturedVideoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF2DD4BF),
@@ -1103,7 +1103,7 @@ class CapturedVideoPreviewScreen extends StatelessWidget {
                           backgroundColor: Colors.green,
                           colorText: Colors.white,
                         );
-                        Get.back();
+                        AppNav.back();
                       },
                       style: OutlinedButton.styleFrom(
                         foregroundColor: const Color(0xFF2DD4BF),

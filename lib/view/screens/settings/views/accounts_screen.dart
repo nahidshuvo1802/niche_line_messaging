@@ -6,6 +6,7 @@ import 'package:niche_line_messaging/view/screens/authentication/controller/auth
 import 'package:niche_line_messaging/view/screens/settings/controller/profile_controller.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/edit_profile_screen.dart';
 import 'package:niche_line_messaging/view/components/shimmer/shimmer_loading.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Account Screen ====================
 class AccountScreen extends StatelessWidget {
@@ -22,7 +23,7 @@ class AccountScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'Accounts',
@@ -300,12 +301,12 @@ class AccountScreen extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => AppNav.back(),
             child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
           ),
           TextButton(
             onPressed: () {
-              Get.back(); // Close dialog
+              AppNav.back(); // Close dialog
               Get.find<AuthController>().logoutUser();
             },
             child: const Text('Log Out', style: TextStyle(color: Colors.red)),

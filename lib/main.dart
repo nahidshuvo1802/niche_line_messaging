@@ -25,21 +25,20 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final themeController = Get.find<ThemeController>();
     return ScreenUtilInit(
       minTextAdapt: true,
       splitScreenMode: true,
       designSize: const Size(393, 852),
-      child: Obx(
-        () => GetMaterialApp(
+      child: GetBuilder<ThemeController>(
+        builder: (tc) => GetMaterialApp(
           title: "NicheLine",
-          theme: AppTheme.lightTheme(themeController.fontSize.value),
-          darkTheme: AppTheme.darkTheme(themeController.fontSize.value),
-          themeMode: themeController.themeMode.value == 'light'
+          theme: AppTheme.lightTheme(tc.fontSize.value),
+          darkTheme: AppTheme.darkTheme(tc.fontSize.value),
+          themeMode: tc.themeMode.value == 'light'
               ? ThemeMode.light
-              : themeController.themeMode.value == 'dark'
-              ? ThemeMode.dark
-              : ThemeMode.system,
+              : tc.themeMode.value == 'dark'
+                  ? ThemeMode.dark
+                  : ThemeMode.system,
           debugShowCheckedModeBanner: false,
           defaultTransition: Transition.fadeIn,
           transitionDuration: const Duration(milliseconds: 200),

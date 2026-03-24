@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/change_password_screen.dart';
 
 import 'package:niche_line_messaging/view/screens/settings/controller/privacy_security_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class PrivacySecurityScreen extends StatefulWidget {
   const PrivacySecurityScreen({super.key});
@@ -25,7 +26,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'Privacy & Security',

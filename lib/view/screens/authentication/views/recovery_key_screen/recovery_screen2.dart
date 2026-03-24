@@ -10,6 +10,7 @@ import 'package:niche_line_messaging/view/screens/authentication/controller/auth
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/recovery_screen3.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_line_widget.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_widget.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Save Recovery Key Screen ====================
 // User এর generated recovery key display করে এবং copy করার option দেয়
@@ -290,7 +291,7 @@ class RecoveryScreen2 extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => AppNav.back(),
             child: Text(
               'No, Continue',
               style: TextStyle(
@@ -302,7 +303,7 @@ class RecoveryScreen2 extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              Get.back();
+              AppNav.back();
               authController.cancelRegistration();
             },
             child: Text(
@@ -396,7 +397,7 @@ class RecoveryScreen2 extends StatelessWidget {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(result: false),
+            onPressed: () => AppNav.back(result: false),
             child: CustomText(
               text: 'Cancel',
               fontSize: 14.sp,
@@ -405,7 +406,7 @@ class RecoveryScreen2 extends StatelessWidget {
             ),
           ),
           TextButton(
-            onPressed: () => Get.back(result: true),
+            onPressed: () => AppNav.back(result: true),
             child: CustomText(
               text: 'Regenerate',
               fontSize: 14.sp,

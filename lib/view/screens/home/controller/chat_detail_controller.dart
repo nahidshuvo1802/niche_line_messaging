@@ -20,6 +20,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:path_provider/path_provider.dart'; // Audio Player
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class ChatDetailController extends GetxController {
   final RxBool isLoading = true.obs;
@@ -537,7 +538,7 @@ class ChatDetailController extends GetxController {
                   color: Colors.purple,
                   label: "Gallery",
                   onTap: () {
-                    Get.back();
+                    AppNav.back();
                     _pickImage(ImageSource.gallery);
                   },
                 ),
@@ -546,7 +547,7 @@ class ChatDetailController extends GetxController {
                   color: Colors.blue,
                   label: "Camera",
                   onTap: () {
-                    Get.back();
+                    AppNav.back();
                     _pickImage(ImageSource.camera);
                   },
                 ),
@@ -555,7 +556,7 @@ class ChatDetailController extends GetxController {
                   color: Colors.red,
                   label: "Video",
                   onTap: () {
-                    Get.back();
+                    AppNav.back();
                     _pickVideo();
                   },
                 ),
@@ -564,7 +565,7 @@ class ChatDetailController extends GetxController {
                   color: Colors.orange,
                   label: "File",
                   onTap: () {
-                    Get.back();
+                    AppNav.back();
                     _pickDocument();
                   },
                 ),
@@ -749,7 +750,7 @@ class ChatDetailController extends GetxController {
         ApiUrl.getSingleConversationDetails(currentConversationId!),
       );
 
-      Get.back(); // Close loading
+      AppNav.back(); // Close loading
 
       if (response.statusCode == 200) {
         var data = response.body['data'];
@@ -784,7 +785,7 @@ class ChatDetailController extends GetxController {
         );
       }
     } catch (e) {
-      if (Get.isDialogOpen ?? false) Get.back(); // Close loading if error
+      if (Get.isDialogOpen ?? false) AppNav.back(); // Close loading if error
       debugPrint("Error fetching group details: $e");
       // Fallback navigate
       Get.to(

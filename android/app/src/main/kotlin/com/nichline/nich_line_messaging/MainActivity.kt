@@ -1,4 +1,4 @@
-package com.nichline.nich_line_messaging
+package com.nichline.nichlinemessaging
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -9,6 +9,7 @@ import 'package:niche_line_messaging/view/screens/home/views/chat_screen_one.dar
 import 'package:niche_line_messaging/view/screens/home/controller/chatlist_controller.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:niche_line_messaging/view/screens/home/model/conversation_model.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class CreateGroupController extends GetxController {
   // ==================== Reactive Variables ====================
@@ -197,7 +198,7 @@ class CreateGroupController extends GetxController {
       }
 
       if (currentSubId == null) {
-        Get.back(); // Close loading
+        AppNav.back(); // Close loading
         Get.snackbar(
           'Error',
           'Could not retrieve active subscription ID',
@@ -257,8 +258,8 @@ class CreateGroupController extends GetxController {
               }
 
               if (createdGroup != null && createdGroup.sId != null) {
-                Get.back(); // Close loading dialog
-                Get.back(); // Close CreateGroupScreen
+                AppNav.back(); // Close loading dialog
+                AppNav.back(); // Close CreateGroupScreen
 
                 Get.snackbar(
                   'Success',
@@ -290,8 +291,8 @@ class CreateGroupController extends GetxController {
         }
 
         // Fallback: If fetching failed but creation succeeded
-        Get.back(); // Close loading
-        Get.back(); // Close CreateGroupScreen
+        AppNav.back(); // Close loading
+        AppNav.back(); // Close CreateGroupScreen
         Get.snackbar(
           'Success',
           'Group "$groupName" created!',
@@ -299,7 +300,7 @@ class CreateGroupController extends GetxController {
           colorText: Colors.white,
         );
       } else {
-        Get.back(); // Close loading
+        AppNav.back(); // Close loading
         Get.snackbar(
           'Error',
           'Failed to create group: ${response.statusText}',
@@ -308,7 +309,7 @@ class CreateGroupController extends GetxController {
         );
       }
     } catch (e) {
-      Get.back(); // Close loading
+      AppNav.back(); // Close loading
       debugPrint('Create Group Error: $e');
       Get.snackbar(
         'Error',

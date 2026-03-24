@@ -7,6 +7,7 @@ import 'package:niche_line_messaging/view/components/custom_text/custom_text.dar
 import 'package:niche_line_messaging/view/screens/home/controller/recipient_controller.dart';
 import 'package:niche_line_messaging/view/components/shimmer/shimmer_loading.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Chat Info Screen ====================
 class ChatInfoScreen extends StatelessWidget {
@@ -40,7 +41,7 @@ class ChatInfoScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF0A0E1A),
       elevation: 0,
       leading: IconButton(
-        onPressed: () => Get.back(),
+        onPressed: () => AppNav.back(),
         icon: Icon(
           Icons.arrow_back_ios,
           color: const Color(0xFF2DD4BF),
@@ -410,7 +411,7 @@ class ChatInfoScreen extends StatelessWidget {
               icon: Icons.camera_alt,
               label: 'Take Photo',
               onTap: () {
-                Get.back();
+                AppNav.back();
                 controller.pickImage(ImageSource.camera);
               },
             ),
@@ -422,7 +423,7 @@ class ChatInfoScreen extends StatelessWidget {
               icon: Icons.photo_library,
               label: 'Choose from Gallery',
               onTap: () {
-                Get.back();
+                AppNav.back();
                 controller.pickImage(ImageSource.gallery);
               },
             ),
@@ -438,7 +439,7 @@ class ChatInfoScreen extends StatelessWidget {
                 iconColor: Colors.red,
                 labelColor: Colors.red,
                 onTap: () {
-                  Get.back();
+                  AppNav.back();
                   controller.removeProfileImage();
                 },
               ),
@@ -718,11 +719,11 @@ extension ImagePickerExtension on ChatInfoController {
           ),
           actions: [
             TextButton(
-              onPressed: () => Get.back(result: false),
+              onPressed: () => AppNav.back(result: false),
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
             ),
             TextButton(
-              onPressed: () => Get.back(result: true),
+              onPressed: () => AppNav.back(result: true),
               child: const Text('Remove', style: TextStyle(color: Colors.red)),
             ),
           ],

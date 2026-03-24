@@ -7,6 +7,7 @@ import 'package:niche_line_messaging/view/screens/home/model/all_user_chat_list_
 
 import 'package:niche_line_messaging/helper/shared_prefe/shared_prefe.dart';
 import 'package:niche_line_messaging/utils/app_const/app_const.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class AddMemberController extends GetxController {
   final RxList<AllUser> allRecipients = <AllUser>[].obs;
@@ -189,10 +190,10 @@ class AddMemberController extends GetxController {
         }
       }
 
-      Get.back(); // Close loading
+      AppNav.back(); // Close loading
 
       if (allSuccess) {
-        Get.back(); // Close Screen
+        AppNav.back(); // Close Screen
         Get.snackbar(
           'Success',
           'Member added successfully!',
@@ -208,7 +209,7 @@ class AddMemberController extends GetxController {
         );
       }
     } catch (e) {
-      Get.back(); // Close loading
+      AppNav.back(); // Close loading
       debugPrint('Add Members Error: $e');
       Get.snackbar(
         'Error',

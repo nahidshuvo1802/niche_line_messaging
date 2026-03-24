@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class LockScreen extends StatelessWidget {
   const LockScreen({super.key});
@@ -20,7 +20,7 @@ class LockScreen extends StatelessWidget {
             ),
             const SizedBox(height: 30),
             ElevatedButton(
-              onPressed: () => Get.back(),
+              onPressed: () => AppNav.back(),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2DD4BF),
                 shape: RoundedRectangleBorder(

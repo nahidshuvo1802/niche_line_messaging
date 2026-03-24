@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/service/api_client.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
-import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/view/screens/home/controller/chatlist_controller.dart';
 import 'package:niche_line_messaging/view/screens/settings/model/profile_model.dart';
 import 'package:flutter/material.dart';
@@ -75,9 +75,7 @@ class ProfileController extends GetxController {
           Get.delete<ChatListController>(force: true);
         }
 
-        Get.offAll(
-          () => HomeScreen(),
-        ); // Navigate to HomeScreen with fresh controller
+        Get.offAllNamed(AppRoutes.homeScreen);
       } else {
         Get.snackbar(
           "Error",

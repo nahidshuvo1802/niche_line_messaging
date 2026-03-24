@@ -10,6 +10,7 @@ import 'package:niche_line_messaging/view/screens/authentication/controller/auth
 
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_line_widget.dart';
 import 'package:niche_line_messaging/view/screens/authentication/views/recovery_key_screen/widget/setup_widget.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 // ==================== Verify Recovery Key Screen ====================
 class RecoveryScreen3 extends StatefulWidget {
@@ -124,7 +125,7 @@ class _RecoveryScreen3State extends State<RecoveryScreen3> {
                       ),
                       onPressed: () {
                         if (Get.isDialogOpen ?? false) {
-                          Get.back();
+                          AppNav.back();
                         }
                       },
                       child: Text(
@@ -343,7 +344,7 @@ class _RecoveryScreen3State extends State<RecoveryScreen3> {
         ),
         actions: [
           TextButton(
-            onPressed: () => Get.back(),
+            onPressed: () => AppNav.back(),
             child: Text(
               'No, Continue',
               style: TextStyle(
@@ -355,7 +356,7 @@ class _RecoveryScreen3State extends State<RecoveryScreen3> {
           ),
           TextButton(
             onPressed: () {
-              Get.back();
+              AppNav.back();
               authController.cancelRegistration();
             },
             child: Text(

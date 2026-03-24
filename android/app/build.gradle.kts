@@ -18,7 +18,7 @@ if (keystorePropertiesFile.exists()) {
 // ================== নতুন কোড শেষ ==================
 
 android {
-    namespace = "com.nichline.nich_line_messaging"
+    namespace = "com.nichline.nichlinemessaging"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -32,7 +32,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.nichline.nich_line_messaging"
+        applicationId = "com.nichline.nichlinemessaging"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

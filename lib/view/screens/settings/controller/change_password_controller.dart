@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/service/api_client.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class ChangePasswordController extends GetxController {
   final oldPasswordController = TextEditingController();
@@ -61,7 +62,7 @@ class ChangePasswordController extends GetxController {
     try {
       var response = await ApiClient.patchData(ApiUrl.changePassword, body);
       if (response.statusCode == 200) {
-        Get.back(); // Close screen
+        AppNav.back(); // Close screen
         Get.snackbar(
           "Success",
           "Password changed successfully",

@@ -17,6 +17,7 @@ import 'package:niche_line_messaging/view/screens/media_library/views/media-libr
 import 'package:niche_line_messaging/view/screens/home/views/add_member_screen.dart';
 import 'package:niche_line_messaging/service/api_client.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class ChatInfoController extends GetxController {
   // ==================== Observable State ====================
@@ -345,7 +346,7 @@ class ChatInfoController extends GetxController {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Get.back(),
+                  onPressed: () => AppNav.back(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),
                     foregroundColor: const Color(0xFF0E1527),
@@ -459,7 +460,7 @@ class ChatInfoController extends GetxController {
                       );
                       return;
                     }
-                    Get.back(result: true);
+                    AppNav.back(result: true);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF2DD4BF),
@@ -482,7 +483,7 @@ class ChatInfoController extends GetxController {
               SizedBox(
                 width: double.infinity,
                 child: OutlinedButton(
-                  onPressed: () => Get.back(result: false),
+                  onPressed: () => AppNav.back(result: false),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: const Color(0xFF2DD4BF),
                     side: BorderSide(
@@ -552,7 +553,7 @@ class ChatInfoController extends GetxController {
           chatInfo.value?.name ?? "Chat",
         );
 
-        Get.back(); // Close Loading
+        AppNav.back(); // Close Loading
 
         // 5. Share PDF
         await Share.shareXFiles([
@@ -567,7 +568,7 @@ class ChatInfoController extends GetxController {
           colorText: Colors.white,
         );
       } catch (e) {
-        Get.back(); // Close Loading
+        AppNav.back(); // Close Loading
         Get.snackbar(
           'Export Failed',
           e.toString(),
@@ -769,11 +770,11 @@ class ChatInfoController extends GetxController {
           ),
           actions: [
             TextButton(
-              onPressed: () => Get.back(result: false),
+              onPressed: () => AppNav.back(result: false),
               child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
             ),
             TextButton(
-              onPressed: () => Get.back(result: true),
+              onPressed: () => AppNav.back(result: true),
               child: const Text('Delete', style: TextStyle(color: Colors.red)),
             ),
           ],
@@ -797,7 +798,7 @@ class ChatInfoController extends GetxController {
       );
 
       // Navigate back to chat list
-      Get.back();
+      AppNav.back();
 
       debugPrint('✅ Chat Deleted: $chatId');
     } catch (e) {

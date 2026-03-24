@@ -24,10 +24,6 @@ class AuthController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    if (kDebugMode) {
-      loginEmailController.text = "info.sohelranaa@gmail.com";
-      loginPasswordController.text = "MyStrongPass@2026";
-    }
   }
 
   RxBool isRecoveryLoading = false.obs;

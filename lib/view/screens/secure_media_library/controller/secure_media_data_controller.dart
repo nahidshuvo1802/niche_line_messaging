@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:niche_line_messaging/service/api_client.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
 import 'package:niche_line_messaging/view/screens/secure_media_library/model/secure_media_model.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class SecureMediaDataController extends GetxController {
   // Use the model type
@@ -104,7 +105,7 @@ class SecureMediaDataController extends GetxController {
                   ),
                 ),
                 onTap: () async {
-                  Get.back();
+                  AppNav.back();
                   final XFile? photo = await _picker.pickImage(
                     source: ImageSource.camera,
                   );
@@ -120,7 +121,7 @@ class SecureMediaDataController extends GetxController {
                   ),
                 ),
                 onTap: () async {
-                  Get.back();
+                  AppNav.back();
                   final XFile? image = await _picker.pickImage(
                     source: ImageSource.gallery,
                   );
@@ -136,7 +137,7 @@ class SecureMediaDataController extends GetxController {
                   ),
                 ),
                 onTap: () async {
-                  Get.back();
+                  AppNav.back();
                   final XFile? video = await _picker.pickVideo(
                     source: ImageSource.gallery,
                   );

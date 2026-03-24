@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/view/screens/secure_media_library/views/secure_media_screen.dart';
 import 'package:niche_line_messaging/view/screens/settings/controller/secure_folder_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class SecureFolderScreen extends StatefulWidget {
   const SecureFolderScreen({super.key});
@@ -110,7 +111,7 @@ class _SecureFolderScreenState extends State<SecureFolderScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'Secure Folder',

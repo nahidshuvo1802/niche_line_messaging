@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
-import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/view/screens/subscription/view/subscription_screen_pricing.dart';
 
 import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
@@ -24,7 +24,7 @@ class SubscriptionScreenTrial extends StatelessWidget {
               Align(
                 alignment: Alignment.topRight,
                 child: IconButton(
-                  onPressed: () => Get.to(() => HomeScreen()),
+                  onPressed: () => Get.offAllNamed(AppRoutes.homeScreen),
                   icon: Icon(Icons.close, color: Colors.white, size: 28.sp),
                 ),
               ),
@@ -156,7 +156,7 @@ class SubscriptionScreenTrial extends StatelessWidget {
                 width: double.infinity,
                 child: OutlinedButton(
                   onPressed: () {
-                    Get.to(() => HomeScreen());
+                    Get.offAllNamed(AppRoutes.homeScreen);
                   },
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.white,

@@ -5,6 +5,7 @@ import 'package:niche_line_messaging/utils/app_images/app_images.dart';
 import 'package:niche_line_messaging/view/components/custom_image/custom_image.dart';
 import 'package:niche_line_messaging/view/screens/settings/controller/settings_content_controller.dart';
 import 'package:niche_line_messaging/view/screens/settings/views/content_display_screen.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
@@ -17,7 +18,7 @@ class AboutScreen extends StatelessWidget {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
         title: const Text(
           'About',

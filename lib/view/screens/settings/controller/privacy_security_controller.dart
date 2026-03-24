@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:niche_line_messaging/service/api_client.dart';
 import 'package:niche_line_messaging/service/api_url.dart';
 import 'package:niche_line_messaging/view/screens/settings/controller/profile_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class PrivacySecurityController extends GetxController {
   final ProfileController profileController = Get.put(ProfileController());
@@ -76,7 +77,7 @@ class PrivacySecurityController extends GetxController {
               );
               return;
             }
-            Get.back(); // process logic
+            AppNav.back(); // process logic
             _validateRecoveryKey(keyController.text.trim());
           },
           child: const Text("Verify", style: TextStyle(color: Colors.white)),
@@ -85,7 +86,7 @@ class PrivacySecurityController extends GetxController {
       cancel: SizedBox(
         width: 100,
         child: TextButton(
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
           child: const Text("Cancel", style: TextStyle(color: Colors.white54)),
         ),
       ),
@@ -105,7 +106,7 @@ class PrivacySecurityController extends GetxController {
 
       String? email = profileController.profileData.value?.email;
       if (email == null || email.isEmpty) {
-        Get.back(); // close loading
+        AppNav.back(); // close loading
         Get.snackbar(
           "Error",
           "Could not retrieve user email.",
@@ -130,7 +131,7 @@ class PrivacySecurityController extends GetxController {
         body,
       );
 
-      Get.back(); // close loading
+      AppNav.back(); // close loading
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         // Validation Successful -> Proceed to Confirmation
@@ -145,7 +146,7 @@ class PrivacySecurityController extends GetxController {
         );
       }
     } catch (e) {
-      Get.back(); // close loading
+      AppNav.back(); // close loading
       Get.snackbar(
         "Error",
         "An unexpected error occurred: $e",
@@ -185,7 +186,7 @@ class PrivacySecurityController extends GetxController {
             ),
           ),
           onPressed: () {
-            Get.back();
+            AppNav.back();
             _showConfirmationStep2();
           },
           child: const Text(
@@ -197,7 +198,7 @@ class PrivacySecurityController extends GetxController {
       cancel: SizedBox(
         width: 100,
         child: TextButton(
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
           child: const Text("Cancel", style: TextStyle(color: Colors.white54)),
         ),
       ),
@@ -232,7 +233,7 @@ class PrivacySecurityController extends GetxController {
             ),
           ),
           onPressed: () {
-            Get.back();
+            AppNav.back();
             _executeDeleteAllMessages();
           },
           child: const Text("Confirm", style: TextStyle(color: Colors.white)),
@@ -241,7 +242,7 @@ class PrivacySecurityController extends GetxController {
       cancel: SizedBox(
         width: 100,
         child: TextButton(
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
           child: const Text("Cancel", style: TextStyle(color: Colors.white54)),
         ),
       ),
@@ -256,7 +257,7 @@ class PrivacySecurityController extends GetxController {
     try {
       var response = await ApiClient.deleteData(ApiUrl.deleteAllConversation);
 
-      Get.back(); // close loading
+      AppNav.back(); // close loading
 
       if (response.statusCode == 200) {
         Get.snackbar(
@@ -274,7 +275,7 @@ class PrivacySecurityController extends GetxController {
         );
       }
     } catch (e) {
-      Get.back(); // close loading
+      AppNav.back(); // close loading
       Get.snackbar(
         "Error",
         "An unexpected error occurred: $e",

@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:shimmer/shimmer.dart';
 import 'package:niche_line_messaging/view/screens/settings/controller/settings_content_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class ContentDisplayScreen extends StatefulWidget {
   final String title;
@@ -47,7 +48,7 @@ class _ContentDisplayScreenState extends State<ContentDisplayScreen> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Color(0xFF2DD4BF)),
-          onPressed: () => Get.back(),
+          onPressed: () => AppNav.back(),
         ),
       ),
       body: Obx(() {

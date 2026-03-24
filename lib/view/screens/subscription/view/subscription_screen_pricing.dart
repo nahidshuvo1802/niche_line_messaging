@@ -3,8 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:niche_line_messaging/utils/app_colors/app_colors.dart';
 import 'package:flutter/services.dart';
-import 'package:niche_line_messaging/view/screens/home/views/home_screen.dart';
+import 'package:niche_line_messaging/core/app_routes/app_routes.dart';
 import 'package:niche_line_messaging/view/screens/subscription/controller/subscription_controller.dart';
+import 'package:niche_line_messaging/core/app_navigation.dart';
 
 class SubscriptionUpgradeScreen extends StatelessWidget {
   const SubscriptionUpgradeScreen({super.key});
@@ -198,7 +199,7 @@ class SubscriptionUpgradeScreen extends StatelessWidget {
 
                 TextButton(
                   onPressed: () {
-                    Get.to(() => HomeScreen());
+                    Get.offAllNamed(AppRoutes.homeScreen);
                   },
                   child: Text(
                     "Maybe later",
@@ -364,7 +365,7 @@ class SubscriptionUpgradeScreen extends StatelessWidget {
             actionsAlignment: MainAxisAlignment.center,
             actions: [
               TextButton(
-                onPressed: () => Get.back(),
+                onPressed: () => AppNav.back(),
                 child: Text(
                   "Cancel",
                   style: TextStyle(color: Colors.white54, fontSize: 16.sp),
@@ -372,7 +373,7 @@ class SubscriptionUpgradeScreen extends StatelessWidget {
               ),
               ElevatedButton(
                 onPressed: () {
-                  Get.back(); // Close dialog
+                  AppNav.back(); // Close dialog
                   controller.purchasePaidSubscription(
                     subscriptionId: subscriptionId,
                     priceId: priceId,
